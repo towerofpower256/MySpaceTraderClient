@@ -1,4 +1,4 @@
-import React from 'react';
+import Page from "./Page.js"
 
 import {
     useLocation
@@ -8,8 +8,8 @@ export default function UnknownPage() {
     let location = useLocation();
 
     return (
-        <div>
+        <Page title="Unknown page">
             The route <code>{location.pathname}</code> is not a valid route.
-        </div>
+        </Page>
     );
 }

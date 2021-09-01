@@ -3,7 +3,8 @@ import {
   HashRouter as Router,
   Switch,
   Route,
-  Link
+  Link,
+  Redirect
 } from "react-router-dom";
 
 import './App.css';
@@ -18,9 +19,7 @@ function App() {
         <AppNavHeader />
 
         <Switch>
-          <Route exact path="/">
-            <AccountPage />
-          </Route>
+          <Redirect exact from='/' to='/account'/>
           <Route path="/account">
             <AccountPage />
           </Route>

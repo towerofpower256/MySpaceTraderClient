@@ -1,18 +1,9 @@
-import React from 'react';
+import Page from "../Common/Page.js"
 
-export class AccountPage extends React.Component {
-    render() {
-        return (
-            <div class="card">
-                <div class="card-header">
-                    <h5>Account</h5>
-                </div>
-                <div class="card-body">
-                    This is the account page.
-                </div>
-            </div>
-        );
-    }
+export default function AccountPage(props) {
+    return (
+        <Page title="Account">
+            This is the account page.
+        </Page>
+    );
 }
-
-export default AccountPage;
