@@ -9,7 +9,7 @@ import {
 
 import './App.css';
 import AppNavHeader from "./Components/Common/AppHeader.js";
-import AccountPage from "./Components/Account/AccountPage.js";
+import PlayerInfoPage from "./Components/Player/PlayerInfoPage.js";
 import UnknownPage from "./Components/Common/UnknownPage";
 
 function App() {
@@ -19,9 +19,9 @@ function App() {
         <AppNavHeader />
 
         <Switch>
-          <Redirect exact from='/' to='/account'/>
-          <Route path="/account">
-            <AccountPage />
+          <Redirect exact from='/' to='/player'/>
+          <Route path="/player">
+            <PlayerInfoPage />
           </Route>
           <Route path="*">
             <UnknownPage />
