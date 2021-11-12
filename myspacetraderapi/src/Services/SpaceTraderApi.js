@@ -7,6 +7,14 @@ class SpaceTraderClient {
         return this._doRequest("my/account", "GET");
     }
 
+    async getLoans() {
+        return this._doRequest("my/loans", "GET");
+    }
+
+    async payLoan(loanID) {
+        return this._doRequest("my/loans/"+loanID, "POST");
+    }
+
     async _doRequest(url, method, options) {
         if (!options) options = {};
         const fullUrl = this.getUri(url);

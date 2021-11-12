@@ -11,6 +11,7 @@ import './App.css';
 import AppNavHeader from "./Components/Common/AppHeader.js";
 import PlayerInfoPage from "./Components/Player/PlayerInfoPage.js";
 import UnknownPage from "./Components/Common/UnknownPage";
+import LoansPage from "./Components/Loans/LoansPage";
 
 function App() {
   return (
@@ -22,6 +23,9 @@ function App() {
           <Redirect exact from='/' to='/player'/>
           <Route path="/player">
             <PlayerInfoPage />
+          </Route>
+          <Route path="/loans">
+            <LoansPage />
           </Route>
           <Route path="*">
             <UnknownPage />
