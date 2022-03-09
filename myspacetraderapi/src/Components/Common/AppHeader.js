@@ -5,22 +5,22 @@ import { NavLink } from "react-router-dom";
 
 export default function AppNavHeader(props) {
     return (
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="/">MySpaceTraderApi</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
+        <nav className="navbar navbar-expand-lg navbar-light bg-light">
+            <div className="container-fluid">
+                <a className="navbar-brand" href="/">MySpaceTraderApi</a>
+                <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span className="navbar-toggler-icon"></span>
                 </button>
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li class="nav-item">
-                            <NavLink to="/player" aria-current="page" activeClassName="nav-link active" className="nav-link">Player</NavLink>
+                <div className="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li className="nav-item">
+                            <NavLink to="/player" aria-current="page" activeclassname="nav-link active" className="nav-link">Player</NavLink>
                         </li>
-                        <li class="nav-item">
-                            <NavLink to="/loans" aria-current="page" activeClassName="nav-link active" className="nav-link">Loans</NavLink>
+                        <li className="nav-item">
+                            <NavLink to="/loans" aria-current="page" activeclassname="nav-link active" className="nav-link">Loans</NavLink>
                         </li>
-                        <li class="nav-item">
-                            <NavLink to="/ships" aria-current="page" activeClassName="nav-link active" className="nav-link">Ships</NavLink>
+                        <li className="nav-item">
+                            <NavLink to="/ship" aria-current="page" activeclassname="nav-link active" className="nav-link">Ships</NavLink>
 
                         </li>
                     </ul>

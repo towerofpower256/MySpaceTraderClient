@@ -1,18 +1,29 @@
 import { useEffect, useState } from "react";
 import Page from "../Common/Page.js"
 import SpaceTraderClient from "../../Services/SpaceTraderApi.js";
+import {  useParams } from "react-router-dom";
 
-function PlayerInfoPage(props) {
+export default function ShipDetailPage(props) {
+    let params = useParams();
+    const PAGE_NAME = `Ship - ${params.shipId}`;
 
     const [error, setError] = useState(null)
     const [isLoaded, setLoaded] = useState(false)
-    const [playerInfo, setPlayerInfo] = useState([]) // Create new state variable for user info data
+    const [shipData, setShipData] = useState(null)
 
     useEffect(() => {
-        const stClient = new SpaceTraderClient();
-        stClient.getPlayerInfo()
+        loadShipData();
+    }, []);
+
+    function loadShipData() {
+        setLoaded(false);
+        setError(null);
+        setShipData(null);
+
+        const stc = new SpaceTraderClient();
+        stc.getShipInfo(params.shipId)
             .then(
-                (response) => {
+                response => {
                     if (!response.ok) {
                         response.text().then(text =>
                             doError(response.status + ", " + text)
@@ -23,8 +34,8 @@ function PlayerInfoPage(props) {
                         response.json().then(
                             data => {
                                 try {
-                                    console.log("Loading user data:", data);
-                                    setPlayerInfo(data);
+                                    console.log("Loading ship data:", data);
+                                    setShipData(data);
                                     setLoaded(true);
                                 } catch (ex) {
                                     doError(ex);
@@ -36,13 +47,12 @@ function PlayerInfoPage(props) {
                             }
                         );
                     }
-
                 },
-                (error) => {
+                error => {
                     doError(error);
                 }
-            );
-    }, []);
+            )
+    }
 
     function doError(error) {
         console.error("ERROR", error);
@@ -52,7 +62,7 @@ function PlayerInfoPage(props) {
 
     if (!isLoaded) {
         return (
-            <Page title="Player info">
+            <Page title={PAGE_NAME}>
                 <pre>It's loading</pre>
             </Page>
         );
@@ -60,54 +70,47 @@ function PlayerInfoPage(props) {
 
     if (error) {
         return (
-            <Page title="Player info">
+            <Page title={PAGE_NAME}>
                 <pre>ERROR: {error}</pre>
             </Page>
         );
     }
 
+    if (shipData) {
 
+        let ship = shipData.ship;
 
-    if (playerInfo) {
         return (
-            <Page title="Player info">
-                This is the player info page.
-
-                <pre>
-                    Player info data:
-                    {JSON.stringify(playerInfo)}
-                </pre>
-
-                <table className="table table-striped">
+            <Page title={PAGE_NAME}>
+                <table className="table table-striped table-hover">
                     <tbody>
                         <tr>
-                            <td>Username:</td>
-                            <td>{playerInfo.user.username}</td>
+                            <td>ID</td>
+                            <td>{ship.id}</td>
                         </tr>
                         <tr>
-                            <td>Ship count:</td>
-                            <td>{playerInfo.user.shipCount}</td>
+                            <td>Location</td>
+                            <td>{ship.location}</td>
                         </tr>
                         <tr>
-                            <td>Structure count:</td>
-                            <td>{playerInfo.user.structureCount}</td>
+                            <td>Class</td>
+                            <td>{ship.class}</td>
                         </tr>
                         <tr>
-                            <td>Joined:</td>
-                            <td>{playerInfo.user.joinedAt}</td>
+                            <td>Type</td>
+                            <td>{ship.manufacturer} {ship.type}</td>
                         </tr>
                         <tr>
-                            <td>Credits:</td>
-                            <td>{playerInfo.user.credits}</td>
+                            <td>Cargo</td>
+                            <td>{ship.spaceAvailable} / {ship.maxCargo}</td>
+                        </tr>
+                        <tr>
+                            <td>Speed / Plating / Weapons</td>
+                            <td>{ship.speed} / {ship.plating} / {ship.weapons}</td>
                         </tr>
                     </tbody>
                 </table>
-
-
-
-            </Page >
+            </Page>
         );
     }
 }
-
-export default PlayerInfoPage;

@@ -1,7 +1,8 @@
 
 
 class SpaceTraderClient {
-    BASEPATH = "https://api.spacetraders.io/"
+    //BASEPATH = "https://api.spacetraders.io/"
+    BASEPATH = "/dummyapi/"
 
     async getPlayerInfo() {
         return this._doRequest("my/account", "GET");
@@ -12,7 +13,23 @@ class SpaceTraderClient {
     }
 
     async payLoan(loanID) {
-        return this._doRequest("my/loans/"+loanID, "POST");
+        return this._doRequest("my/loans/" + encodeURIComponent(loanID), "PUT");
+    }
+
+    async takeOutLoan(loanID) {
+        return this._doRequest("my/loans/?type=" + encodeURIComponent(loanID), "POST");
+    }
+
+    async getShips() {
+        return this._doRequest("my/ships", "GET");
+    }
+
+    async getShipInfo(id) {
+        return this._doRequest("my/ships/"+id, "GET");
+    }
+
+    async buyNewShip(locationID, typeID) {
+        return this._doRequest("my/ships?location="+encodeURIComponent(locationID)+"&type="+encodeURIComponent(typeID), "POST");
     }
 
     async _doRequest(url, method, options) {
@@ -20,33 +37,41 @@ class SpaceTraderClient {
         const fullUrl = this.getUri(url);
         console.log("Making request", "URL: " + fullUrl, "Method: " + method, "Options:", options);
 
-        return fetch(fullUrl, {
+        const req = fetch(fullUrl, {
             method: method,
+            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
             //mode: 'cors',
             //credentials: 
             headers: {
-                "Authorization": "Bearer d9394b3a-9faf-4743-a503-1352b117708c", // Hard code for now, come back to this later
+                "Authorization": "Bearer 0c5123a3-8ea2-4dad-b539-d1f8d8da16f1", // Hard code for now, come back to this later
             },
             body: options.body,
-        })
-            .then(response => {
+        });
+        req.then(
+            response => {
                 console.log("Response: ", response);
                 if (!response.ok) {
                     this.handleResponseError(response);
                 }
-                return response.json();
-            })
-            .catch(error => {
+            },
+            error => {
                 this.handleError(error);
-            });
+            }
+        );
+
+        return req;
     }
 
     getUri(relativePath) {
-        return this.BASEPATH+relativePath;
+        return this.BASEPATH + relativePath;
     }
 
     handleError(error) {
         console.error("SpaceTraderClient ERROR: ", error);
+    }
+
+    handleResponseError(response) {
+        this.handleError("Response " + response.status + " " + response.statusText);
     }
 
     log() {

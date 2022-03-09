@@ -1,0 +1,11 @@
+{
+    "loans": [
+        {
+            "due": "2021-05-15T02:32:43.269Z",
+            "id": "ckoma153c0060zbnzquw2xa29",
+            "repaymentAmount": 280000,
+            "status": "CURRENT",
+            "type": "STARTUP"
+        }
+    ]
+}
