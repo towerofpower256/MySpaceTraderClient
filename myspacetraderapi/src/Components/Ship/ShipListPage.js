@@ -80,9 +80,10 @@ export default function ShipListPage(props) {
                     <thead>
                         <tr>
                             <td>ID</td>
+                            <td>Ship type</td>
                             <td>Location</td>
                             <td>Class</td>
-                            <td>Type</td>
+                            <td>Manufacturer</td>
                             <td>Cargo</td>
                             <td>S / P / W</td>
                         </tr>
@@ -92,9 +93,10 @@ export default function ShipListPage(props) {
                             return (
                                 <tr key={ship.id}>
                                     <td><Link to={ship.id}>{ship.id}</Link></td>
+                                    <td>{ship.type}</td>
                                     <td>{ship.location}</td>
                                     <td>{ship.class}</td>
-                                    <td>{ship.manufacturer} {ship.type}</td>
+                                    <td>{ship.manufacturer}</td>
                                     <td>{ship.spaceAvailable} / {ship.maxCargo}</td>
                                     <td>{ship.speed} / {ship.plating} / {ship.weapons}</td>
                                 </tr>

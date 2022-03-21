@@ -1,24 +1,46 @@
 import { useEffect, useState } from "react";
+import { prettyNumber } from "../../Utils";
 
 function LoanItem(props) {
 
     if (props.content) {
         return (
-            <div className="list-group-item" key="CONTENT">
+            <div className="card h100">
                 {props.content}
             </div>
         );
     }
 
     return (
-        <div className="list-group-item" key={props.loan.id}>
-            <div>ID: {props.loan.id}</div>
-            <div>Status: {props.loan.status}</div>
-            <div>Due: {props.loan.due}</div>
-            <div>Repayment amount: {props.loan.repaymentAmount}</div>
-            <div>Type: {props.loan.type}</div>
-            <div className="btn-group" role="group">
-                <button type="button" className="btn btn-primary">Pay off loan</button>
+        <div className="card h100" key={props.loan.id}>
+            <div className="card-header">
+                {props.loan.type}
+            </div>
+            <div className="card-body">
+                <table className="table table-striped">
+                    <tbody>
+                        <tr>
+                            <th>Status</th>
+                            <td>{props.loan.status}</td>
+                        </tr>
+                        <tr>
+                            <th>Due</th>
+                            <td>{props.loan.due}</td>
+                        </tr>
+                        <tr>
+                            <th>Repayment amount</th>
+                            <td>{prettyNumber(props.loan.repaymentAmount)}</td>
+                        </tr>
+                        <tr>
+                            <th>Type</th>
+                            <td>{props.loan.type}</td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+            <div className="card-footer text-end">
+                <button type="button" className="btn btn-primary btn-sm" data-id={props.loan.id}>Pay off loan</button>
             </div>
         </div>
     );

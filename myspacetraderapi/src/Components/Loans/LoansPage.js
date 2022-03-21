@@ -77,39 +77,31 @@ function LoansPage(props) {
     }
 
     if (loansInfo) {
-        var loanItems = [];
-
-        if (loansInfo.loans.length == 0) {
-            loanItems.push(
-                <LoanItem content="You don't have any loans" />
-            )
-        } else {
-            loansInfo.loans.map((item, index) => (
-                loanItems.push(
+        var loanItems = loansInfo.loans.map((item, index) => {
+            return (
+                <div className="col-md-4 col-xs-12 h-100" key={item.id}>
                     <LoanItem loan={item} />
-                )
-            ));
-        }
+                </div>
+            );
+        });
+
+        loanItems.push(
+            <div className="col-md-4 col-xs-12 h-100" key="TAKEOUTLOAN" >
+                <TakeOutLoanForm />
+            </div>
+        );
 
 
 
         return (
             <Page title={pageName}>
-                Loans info
-                <pre>
-                    Loans data:
-                    {JSON.stringify(loansInfo)}
-                </pre>
 
-                Your loans
+                <div className="column">
+                    <div className="row">
+                        {loanItems}
+                    </div>
 
-                <div class="list-group">
-                    {loanItems}
                 </div>
-
-                Take out a new loan
-
-                <TakeOutLoanForm loadLoansData={loadLoansData}/>
             </Page>
         );
     }

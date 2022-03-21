@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Page from "../Common/Page.js"
 import SpaceTraderClient from "../../Services/SpaceTraderApi.js";
+import { prettyNumber } from "../../Utils.js";
 
 function PlayerInfoPage(props) {
 
@@ -98,7 +99,7 @@ function PlayerInfoPage(props) {
                         </tr>
                         <tr>
                             <td>Credits:</td>
-                            <td>{playerInfo.user.credits}</td>
+                            <td>{prettyNumber(playerInfo.user.credits)}</td>
                         </tr>
                     </tbody>
                 </table>

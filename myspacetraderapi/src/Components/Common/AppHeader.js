@@ -21,7 +21,9 @@ export default function AppNavHeader(props) {
                         </li>
                         <li className="nav-item">
                             <NavLink to="/ship" aria-current="page" activeclassname="nav-link active" className="nav-link">Ships</NavLink>
-
+                        </li>
+                        <li className="nav-item">
+                            <NavLink to="/shipmarket" aria-current="page" activeclassname="nav-link active" className="nav-link">Ship market</NavLink>
                         </li>
                     </ul>
                 </div>

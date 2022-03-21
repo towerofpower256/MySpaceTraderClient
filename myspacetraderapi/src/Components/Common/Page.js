@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import MyErrorBoundary from './MyErrorBoundary';
 
 export default function Page(props) {
     useEffect(() => {
@@ -6,13 +7,15 @@ export default function Page(props) {
     }, []);
 
     return (
-        <div className="card">
-            <div className="card-header">
-                <h5>{props.title}</h5>
+        <MyErrorBoundary>
+            <div className="card">
+                <div className="card-header">
+                    <h5>{props.title}</h5>
+                </div>
+                <div className="card-body">
+                    {props.children}
+                </div>
             </div>
-            <div className="card-body">
-                {props.children}
-            </div>
-        </div>
+        </MyErrorBoundary>
     );
 };

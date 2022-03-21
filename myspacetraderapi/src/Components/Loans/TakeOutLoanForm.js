@@ -76,26 +76,29 @@ export default function TakeOutLoanForm(props) {
     );
 
     let errorSection = undefined;
-    if (errorMsg)
-        errorSection =
+    if (errorMsg) {
+        errorSection = (
             <div style={{ color: "red" }}>
                 There was an error taking out the loan:<br />
                 {errorMsg}
             </div>
+        )
+    }
 
     let buttonTakeOutLoan;
+    let btnDisabled = !selectedLoan || isWorking;
     if (isWorking) {
         buttonTakeOutLoan =
             <button type="button"
-                className="btn btn-warning"
-                disabled={isWorking}
+                className="btn btn-warning btn-sm"
+                disabled={btnDisabled}
                 onClick={handleTakeOutLoan}
             >Working...</button>
     } else {
         buttonTakeOutLoan =
             <button type="button"
-                className="btn btn-warning w100"
-                disabled={isWorking}
+                className="btn btn-warning btn-sm"
+                disabled={btnDisabled}
                 onClick={handleTakeOutLoan}
             >Take out loan</button>
     }
@@ -108,30 +111,24 @@ export default function TakeOutLoanForm(props) {
                 <table class="table table-striped">
                     <tbody>
                         <tr>
-                            <td>Loan type:</td>
+                            <th>Loan type:</th>
                             <td>{selectedLoan.type}</td>
                         </tr>
                         <tr>
-                            <td>Amount:</td>
+                            <th>Amount:</th>
                             <td>{selectedLoan.amount}</td>
                         </tr>
                         <tr>
-                            <td>Interest rate:</td>
+                            <th>Interest rate:</th>
                             <td>{selectedLoan.rate}%</td>
                         </tr>
                         <tr>
-                            <td>Term:</td>
+                            <th>Term:</th>
                             <td>{selectedLoan.termInDays} days</td>
                         </tr>
                         <tr>
-                            <td>Collateral required:</td>
+                            <th>Collateral required:</th>
                             <td>{selectedLoan.collateralRequired.toString()}</td>
-                        </tr>
-                        <tr>
-                            <td colSpan="2">
-                                {buttonTakeOutLoan}
-                                {errorSection}
-                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -139,15 +136,25 @@ export default function TakeOutLoanForm(props) {
     }
 
     return (
-        <div className="form-take-out-loan">
-            <div>
-                <label htmlFor="">Loan type</label>
-                <select className="form-select" onChange={handleLoanTypeChange}>
-                    <option value="">--- Select a loan ---</option>
-                    {loanTypeOptions}
-                </select>
+        <div className="card">
+            <div className="card-header">
+                Take out a loan
             </div>
-            {selectedLoanSection}
+            <div className="card-body">
+
+                <div>
+                    <label htmlFor="">Loan type</label>
+                    <select className="form-select" onChange={handleLoanTypeChange}>
+                        <option value="">--- Select a loan ---</option>
+                        {loanTypeOptions}
+                    </select>
+                </div>
+                {selectedLoanSection}
+
+            </div>
+            <div className="card-footer text-end">
+                {buttonTakeOutLoan}
+            </div>
         </div>
     )
 }

@@ -15,6 +15,7 @@ import UnknownPage from "./Components/Common/UnknownPage";
 import LoansPage from "./Components/Loans/LoansPage";
 import ShipListPage from "./Components/Ship/ShipListPage";
 import ShipDetailPage from "./Components/Ship/ShipDetailPage";
+import ShipMarketPage from "./Components/Ship/ShipMarketPage";
 
 function App() {
   return (
@@ -36,6 +37,8 @@ function App() {
                 
               </Route>
               <Route path="/ship/:shipId" element={<ShipDetailPage />} />
+
+              <Route path="/shipmarket" element={<ShipMarketPage />} />
 
               <Route path="*" element={<UnknownPage />}>
 

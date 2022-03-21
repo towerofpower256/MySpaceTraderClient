@@ -5,7 +5,6 @@ import {  useParams } from "react-router-dom";
 
 export default function ShipDetailPage(props) {
     let params = useParams();
-    const PAGE_NAME = `Ship - ${params.shipId}`;
 
     const [error, setError] = useState(null)
     const [isLoaded, setLoaded] = useState(false)
@@ -60,6 +59,12 @@ export default function ShipDetailPage(props) {
         setLoaded(true);
     }
 
+    let shipName = "";
+    if (shipData) {
+        shipName = shipData.ship.type;
+    }
+    let PAGE_NAME = `Ship - ${shipName || ""} - ${params.shipId}`;
+
     if (!isLoaded) {
         return (
             <Page title={PAGE_NAME}>
@@ -89,6 +94,10 @@ export default function ShipDetailPage(props) {
                             <td>{ship.id}</td>
                         </tr>
                         <tr>
+                            <td>Ship type</td>
+                            <td>{ship.type}</td>
+                        </tr>
+                        <tr>
                             <td>Location</td>
                             <td>{ship.location}</td>
                         </tr>
@@ -97,8 +106,8 @@ export default function ShipDetailPage(props) {
                             <td>{ship.class}</td>
                         </tr>
                         <tr>
-                            <td>Type</td>
-                            <td>{ship.manufacturer} {ship.type}</td>
+                            <td>Manufacturer</td>
+                            <td>{ship.manufacturer}</td>
                         </tr>
                         <tr>
                             <td>Cargo</td>

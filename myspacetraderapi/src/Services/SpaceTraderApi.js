@@ -1,8 +1,8 @@
 
 
 class SpaceTraderClient {
-    //BASEPATH = "https://api.spacetraders.io/"
-    BASEPATH = "/dummyapi/"
+    BASEPATH = "https://api.spacetraders.io/"
+    //BASEPATH = "/dummyapi/"
 
     async getPlayerInfo() {
         return this._doRequest("my/account", "GET");
@@ -26,6 +26,11 @@ class SpaceTraderClient {
 
     async getShipInfo(id) {
         return this._doRequest("my/ships/"+id, "GET");
+    }
+
+    // Get a list of all available ships, and where you can buy them & for how much
+    async getShipMarket() {
+        return this._doRequest("game/ships", "GET");
     }
 
     async buyNewShip(locationID, typeID) {
