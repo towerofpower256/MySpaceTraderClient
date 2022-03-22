@@ -14,6 +14,27 @@ function PlayerInfoPage(props) {
         stClient.getPlayerInfo()
             .then(
                 (response) => {
+                    console.log("PlayerInfoPage Reponse ", response);
+                    stClient.readResponse(response)
+                        .then(
+                            stcResponse => {
+                                console.log("PlayerInfoPage StcResponse ", stcResponse);
+                                if (!stcResponse.ok) {
+                                    doError("(" + stcResponse.errorCode + ") " + stcResponse.error);
+                                } else {
+                                    setPlayerInfo(stcResponse.data);
+                                    setLoaded(true);
+                                }
+                            }
+                        );
+
+                },
+                (error) => {
+                    doError(error);
+                });
+        /*
+            .then(
+                (response) => {
                     if (!response.ok) {
                         response.text().then(text =>
                             doError(response.status + ", " + text)
@@ -43,6 +64,7 @@ function PlayerInfoPage(props) {
                     doError(error);
                 }
             );
+            */
     }, []);
 
     function doError(error) {

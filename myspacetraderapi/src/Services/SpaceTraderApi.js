@@ -1,3 +1,5 @@
+import { toast } from 'react-toastify';
+import SpaceTraderApiResponse from './SpaceTraderApiResponse';
 
 
 class SpaceTraderClient {
@@ -25,7 +27,7 @@ class SpaceTraderClient {
     }
 
     async getShipInfo(id) {
-        return this._doRequest("my/ships/"+id, "GET");
+        return this._doRequest("my/ships/" + id, "GET");
     }
 
     // Get a list of all available ships, and where you can buy them & for how much
@@ -34,7 +36,7 @@ class SpaceTraderClient {
     }
 
     async buyNewShip(locationID, typeID) {
-        return this._doRequest("my/ships?location="+encodeURIComponent(locationID)+"&type="+encodeURIComponent(typeID), "POST");
+        return this._doRequest("my/ships?location=" + encodeURIComponent(locationID) + "&type=" + encodeURIComponent(typeID), "POST");
     }
 
     async _doRequest(url, method, options) {
@@ -55,16 +57,46 @@ class SpaceTraderClient {
         req.then(
             response => {
                 console.log("Response: ", response);
-                if (!response.ok) {
-                    this.handleResponseError(response);
-                }
             },
             error => {
+                toast.error("Connection error: " + error);
                 this.handleError(error);
             }
         );
 
         return req;
+    }
+
+    async readResponse(response) {
+        var promise = new Promise((resolve, reject) => {
+            try {
+                const stcResponse = new SpaceTraderApiResponse();
+                stcResponse.readResponse(response);
+
+
+                // try to read the response JSON payload, see if there's an error in it
+                const promises = [];
+                promises.push(response.json().then(
+                    data => {
+                        stcResponse.readData(data);
+                    },
+                    error => {
+                        stcResponse.setError(-1, "Error reading response data: " + error);
+                    }
+                ));
+
+                Promise.allSettled(promises).then(() => {
+                    resolve(stcResponse);
+                }
+                );
+            }
+            catch (ex) {
+                reject(ex);
+            }
+
+        });
+
+        return promise;
     }
 
     getUri(relativePath) {
@@ -73,10 +105,6 @@ class SpaceTraderClient {
 
     handleError(error) {
         console.error("SpaceTraderClient ERROR: ", error);
-    }
-
-    handleResponseError(response) {
-        this.handleError("Response " + response.status + " " + response.statusText);
     }
 
     log() {
