@@ -39,6 +39,10 @@ class SpaceTraderClient {
         return this._doRequest("my/ships?location=" + encodeURIComponent(locationID) + "&type=" + encodeURIComponent(typeID), "POST");
     }
 
+    async getAllSystems() {
+        return this._doRequest("/game/systems", "GET");
+    }
+
     async _doRequest(url, method, options) {
         if (!options) options = {};
         const fullUrl = this.getUri(url);

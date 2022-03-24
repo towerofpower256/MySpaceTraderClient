@@ -91,7 +91,11 @@ function PlayerInfoPage(props) {
 
 
 
-    if (playerInfo) {
+    if (!playerInfo) {
+        return(
+            <div>No data</div>
+        );
+    } else {
         return (
             <Page title="Player info">
                 This is the player info page.
