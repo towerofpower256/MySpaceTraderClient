@@ -27,6 +27,10 @@ function App() {
     toast("Starting");
   }, []);
 
+  const mainApp = (
+    
+  )
+
   return (
     <div className="App">
       <ToastContainer
