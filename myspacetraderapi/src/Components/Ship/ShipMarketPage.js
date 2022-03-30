@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Page from "../Common/Page.js"
-import SpaceTraderClient from "../../Services/SpaceTraderApi.js";
+import { getShipMarket, readResponse } from "../../Services/SpaceTraderApi.js";
 import { prettyNumber } from "../../Utils.js";
 
 export default function ShipMarketPage(props) {
@@ -18,8 +18,7 @@ export default function ShipMarketPage(props) {
         setError(null);
         setShipsData(null);
 
-        const stc = new SpaceTraderClient();
-        stc.getShipMarket()
+        getShipMarket()
             .then(
                 response => {
                     if (!response.ok) {
@@ -27,20 +26,15 @@ export default function ShipMarketPage(props) {
                             doError(response.status + ", " + text)
                         );
                     } else {
-                        response.json().then(
-                            data => {
-                                try {
-                                    console.log("Loading ship market data:", data);
-                                    setShipsData(data);
-                                    setLoaded(true);
-                                } catch (ex) {
-                                    doError(ex);
-                                }
-                            },
-                            error => {
+                        readResponse(response)
+                            .then(stcResponse => {
+                                console.log("Loading ship market data:", stcResponse);
+                                setShipsData(stcResponse.data);
+                                setLoaded(true);
+                            })
+                            .catch(ex => {
                                 doError("Error reading the response payload: " + error);
-                            }
-                        );
+                            });
                     }
                 },
                 (error) => {
@@ -110,7 +104,7 @@ function ShipMarketItem(props) {
     }
 
     return (
-        <div className="col-md-6 col-xs-12" style={{"margin-bottom": "15px"}}>
+        <div className="col-md-6 col-xs-12" style={{ "margin-bottom": "15px" }}>
             <div className="card">
                 <div className="card-header">
                     <h4>{st.type}</h4>
@@ -119,31 +113,27 @@ function ShipMarketItem(props) {
                     <table className="table table-striped">
                         <tbody>
                             <tr>
-                                <td>Manufacturer</td>
-                                <td>{st.manufacturer}</td>
-                            </tr>
-                            <tr>
-                                <td>Class</td>
-                                <td>{st.class}</td>
-                            </tr>
-                            <tr>
-                                <td>Max cargo</td>
+                                <th>Type</th>
+                                <td>{st.type}</td>
+                                <th>Max cargo</th>
                                 <td>{st.maxCargo}</td>
                             </tr>
                             <tr>
-                                <td>Cargo loading speed</td>
+                                <th>Manufacturer</th>
+                                <td>{st.manufacturer}</td>
+                                <th>Cargo loading speed</th>
                                 <td>{st.loadingSpeed}</td>
                             </tr>
                             <tr>
-                                <td>Speed</td>
+                                <th>Class</th>
+                                <td>{st.class}</td>
+                                <th>Speed</th>
                                 <td>{st.speed}</td>
                             </tr>
                             <tr>
-                                <td>Plating</td>
+                                <th>Plating</th>
                                 <td>{st.plating}</td>
-                            </tr>
-                            <tr>
-                                <td>Weapons</td>
+                                <th>Weapons</th>
                                 <td>{st.weapons}</td>
                             </tr>
                         </tbody>

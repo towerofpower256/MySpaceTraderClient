@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Page from "../Common/Page.js"
-import SpaceTraderClient from "../../Services/SpaceTraderApi.js";
+import { getShips, readResponse } from "../../Services/SpaceTraderApi.js";
 import { Link } from "react-router-dom";
 
 export default function ShipListPage(props) {
@@ -18,8 +18,7 @@ export default function ShipListPage(props) {
         setError(null);
         setShipsData(null);
 
-        const stc = new SpaceTraderClient();
-        stc.getShips()
+        getShips()
             .then(
                 response => {
                     if (!response.ok) {
@@ -27,21 +26,15 @@ export default function ShipListPage(props) {
                             doError(response.status + ", " + text)
                         );
                     } else {
-                        response.json().then(
-                            data => {
-                                try {
-                                    console.log("Loading ships data:", data);
-                                    setShipsData(data);
-                                    setLoaded(true);
-                                } catch (ex) {
-                                    doError(ex);
-                                }
-
+                        readResponse(response)
+                            .then(stcResponse => {
+                                console.log("Loading ships data:", stcResponse);
+                                setShipsData(stcResponse.data);
+                                setLoaded(true);
                             },
-                            error => {
-                                doError("Error reading the response payload: " + error);
-                            }
-                        );
+                                ex => {
+                                    doError("Error reading the response payload: " + error);
+                                });
                     }
                 },
                 error => {

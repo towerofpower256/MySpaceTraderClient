@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Page from "../Common/Page.js"
-import SpaceTraderClient from "../../Services/SpaceTraderApi.js";
-import {  useParams } from "react-router-dom";
+import { getShipInfo, readResponse } from "../../Services/SpaceTraderApi.js";
+import { useParams } from "react-router-dom";
 
 export default function ShipDetailPage(props) {
     let params = useParams();
@@ -19,8 +19,7 @@ export default function ShipDetailPage(props) {
         setError(null);
         setShipData(null);
 
-        const stc = new SpaceTraderClient();
-        stc.getShipInfo(params.shipId)
+        getShipInfo(params.shipId)
             .then(
                 response => {
                     if (!response.ok) {
@@ -30,21 +29,15 @@ export default function ShipDetailPage(props) {
 
 
                     } else {
-                        response.json().then(
-                            data => {
-                                try {
-                                    console.log("Loading ship data:", data);
-                                    setShipData(data);
-                                    setLoaded(true);
-                                } catch (ex) {
-                                    doError(ex);
-                                }
-
-                            },
-                            error => {
-                                doError("Error reading the response payload: " + error);
-                            }
-                        );
+                        readResponse(response)
+                        .then(stcResponse => {
+                            console.log("Loading ship data:", stcResponse);
+                            setShipData(stcResponse.data);
+                            setLoaded(true);
+                        },
+                        ex => {
+                            doError("Error reading the response payload: " + error);
+                        });
                     }
                 },
                 error => {

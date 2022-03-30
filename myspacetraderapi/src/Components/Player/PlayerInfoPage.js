@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Page from "../Common/Page.js"
-import SpaceTraderClient from "../../Services/SpaceTraderApi.js";
+import { getPlayerInfo, readResponse } from "../../Services/SpaceTraderApi.js";
 import { prettyNumber } from "../../Utils.js";
 
 function PlayerInfoPage(props) {
@@ -10,12 +10,11 @@ function PlayerInfoPage(props) {
     const [playerInfo, setPlayerInfo] = useState([]) // Create new state variable for user info data
 
     useEffect(() => {
-        const stClient = new SpaceTraderClient();
-        stClient.getPlayerInfo()
+        getPlayerInfo()
             .then(
                 (response) => {
                     console.log("PlayerInfoPage Reponse ", response);
-                    stClient.readResponse(response)
+                    readResponse(response)
                         .then(
                             stcResponse => {
                                 console.log("PlayerInfoPage StcResponse ", stcResponse);

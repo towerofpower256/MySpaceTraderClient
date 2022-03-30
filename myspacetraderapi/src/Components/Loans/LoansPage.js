@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Page from "../Common/Page.js"
-import SpaceTraderClient from "../../Services/SpaceTraderApi.js";
+import { getLoans, readResponse } from "../../Services/SpaceTraderApi.js";
 import LoanItem from "./LoanItem"
 import TakeOutLoanForm from "./TakeOutLoanForm.js";
 
@@ -19,8 +19,7 @@ function LoansPage(props) {
         setError(null);
         setLoaded(false);
 
-        const stClient = new SpaceTraderClient();
-        stClient.getLoans()
+        getLoans()
             .then(
                 (response) => {
                     if (!response.ok) {
@@ -30,21 +29,12 @@ function LoansPage(props) {
 
 
                     } else {
-                        response.json().then(
-                            data => {
-                                try {
-                                    console.log("Loading loan data:", data);
-                                    setLoanInfo(data);
-                                    setLoaded(true);
-                                } catch (ex) {
-                                    doError(ex);
-                                }
-
-                            },
-                            error => {
-                                doError("Error reading the response payload: " + error);
-                            }
-                        );
+                        readResponse(response)
+                            .then(stcResponse => {
+                                console.log("Loading loan data:", stcResponse);
+                                setLoanInfo(stcResponse.data);
+                                setLoaded(true);
+                            });
                     }
 
                 },

@@ -6,6 +6,7 @@ class SpaceTraderApiResponse {
         this.ok = true;
         this.error = "";
         this.errorCode = 0;
+        this.errorPretty = "";
         this.data = {};
     }
 
@@ -33,6 +34,8 @@ class SpaceTraderApiResponse {
             console.error("Invalid error code: " + code);
             this.errorCode = -1;
         }
+
+        this.errorPretty = "("+this.errorCode+") "+this.error;
 
         console.error(this.errorCode + " " + this.error);
     }

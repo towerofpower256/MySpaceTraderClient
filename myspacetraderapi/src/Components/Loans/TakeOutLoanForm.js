@@ -1,11 +1,11 @@
-import { isValidElement, useState } from "react";
-import SpaceTraderClient from "../../Services/SpaceTraderApi.js";
+import { useState } from "react";
+import { readResponse, takeOutLoan } from "../../Services/SpaceTraderApi.js";
 import LoanTypes from "../../Data/LoanTypes.js";
+import { toast } from "react-toastify";
 
 export default function TakeOutLoanForm(props) {
     const [selectedLoan, setSelectedLoan] = useState(null);
     const [isWorking, setWorking] = useState(false);
-    const [errorMsg, setErrorMsg] = useState(null);
 
 
     const loanTypeOptions = [];
@@ -23,7 +23,6 @@ export default function TakeOutLoanForm(props) {
 
     function handleTakeOutLoan(e) {
         setWorking(true);
-        setErrorMsg(null);
 
         if (!selectedLoan) {
             console.error("Can't take out a loan when a loan isn't selected");
@@ -32,40 +31,36 @@ export default function TakeOutLoanForm(props) {
         }
 
         // Make the request
-        var stc = new SpaceTraderClient();
-        stc.takeOutLoan(selectedLoan.type)
+        takeOutLoan(selectedLoan.type)
             .then(
                 response => {
-                    if (!response.ok) {
-                        response.text().then(text =>
-                            doTakeOutError(response.status + ", " + text)
-                        );
-                    } else {
-                        response.json().then(
-                            data => {
-                                if (data.error) {
-                                    doTakeOutError(JSON.stringify(data.error));
+                    readResponse(response)
+                        .then(
+                            stcResponse => {
+                                if (!stcResponse.ok) {
+                                    doTakeOutError(stcResponse.errorPretty);
                                 } else {
                                     setSelectedLoan(null);
                                     setWorking(false);
                                     props.loadLoansData();
+                                    const loan = stcResponse.data.loan;
+                                    toast.success("Took out loan: "+loan.type+" "+loan.repaymentAmount);
                                 }
                             },
                             error => {
                                 doTakeOutError("Error reading the response payload: " + error);
                             }
                         );
-                    }
+
                 },
                 error => {
-
-                }
-            );
+                    doTakeOutError(error);
+                });
     }
 
     function doTakeOutError(error) {
         console.error("doTakeOutError: " + error);
-        setErrorMsg(error);
+        toast.error("Error taking out loan: "+error);
         setWorking(false);
     }
 
@@ -74,16 +69,6 @@ export default function TakeOutLoanForm(props) {
             Select a loan
         </div>
     );
-
-    let errorSection = undefined;
-    if (errorMsg) {
-        errorSection = (
-            <div style={{ color: "red" }}>
-                There was an error taking out the loan:<br />
-                {errorMsg}
-            </div>
-        )
-    }
 
     let buttonTakeOutLoan;
     let btnDisabled = !selectedLoan || isWorking;

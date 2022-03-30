@@ -21,54 +21,61 @@ import LoansPage from "./Components/Loans/LoansPage";
 import ShipListPage from "./Components/Ship/ShipListPage";
 import ShipDetailPage from "./Components/Ship/ShipDetailPage";
 import ShipMarketPage from "./Components/Ship/ShipMarketPage";
+import LoginWrapper from "./Components/Auth/LoginWrapper";
+import ContextContainer from "./ContextContainer";
+import LogoutPage from "./Components/Auth/LogoutPage";
 
 function App() {
   useEffect(() => {
     toast("Starting");
   }, []);
 
-  const mainApp = (
-    
-  )
-
   return (
     <div className="App">
       <ToastContainer
         position="top-right"
         autoClose={5000}
-        newestonTop ={false}
+        newestonTop={false}
         pauseOnFocusLoss
         pauseOnHover
         draggable
       />
-      <Router>
-        <AppNavHeader />
-        <div className="container-md">
-          <div className="col">
-            <Routes>
-              <Route index element={<Navigate to="/player" />} />
-              <Route path="/player" element={<PlayerInfoPage />}>
+      <ContextContainer>
+        <Router>
+          <AppNavHeader />
+          <div className="container-md">
+            <div className="col">
+              <LoginWrapper>
+                <Routes>
+                  <Route index element={<Navigate to="/player" />} />
+                  <Route path="/player" element={<PlayerInfoPage />}>
 
-              </Route>
-              <Route path="/loans" element={<LoansPage />}>
+                  </Route>
+                  <Route path="/loans" element={<LoansPage />}>
 
-              </Route>
+                  </Route>
 
-              <Route path="/ship" element={<ShipListPage />}>
+                  <Route path="/ship" element={<ShipListPage />}>
 
-              </Route>
-              <Route path="/ship/:shipId" element={<ShipDetailPage />} />
+                  </Route>
+                  <Route path="/ship/:shipId" element={<ShipDetailPage />} />
 
-              <Route path="/shipmarket" element={<ShipMarketPage />} />
+                  <Route path="/shipmarket" element={<ShipMarketPage />} />
 
-              <Route path="*" element={<UnknownPage />}>
+                  <Route path="/logout" element={<LogoutPage />} />
 
-              </Route>
-            </Routes>
+                  <Route path="*" element={<UnknownPage />}>
+                  </Route>
+                </Routes>
+
+              </LoginWrapper>
+
+            </div>
           </div>
-        </div>
 
-      </Router>
+        </Router>
+      </ContextContainer>
+
 
 
     </div>
