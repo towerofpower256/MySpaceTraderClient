@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Page from "../Common/Page.js"
 import { getPlayerInfo, readResponse } from "../../Services/SpaceTraderApi.js";
 import { prettyNumber } from "../../Utils.js";
+import Timestamp from "../Common/Timestamp.js";
 
 function PlayerInfoPage(props) {
 
@@ -31,39 +32,6 @@ function PlayerInfoPage(props) {
                 (error) => {
                     doError(error);
                 });
-        /*
-            .then(
-                (response) => {
-                    if (!response.ok) {
-                        response.text().then(text =>
-                            doError(response.status + ", " + text)
-                        );
-
-
-                    } else {
-                        response.json().then(
-                            data => {
-                                try {
-                                    console.log("Loading user data:", data);
-                                    setPlayerInfo(data);
-                                    setLoaded(true);
-                                } catch (ex) {
-                                    doError(ex);
-                                }
-
-                            },
-                            error => {
-                                doError("Error reading the response payload: " + error);
-                            }
-                        );
-                    }
-
-                },
-                (error) => {
-                    doError(error);
-                }
-            );
-            */
     }, []);
 
     function doError(error) {
@@ -120,7 +88,7 @@ function PlayerInfoPage(props) {
                         </tr>
                         <tr>
                             <td>Joined:</td>
-                            <td>{playerInfo.user.joinedAt}</td>
+                            <td><Timestamp value={playerInfo.user.joinedAt} /></td>
                         </tr>
                         <tr>
                             <td>Credits:</td>

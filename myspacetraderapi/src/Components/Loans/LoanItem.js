@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { prettyNumber } from "../../Utils";
+import Timestamp from "../Common/Timestamp";
 
 function LoanItem(props) {
 
@@ -25,7 +26,7 @@ function LoanItem(props) {
                         </tr>
                         <tr>
                             <th>Due</th>
-                            <td>{props.loan.due}</td>
+                            <td><Timestamp value={props.loan.due} /></td>
                         </tr>
                         <tr>
                             <th>Repayment amount</th>
