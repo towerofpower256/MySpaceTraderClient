@@ -28,6 +28,7 @@ This is a practice project to teach myself some ReactJS and web development skil
 * [ ] Scrap ship for credits
 * [ ] Transfer cargo between ships
 * [ ] Move a ship to a new location
+* [ ] Warp travel
 * [ ] View the goods market at a location
 * [ ] Cache market data
 * [ ] Make a trade (sell / buy)
