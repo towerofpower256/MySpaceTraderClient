@@ -32,6 +32,7 @@ This is a practice project to teach myself some ReactJS and web development skil
 * [ ] View the goods market at a location
 * [ ] Cache market data
 * [ ] Make a trade (sell / buy)
+* [ ] Handling trades larger than the ship's loading speed
 * [ ] View ships that are available to buy
 * [ ] Buy a ship
 * [ ] View player ships that are moving
