@@ -5,8 +5,10 @@ import LoggedInContext from "./Components/Contexts/LoggedInContext";
 import { getAuthToken } from "./Services/LocalStorage";
 
 export default function ContextContainer(props) {
+    const [isLoggedIn, setLoggedIn] = useState(!!getAuthToken()); // User is considered logged in if there's an auth token in storage
+    const [isGameLoading, setGameLoading] = useState(false);
+    
     // Setup contexts
-    const [isLoggedIn, setLoggedIn] = useState(!!getAuthToken); // User is considered logged in if there's an auth token in storage
     const [loggedInUserInfo, setLoggedInUserInfo] = useState({});
 
     useEffect(() => {
@@ -15,7 +17,12 @@ export default function ContextContainer(props) {
             return;
         }
         // remember logged in user
-    }, [isLoggedIn]);
+    }, [isLoggedIn, isGameLoaded]);
+
+    // Load global game data, like ship types
+    function loadGameData() {
+        
+    }
 
     return (
         <LoggedInUserInfoContext.Provider value={[loggedInUserInfo, setLoggedInUserInfo]}>
