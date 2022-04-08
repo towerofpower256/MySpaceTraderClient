@@ -13,7 +13,7 @@ class SpaceTraderApiResponse {
     readResponse(_response) {
         this.response = _response;
         if (!_response.ok) {
-            this.setError(_response.status, "HTTP error: " + _response.status);
+            this.setError(_response.status, "HTTP error: " + _response.status + " " + _response.url);
         }
     }
 
@@ -30,7 +30,7 @@ class SpaceTraderApiResponse {
         this.ok = false;
         this.error = err;
         this.errorCode = parseInt(code);
-        if (this.errorCode) {
+        if (!this.errorCode || isNaN(this.errorCode)) {
             console.error("Invalid error code: " + code);
             this.errorCode = -1;
         }

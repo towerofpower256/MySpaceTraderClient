@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import Page from "../Common/Page.js"
-import { getLoans, readResponse } from "../../Services/SpaceTraderApi.js";
-import LoanItem from "./LoanItem"
-import TakeOutLoanForm from "./TakeOutLoanForm.js";
+import Page from "../Components/Page.js"
+import { getLoans, readResponse } from "../Services/SpaceTraderApi.js";
+import LoanItem from "../Components/Loans/LoanItem"
+import TakeOutLoanForm from "../Components/Loans/TakeOutLoanForm.js";
 
 function LoansPage(props) {
     const pageName = "Loans";
@@ -20,28 +20,15 @@ function LoansPage(props) {
         setLoaded(false);
 
         getLoans()
-            .then(
-                (response) => {
-                    if (!response.ok) {
-                        response.text().then(text =>
-                            doError(response.status + ", " + text)
-                        );
-
-
-                    } else {
-                        readResponse(response)
-                            .then(stcResponse => {
-                                console.log("Loading loan data:", stcResponse);
-                                setLoanInfo(stcResponse.data);
-                                setLoaded(true);
-                            });
-                    }
-
-                },
-                (error) => {
-                    doError(error);
+            .then(stcResponse => {
+                console.log("LoansPage StcResponse ", stcResponse);
+                if (!stcResponse.ok) {
+                    doError("(" + stcResponse.errorCode + ") " + stcResponse.error);
+                } else {
+                    setLoanInfo(stcResponse.data);
+                    setLoaded(true);
                 }
-            );
+            })
     }
 
     function doError(error) {

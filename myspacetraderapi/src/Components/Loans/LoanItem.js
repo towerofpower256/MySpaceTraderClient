@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { prettyNumber } from "../../Utils";
-import Timestamp from "../Common/Timestamp";
+import Timestamp from "../Timestamp";
 
 function LoanItem(props) {
 

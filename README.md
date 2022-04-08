@@ -41,6 +41,7 @@ This is a practice project to teach myself some ReactJS and web development skil
 * [ ] Take out a new loan
 * [ ] Navigate a ship to a new location
 * [ ] List of systems
+* [ ] Icons for systems and locations (e.g. allows construction, has player ships, is warp gate, etc)
 * [ ] Visual map map of systems
 * [ ] List of locations in a system
 * [ ] Visual map of locations in a system

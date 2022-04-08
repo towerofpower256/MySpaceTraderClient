@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
-import LoggedInUserInfoContext from "./Components/Contexts/LoggedInUserInfoContext";
-import LoggedInContext from "./Components/Contexts/LoggedInContext";
+import LoggedInUserInfoContext from "./Contexts/LoggedInUserInfoContext";
+import LoggedInContext from "./Contexts/LoggedInContext";
 import { getAuthToken } from "./Services/LocalStorage";
 
 export default function ContextContainer(props) {
@@ -16,13 +16,11 @@ export default function ContextContainer(props) {
             // If the user isn't logged in, don't do or load anything
             return;
         }
-        // remember logged in user
-    }, [isLoggedIn, isGameLoaded]);
 
-    // Load global game data, like ship types
-    function loadGameData() {
         
-    }
+
+        // remember logged in user
+    }, [isLoggedIn, isGameLoading]);
 
     return (
         <LoggedInUserInfoContext.Provider value={[loggedInUserInfo, setLoggedInUserInfo]}>

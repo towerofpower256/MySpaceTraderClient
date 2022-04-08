@@ -1,7 +1,7 @@
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import LoggedInContext from "../Contexts/LoggedInContext";
-import { clearAuth } from "../../Services/LocalStorage";
+import { clearAuth } from "../Services/LocalStorage";
 import { toast } from "react-toastify";
 
 

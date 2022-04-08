@@ -1,7 +1,7 @@
 import { useContext, useState } from "react"
 import { toast } from "react-toastify";
-import { setAuthToken, setUserName } from "../../Services/LocalStorage";
-import { getPlayerInfo, readResponse } from "../../Services/SpaceTraderApi";
+import { setAuthToken, setUserName } from "../Services/LocalStorage";
+import { getPlayerInfo, readResponse } from "../Services/SpaceTraderApi";
 import LoggedInContext from "../Contexts/LoggedInContext"
 import LoggedInUserInfoContext from "../Contexts/LoggedInUserInfoContext";
 
@@ -41,32 +41,24 @@ export default function LoginPage(props) {
         setAuthToken(loginToken);
         getPlayerInfo()
             .then(
-                response => {
-                    readResponse(response)
-                        .then(
-                            stcResponse => {
-                                if (!stcResponse.ok) {
-                                    doLoginError(stcResponse.errorPretty);
-                                } else {
-                                    // Successful login
-                                    setUserName(stcResponse.data.username);
-                                    setLoggedInUserInfo(stcResponse.data.user);
-                                    setLoggedIn(true);
-                                    toast.success("Logged in: "+loggedInUserInfo.username);
-                                    // Shouldn't need to set submitting to false, 
-                                    // because the user should be automatically redirected away from the login page.
-                                }
-                            },
-                            error => {
-                                doLoginError(error)
-                            }
-
-                        )
+                stcResponse => {
+                    if (!stcResponse.ok) {
+                        doLoginError(stcResponse.errorPretty);
+                    } else {
+                        // Successful login
+                        setUserName(stcResponse.data.username);
+                        setLoggedInUserInfo(stcResponse.data.user);
+                        setLoggedIn(true);
+                        toast.success("Logged in: " + loggedInUserInfo.username);
+                        // Shouldn't need to set submitting to false, 
+                        // because the user should be automatically redirected away from the login page.
+                    }
                 },
                 error => {
-                    doLoginError(error);
+                    doLoginError(error)
                 }
-            )
+
+            );
     }
 
     function doLoginError(error) {

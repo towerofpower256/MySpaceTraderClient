@@ -33,34 +33,26 @@ export default function TakeOutLoanForm(props) {
         // Make the request
         takeOutLoan(selectedLoan.type)
             .then(
-                response => {
-                    readResponse(response)
-                        .then(
-                            stcResponse => {
-                                if (!stcResponse.ok) {
-                                    doTakeOutError(stcResponse.errorPretty);
-                                } else {
-                                    setSelectedLoan(null);
-                                    setWorking(false);
-                                    props.loadLoansData();
-                                    const loan = stcResponse.data.loan;
-                                    toast.success("Took out loan: "+loan.type+" "+loan.repaymentAmount);
-                                }
-                            },
-                            error => {
-                                doTakeOutError("Error reading the response payload: " + error);
-                            }
-                        );
-
+                stcResponse => {
+                    if (!stcResponse.ok) {
+                        doTakeOutError(stcResponse.errorPretty);
+                    } else {
+                        setSelectedLoan(null);
+                        setWorking(false);
+                        props.loadLoansData();
+                        const loan = stcResponse.data.loan;
+                        toast.success("Took out loan: " + loan.type + " " + loan.repaymentAmount);
+                    }
                 },
                 error => {
-                    doTakeOutError(error);
-                });
+                    doTakeOutError("Error reading the response payload: " + error);
+                }
+            );
     }
 
     function doTakeOutError(error) {
         console.error("doTakeOutError: " + error);
-        toast.error("Error taking out loan: "+error);
+        toast.error("Error taking out loan: " + error);
         setWorking(false);
     }
 

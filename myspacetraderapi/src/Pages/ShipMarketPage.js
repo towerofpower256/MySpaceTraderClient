@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import Page from "../Common/Page.js"
-import { getShipMarket, readResponse } from "../../Services/SpaceTraderApi.js";
-import { prettyNumber } from "../../Utils.js";
+import Page from "../Components/Page.js"
+import { getShipMarket, readResponse } from "../Services/SpaceTraderApi.js";
+import { prettyNumber } from "../Utils.js";
 
 export default function ShipMarketPage(props) {
     const PAGE_NAME = "Buy a new ship";
@@ -19,28 +19,14 @@ export default function ShipMarketPage(props) {
         setShipsData(null);
 
         getShipMarket()
-            .then(
-                response => {
-                    if (!response.ok) {
-                        response.text().then(text =>
-                            doError(response.status + ", " + text)
-                        );
-                    } else {
-                        readResponse(response)
-                            .then(stcResponse => {
-                                console.log("Loading ship market data:", stcResponse);
-                                setShipsData(stcResponse.data);
-                                setLoaded(true);
-                            })
-                            .catch(ex => {
-                                doError("Error reading the response payload: " + error);
-                            });
-                    }
-                },
-                (error) => {
-                    doError(error);
-                }
-            )
+            .then(stcResponse => {
+                console.log("Loading ship market data:", stcResponse);
+                setShipsData(stcResponse.data);
+                setLoaded(true);
+            })
+            .catch(ex => {
+                doError("Error reading the response payload: " + error);
+            });
     }
 
     function doError(error) {

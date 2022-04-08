@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import Page from "../Common/Page.js"
-import { getShipInfo, readResponse } from "../../Services/SpaceTraderApi.js";
+import Page from "../Components/Page.js"
+import { getShipInfo, readResponse } from "../Services/SpaceTraderApi.js";
 import { useParams } from "react-router-dom";
 
 export default function ShipDetailPage(props) {
@@ -20,30 +20,14 @@ export default function ShipDetailPage(props) {
         setShipData(null);
 
         getShipInfo(params.shipId)
-            .then(
-                response => {
-                    if (!response.ok) {
-                        response.text().then(text =>
-                            doError(response.status + ", " + text)
-                        );
-
-
-                    } else {
-                        readResponse(response)
-                        .then(stcResponse => {
-                            console.log("Loading ship data:", stcResponse);
-                            setShipData(stcResponse.data);
-                            setLoaded(true);
-                        },
-                        ex => {
-                            doError("Error reading the response payload: " + error);
-                        });
-                    }
-                },
-                error => {
-                    doError(error);
-                }
-            )
+            .then(stcResponse => {
+                console.log("Loading ship data:", stcResponse);
+                setShipData(stcResponse.data);
+                setLoaded(true);
+            },
+                ex => {
+                    doError("Error reading the response payload: " + error);
+                });
     }
 
     function doError(error) {

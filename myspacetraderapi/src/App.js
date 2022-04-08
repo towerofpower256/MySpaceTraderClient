@@ -14,16 +14,18 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useEffect } from "react";
 
 import './App.css';
-import AppNavHeader from "./Components/Common/AppHeader.js";
-import PlayerInfoPage from "./Components/Player/PlayerInfoPage.js";
-import UnknownPage from "./Components/Common/UnknownPage";
-import LoansPage from "./Components/Loans/LoansPage";
-import ShipListPage from "./Components/Ship/ShipListPage";
-import ShipDetailPage from "./Components/Ship/ShipDetailPage";
-import ShipMarketPage from "./Components/Ship/ShipMarketPage";
-import LoginWrapper from "./Components/Auth/LoginWrapper";
+import AppNavHeader from "./Components/AppHeader.js";
+import PlayerInfoPage from "./Pages/PlayerInfoPage.js";
+import UnknownPage from "./Pages/UnknownPage";
+import LoansPage from "./Pages/LoansPage";
+import ShipListPage from "./Pages/ShipListPage";
+import ShipDetailPage from "./Pages/ShipDetailPage";
+import ShipMarketPage from "./Pages/ShipMarketPage";
+import LoginWrapper from "./Components/LoginWrapper";
 import ContextContainer from "./ContextContainer";
-import LogoutPage from "./Components/Auth/LogoutPage";
+import LogoutPage from "./Pages/LogoutPage";
+import AllSystemsPage from "./Pages/AllSystemsPage";
+import LocationPage from "./Pages/LocationPage";
 
 function App() {
   useEffect(() => {
@@ -63,6 +65,10 @@ function App() {
                   <Route path="/shipmarket" element={<ShipMarketPage />} />
 
                   <Route path="/logout" element={<LogoutPage />} />
+
+                  <Route path="/systems" element={<AllSystemsPage />} />
+
+                  <Route path="/location/:locationid" element={<LocationPage />} />
 
                   <Route path="*" element={<UnknownPage />}>
                   </Route>

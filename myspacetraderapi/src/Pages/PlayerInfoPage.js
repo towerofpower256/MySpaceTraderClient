@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import Page from "../Common/Page.js"
-import { getPlayerInfo, readResponse } from "../../Services/SpaceTraderApi.js";
-import { prettyNumber } from "../../Utils.js";
-import Timestamp from "../Common/Timestamp.js";
+import Page from "../Components/Page.js"
+import { getPlayerInfo, readResponse } from "../Services/SpaceTraderApi.js";
+import { prettyNumber } from "../Utils.js";
+import Timestamp from "../Components/Timestamp.js";
 
 function PlayerInfoPage(props) {
 
@@ -12,26 +12,18 @@ function PlayerInfoPage(props) {
 
     useEffect(() => {
         getPlayerInfo()
-            .then(
-                (response) => {
-                    console.log("PlayerInfoPage Reponse ", response);
-                    readResponse(response)
-                        .then(
-                            stcResponse => {
-                                console.log("PlayerInfoPage StcResponse ", stcResponse);
-                                if (!stcResponse.ok) {
-                                    doError("(" + stcResponse.errorCode + ") " + stcResponse.error);
-                                } else {
-                                    setPlayerInfo(stcResponse.data);
-                                    setLoaded(true);
-                                }
-                            }
-                        );
-
-                },
-                (error) => {
-                    doError(error);
-                });
+            .then(stcResponse => {
+                console.log("PlayerInfoPage StcResponse ", stcResponse);
+                if (!stcResponse.ok) {
+                    doError("(" + stcResponse.errorCode + ") " + stcResponse.error);
+                } else {
+                    setPlayerInfo(stcResponse.data);
+                    setLoaded(true);
+                }
+            })
+            .catch(error => {
+                doError(error);
+            });
     }, []);
 
     function doError(error) {
@@ -59,7 +51,7 @@ function PlayerInfoPage(props) {
 
 
     if (!playerInfo) {
-        return(
+        return (
             <div>No data</div>
         );
     } else {

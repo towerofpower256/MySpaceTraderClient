@@ -36,67 +36,64 @@ export async function buyNewShip(locationID, typeID) {
 }
 
 export async function getAllSystems() {
-    return _doRequest("/game/systems", "GET");
+    return _doRequest("game/systems", "GET");
 }
 
-export async function readResponse(response) {
-    var promise = new Promise((resolve, reject) => {
-        try {
-            const stcResponse = new SpaceTraderApiResponse();
-            stcResponse.readResponse(response);
-
-
-            // try to read the response JSON payload, see if there's an error in it
-            const promises = [];
-            promises.push(response.json().then(
-                data => {
-                    stcResponse.readData(data);
-                },
-                error => {
-                    stcResponse.setError(-1, "Error reading response data: " + error);
-                }
-            ));
-
-            Promise.allSettled(promises).then(() => {
-                resolve(stcResponse);
-            }
-            );
-        }
-        catch (ex) {
-            reject(ex);
-        }
-
-    });
-
-    return promise;
+export async function getLocationInfo(locationSymbol) {
+    return _doRequest("locations/" + locationSymbol, "GET");
 }
 
 async function _doRequest(url, method, options) {
     if (!options) options = {};
-    const fullUrl = _getUri(url);
-    console.log("Making request", "URL: " + fullUrl, "Method: " + method, "Options:", options);
 
-    const req = fetch(fullUrl, {
-        method: method,
-        cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-        //mode: 'cors',
-        //credentials: 
-        headers: {
-            "Authorization": "Bearer 0c5123a3-8ea2-4dad-b539-d1f8d8da16f1", // Hard code for now, come back to this later
-        },
-        body: options.body,
+    const promise = new Promise((resolve, reject) => {
+        const fullUrl = _getUri(url);
+        console.log("Making request", "URL: " + fullUrl, "Method: " + method, "Options:", options);
+        const stcReponse = new SpaceTraderApiResponse();
+
+        const req = fetch(fullUrl, {
+            method: method,
+            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+            //mode: 'cors',
+            //credentials: 
+            headers: {
+                "Authorization": "Bearer 0c5123a3-8ea2-4dad-b539-d1f8d8da16f1", // Hard code for now, come back to this later
+            },
+            body: options.body,
+        });
+        req.then(
+            response => {
+                console.log("Response: ", response);
+
+                const stcResponse = new SpaceTraderApiResponse();
+                stcResponse.readResponse(response);
+                // try to read the response JSON payload, see if there's an error in it
+                const promises = [];
+                promises.push(response.json().then(
+                    data => {
+                        stcResponse.readData(data);
+                    },
+                    error => {
+                        stcResponse.setError(-1, "Error reading response data: " + error);
+                    }
+                ));
+
+                Promise.allSettled(promises).then(() => {
+                    if (!stcReponse.ok) {
+                        toast.error(stcReponse.errorPretty);
+                    }
+                    resolve(stcResponse);
+                });
+            },
+            error => {
+                toast.error("Connection error: " + error);
+                _handleError(error);
+                reject(error);
+            }
+        );
     });
-    req.then(
-        response => {
-            console.log("Response: ", response);
-        },
-        error => {
-            toast.error("Connection error: " + error);
-            _handleError(error);
-        }
-    );
 
-    return req;
+    return promise;
 }
 
 function _getUri(relativePath) {
