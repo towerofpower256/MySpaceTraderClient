@@ -26,6 +26,12 @@ export async function getShipInfo(id) {
     return _doRequest("my/ships/" + id, "GET");
 }
 
+export async function submitFlightPlan(shipId, destination) {
+    return _doRequest("my/flight-plans", "POST", {
+        body: {shipId: shipId, destination: destination}
+    });
+}
+
 // Get a list of all available ships, and where you can buy them & for how much
 export async function getShipMarket() {
     return _doRequest("game/ships", "GET");
@@ -43,6 +49,24 @@ export async function getLocationInfo(locationSymbol) {
     return _doRequest("locations/" + locationSymbol, "GET");
 }
 
+export async function getGameStatus() {
+    return _doRequest("game/status");
+}
+
+export async function isGameReady() {
+    let isOK = false;
+
+    await getGameStatus()
+        .then(stcResponse => {
+            isOK = stcResponse.ok;
+        }, error => {
+            isOK = false;
+        });
+
+    console.log("isGameReady: "+isOK);
+    return isOK;
+}
+
 async function _doRequest(url, method, options) {
     if (!options) options = {};
 
@@ -51,16 +75,21 @@ async function _doRequest(url, method, options) {
         console.log("Making request", "URL: " + fullUrl, "Method: " + method, "Options:", options);
         const stcReponse = new SpaceTraderApiResponse();
 
-        const req = fetch(fullUrl, {
+        const reqOptions = {
             method: method,
             cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
             //mode: 'cors',
             //credentials: 
             headers: {
                 "Authorization": "Bearer 0c5123a3-8ea2-4dad-b539-d1f8d8da16f1", // Hard code for now, come back to this later
-            },
-            body: options.body,
-        });
+                "Content-Type": "application/json"
+            }
+        };
+        if (options.body) {
+            reqOptions.body = JSON.stringify(options.body);
+        }
+
+        const req = fetch(fullUrl, reqOptions);
         req.then(
             response => {
                 console.log("Response: ", response);

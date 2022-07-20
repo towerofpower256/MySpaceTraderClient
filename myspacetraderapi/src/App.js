@@ -14,7 +14,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useEffect } from "react";
 
 import './App.css';
-import AppNavHeader from "./Components/AppHeader.js";
+import AppNavHeader from "./Components/AppNavHeader.js";
 import PlayerInfoPage from "./Pages/PlayerInfoPage.js";
 import UnknownPage from "./Pages/UnknownPage";
 import LoansPage from "./Pages/LoansPage";

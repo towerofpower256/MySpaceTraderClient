@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import Page from "../Components/Page.js"
+import ShipNewFlightPlan from "../Components/Ships/ShipNewFlightPlan";
 import { getShipInfo, readResponse } from "../Services/SpaceTraderApi.js";
 import { useParams } from "react-router-dom";
+import { valOrDefault } from "../Utils.js";
 
 export default function ShipDetailPage(props) {
     let params = useParams();
@@ -76,7 +78,7 @@ export default function ShipDetailPage(props) {
                         </tr>
                         <tr>
                             <td>Location</td>
-                            <td>{ship.location}</td>
+                            <td>{valOrDefault(ship.location, "(in transit)")}</td>
                         </tr>
                         <tr>
                             <td>Class</td>
@@ -96,6 +98,7 @@ export default function ShipDetailPage(props) {
                         </tr>
                     </tbody>
                 </table>
+                <ShipNewFlightPlan ship={ship} loadShipData={loadShipData}></ShipNewFlightPlan>
             </Page>
         );
     }

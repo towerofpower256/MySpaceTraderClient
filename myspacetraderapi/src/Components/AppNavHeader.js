@@ -1,9 +1,16 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { NavLink } from "react-router-dom";
+import PlayerInfoContext from '../Contexts/PlayerInfoContext';
+import { prettyNumber, valOrDefault } from '../Utils';
 
 // <a class="nav-link active" aria-current="page" href="/account">Account</a>
 
 export default function AppNavHeader(props) {
+    const [playerInfo, setPlayerinfo] = useContext(PlayerInfoContext);
+
+    let playerCredits = "";
+    if (playerInfo.credits) playerCredits = "$"+valOrDefault(prettyNumber(playerInfo.credits));
+
     return (
         <nav className="navbar navbar-expand-lg navbar-light bg-light">
             <div className="container-fluid">
@@ -31,7 +38,11 @@ export default function AppNavHeader(props) {
                         <li className="nav-item">
                             <NavLink to="/logout" aria-current="page" activeclassname="nav-link active" className="nav-link">Log out</NavLink>
                         </li>
+
                     </ul>
+                    <form className="d-flex">
+                        {playerCredits}
+                    </form>
                 </div>
             </div >
         </nav >

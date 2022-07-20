@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import PlayerInfoContext from "../Contexts/PlayerInfoContext.js";
 import Page from "../Components/Page.js"
 import { getPlayerInfo, readResponse } from "../Services/SpaceTraderApi.js";
 import { prettyNumber } from "../Utils.js";
@@ -6,49 +7,9 @@ import Timestamp from "../Components/Timestamp.js";
 
 function PlayerInfoPage(props) {
 
-    const [error, setError] = useState(null)
-    const [isLoaded, setLoaded] = useState(false)
-    const [playerInfo, setPlayerInfo] = useState([]) // Create new state variable for user info data
+    const [playerInfo, setPlayerInfo] = useContext(PlayerInfoContext);
 
-    useEffect(() => {
-        getPlayerInfo()
-            .then(stcResponse => {
-                console.log("PlayerInfoPage StcResponse ", stcResponse);
-                if (!stcResponse.ok) {
-                    doError("(" + stcResponse.errorCode + ") " + stcResponse.error);
-                } else {
-                    setPlayerInfo(stcResponse.data);
-                    setLoaded(true);
-                }
-            })
-            .catch(error => {
-                doError(error);
-            });
-    }, []);
-
-    function doError(error) {
-        console.error("ERROR", error);
-        setError(error);
-        setLoaded(true);
-    }
-
-    if (!isLoaded) {
-        return (
-            <Page title="Player info">
-                <pre>It's loading</pre>
-            </Page>
-        );
-    }
-
-    if (error) {
-        return (
-            <Page title="Player info">
-                <pre>ERROR: {error}</pre>
-            </Page>
-        );
-    }
-
-
+    console.log("Player info page: ", playerInfo);
 
     if (!playerInfo) {
         return (
@@ -68,23 +29,23 @@ function PlayerInfoPage(props) {
                     <tbody>
                         <tr>
                             <td>Username:</td>
-                            <td>{playerInfo.user.username}</td>
+                            <td>{playerInfo.username}</td>
                         </tr>
                         <tr>
                             <td>Ship count:</td>
-                            <td>{playerInfo.user.shipCount}</td>
+                            <td>{playerInfo.shipCount}</td>
                         </tr>
                         <tr>
                             <td>Structure count:</td>
-                            <td>{playerInfo.user.structureCount}</td>
+                            <td>{playerInfo.structureCount}</td>
                         </tr>
                         <tr>
                             <td>Joined:</td>
-                            <td><Timestamp value={playerInfo.user.joinedAt} /></td>
+                            <td><Timestamp value={playerInfo.joinedAt} /></td>
                         </tr>
                         <tr>
                             <td>Credits:</td>
-                            <td>{prettyNumber(playerInfo.user.credits)}</td>
+                            <td>{prettyNumber(playerInfo.credits)}</td>
                         </tr>
                     </tbody>
                 </table>
