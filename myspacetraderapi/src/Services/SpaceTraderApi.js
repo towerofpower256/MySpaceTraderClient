@@ -1,5 +1,6 @@
 import { toast } from 'react-toastify';
 import { API_BASE_URL } from '../Constants';
+import { getAuthToken } from './LocalStorage';
 import SpaceTraderApiResponse from './SpaceTraderApiResponse';
 
 export async function getPlayerInfo() {
@@ -75,13 +76,22 @@ async function _doRequest(url, method, options) {
         console.log("Making request", "URL: " + fullUrl, "Method: " + method, "Options:", options);
         const stcReponse = new SpaceTraderApiResponse();
 
+        // Get the auth token, handle if it's missing
+        const authToken = getAuthToken();
+        if (!authToken || authToken == "") {
+            const missingTokenMsg = "Auth token is missing. Is the user logged in?";
+            console.error(missingTokenMsg)
+            reject(missingTokenMsg);
+            return;
+        }
+
         const reqOptions = {
             method: method,
             cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
             //mode: 'cors',
             //credentials: 
             headers: {
-                "Authorization": "Bearer 0c5123a3-8ea2-4dad-b539-d1f8d8da16f1", // Hard code for now, come back to this later
+                "Authorization": "Bearer "+authToken,
                 "Content-Type": "application/json"
             }
         };
