@@ -26,6 +26,7 @@ import ContextContainer from "./ContextContainer";
 import LogoutPage from "./Pages/LogoutPage";
 import AllSystemsPage from "./Pages/AllSystemsPage";
 import LocationPage from "./Pages/LocationPage";
+import ToolsWebCallsPage from "./Pages/ToolsWebCallsPage";
 
 function App() {
   useEffect(() => {
@@ -67,6 +68,8 @@ function App() {
                   <Route path="/logout" element={<LogoutPage />} />
 
                   <Route path="/systems" element={<AllSystemsPage />} />
+
+                  <Route path="/tools/webcalls" element={<ToolsWebCallsPage />} />
 
                   <Route path="/location/:locationid" element={<LocationPage />} />
 

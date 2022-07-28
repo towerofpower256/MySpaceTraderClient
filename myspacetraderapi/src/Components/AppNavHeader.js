@@ -9,7 +9,7 @@ export default function AppNavHeader(props) {
     const [playerInfo, setPlayerinfo] = useContext(PlayerInfoContext);
 
     let playerCredits = "";
-    if (playerInfo.credits) playerCredits = "$"+valOrDefault(prettyNumber(playerInfo.credits));
+    if (playerInfo && playerInfo.credits) playerCredits = "$" + valOrDefault(prettyNumber(playerInfo.credits));
 
     return (
         <nav className="navbar navbar-expand-lg navbar-light bg-light">
@@ -34,6 +34,16 @@ export default function AppNavHeader(props) {
                         </li>
                         <li className="nav-item">
                             <NavLink to="/systems" aria-current="page" activeclassname="nav-link active" className="nav-link">Systems</NavLink>
+                        </li>
+                        <li className="nav-item dropdown">
+                            <a className="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Dev Tools
+                            </a>
+                            <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li>
+                                    <NavLink to="/tools/webcalls" aria-current="page" activeclassname="nav-link active" className="dropdown-item">Web Calls</NavLink>
+                                </li>
+                            </ul>
                         </li>
                         <li className="nav-item">
                             <NavLink to="/logout" aria-current="page" activeclassname="nav-link active" className="nav-link">Log out</NavLink>

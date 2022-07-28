@@ -45,6 +45,9 @@ export default function ContextContainer(props) {
 
                     getAllSystems()
                         .then(stcResponse => {
+                            if (!stcResponse.ok) {
+                                reject(stcResponse.errorPretty);
+                            }
                             const systemData = readLocations(stcResponse.data.systems);
                             setSystems(systemData);
                             console.log("Loaded systems", systemData);
@@ -62,6 +65,9 @@ export default function ContextContainer(props) {
                 func: (resolve, reject) => {
                     getPlayerInfo()
                         .then(stcResponse => {
+                            if (!stcResponse.ok) {
+                                reject(stcResponse.errorPretty);
+                            }
                             setPlayerInfo(stcResponse.data.user);
                             console.log("Loaded player info", stcResponse.data.user);
                             resolve();
@@ -78,6 +84,9 @@ export default function ContextContainer(props) {
                 func: (resolve, reject) => {
                     getShips()
                         .then(stcResponse => {
+                            if (!stcResponse.ok) {
+                                reject(stcResponse.errorPretty);
+                            }
                             setPlayerShips(stcResponse.data);
                             console.log("Loaded player ships", stcResponse.data.ships);
                             resolve();
@@ -95,7 +104,7 @@ export default function ContextContainer(props) {
             console.log("Loading game");
             loadJobs.reduce((prevPromise, nextJob) => {
                 return prevPromise
-                    .then(() => {
+                    .then(value => {
                         console.log("Running load job: " + nextJob.name);
                         setGameLoadingMsg(nextJob.name);
                         return new Promise(nextJob.func)
@@ -104,6 +113,9 @@ export default function ContextContainer(props) {
                                 setGameLoadState(GAMELOADSTATE_ERROR);
                                 setGameLoadingMsg("Error loading game");
                             });
+                    },
+                    error => {
+                        console.error("Skipping load job, there was an issue: "+nextJob.name);
                     })
             }, Promise.resolve())
                 .then(result => {

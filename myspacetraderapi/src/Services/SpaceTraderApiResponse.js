@@ -2,7 +2,6 @@
 
 class SpaceTraderApiResponse {
     constructor() {
-        this.reponse = null;
         this.ok = true;
         this.error = "";
         this.errorCode = 0;
@@ -12,7 +11,7 @@ class SpaceTraderApiResponse {
     }
 
     readResponse(_response) {
-        this.response = _response;
+        //this.response = _response;
         if (!_response.ok) {
             this.setError(_response.status, "HTTP error: " + _response.status + " " + _response.url);
         }

@@ -51,7 +51,7 @@ export async function getLocationInfo(locationSymbol) {
 }
 
 export async function getGameStatus() {
-    return _doRequest("game/status");
+    return _doRequest("game/status", "GET");
 }
 
 export async function isGameReady() {
@@ -88,10 +88,9 @@ async function _doRequest(url, method, options) {
         const reqOptions = {
             method: method,
             cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-            //mode: 'cors',
-            //credentials: 
             headers: {
                 "Authorization": "Bearer "+authToken,
+                "Accept": "application/json",
                 "Content-Type": "application/json"
             }
         };
