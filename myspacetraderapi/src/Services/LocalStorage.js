@@ -1,4 +1,4 @@
-import { STORAGE_ACCESS_TOKEN, STORAGE_USER_NAME } from "../Constants";
+import { STORAGE_ACCESS_TOKEN, STORAGE_USER_NAME, STORAGE_MARKET_DATA, STORAGE_PLAYER_SHIPS } from "../Constants";
 
 export function getLocalStorageItem(key) {
     return localStorage.getItem(key);
@@ -24,16 +24,20 @@ export function setLocalStorageItemAsJson(key, value) {
     setLocalStorageItem(key, JSON.stringify(value));
 }
 
-export function getAuthToken(a) {
-    return atob(getLocalStorageItem(STORAGE_ACCESS_TOKEN));
+export function getAuthToken() {
+    let token = getLocalStorageItem(STORAGE_ACCESS_TOKEN);
+    if (!token) return token;
+    return atob(token);
 }
 
 export function setAuthToken(a) {
     setLocalStorageItem(STORAGE_ACCESS_TOKEN, btoa(a));
 }
 
-export function getUserName(a) {
-    return atob(getLocalStorageItem(STORAGE_USER_NAME));
+export function getUserName() {
+    let username = getLocalStorageItem(STORAGE_USER_NAME);
+    if (!username) return username;
+    return atob(username);
 }
 
 export function setUserName(a) {
@@ -48,4 +52,20 @@ export function setLogin(authToken, userName) {
 export function clearAuth() {
     removeLocalStorageItem(STORAGE_USER_NAME);
     removeLocalStorageItem(STORAGE_ACCESS_TOKEN);
+}
+
+export function saveMarketData(a) {
+    setLocalStorageItemAsJson(STORAGE_MARKET_DATA, a);
+}
+
+export function loadMarketData() {
+    return getLocalStorageItemAsJson(STORAGE_MARKET_DATA, []);
+}
+
+export function savePlayerShipsData(a) {
+    setLocalStorageItemAsJson(STORAGE_PLAYER_SHIPS, a);
+}
+
+export function loadPlayerShipsData() {
+    return getLocalStorageItemAsJson(STORAGE_PLAYER_SHIPS, []);
 }

@@ -40,9 +40,8 @@ export default function AppNavHeader(props) {
                                 Dev Tools
                             </a>
                             <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <li>
-                                    <NavLink to="/tools/webcalls" aria-current="page" activeclassname="nav-link active" className="dropdown-item">Web Calls</NavLink>
-                                </li>
+                                <li><NavLink to="/tools/context" aria-current="page" activeclassname="nav-link active" className="dropdown-item">App Contexts</NavLink></li>
+                                <li><NavLink to="/tools/webcalls" aria-current="page" activeclassname="nav-link active" className="dropdown-item">Web Calls</NavLink></li>
                             </ul>
                         </li>
                         <li className="nav-item">

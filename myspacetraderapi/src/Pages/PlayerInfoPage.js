@@ -9,8 +9,6 @@ function PlayerInfoPage(props) {
 
     const [playerInfo, setPlayerInfo] = useContext(PlayerInfoContext);
 
-    console.log("Player info page: ", playerInfo);
-
     if (!playerInfo) {
         return (
             <div>No data</div>
@@ -49,9 +47,6 @@ function PlayerInfoPage(props) {
                         </tr>
                     </tbody>
                 </table>
-
-
-
             </Page >
         );
     }

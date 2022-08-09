@@ -33,6 +33,14 @@ export async function submitFlightPlan(shipId, destination) {
     });
 }
 
+export async function getFlightPlan(flightPlanId) {
+    return _doRequest("my/flight-plans/" + flightPlanId, "GET");
+}
+
+export async function attemptWarpJump(shipId) {
+    return _doRequest("my/warp-jumps/?shipId=" + shipId, "Post");
+}
+
 // Get a list of all available ships, and where you can buy them & for how much
 export async function getShipMarket() {
     return _doRequest("game/ships", "GET");
@@ -48,6 +56,10 @@ export async function getAllSystems() {
 
 export async function getLocationInfo(locationSymbol) {
     return _doRequest("locations/" + locationSymbol, "GET");
+}
+
+export async function getLocationMarketplace(locationSymbol) {
+    return _doRequest("locations/"+locationSymbol+"/marketplace", "GET");
 }
 
 export async function getGameStatus() {

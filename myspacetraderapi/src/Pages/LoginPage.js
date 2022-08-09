@@ -43,13 +43,17 @@ export default function LoginPage(props) {
             .then(
                 stcResponse => {
                     if (!stcResponse.ok) {
-                        doLoginError(stcResponse.errorPretty);
+                        if (stcResponse.errorCode === 40101) {
+                            doLoginError("Login failed, token invalid");
+                        } else {
+                            doLoginError(stcResponse.errorPretty);
+                        }
                     } else {
                         // Successful login
                         setUserName(stcResponse.data.username);
                         setLoggedInUserInfo(stcResponse.data.user);
                         setLoggedIn(true);
-                        toast.success("Logged in: " + loggedInUserInfo.username);
+                        toast.success("Logged in, welcome captain");
                         // Shouldn't need to set submitting to false, 
                         // because the user should be automatically redirected away from the login page.
                     }

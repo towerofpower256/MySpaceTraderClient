@@ -1,14 +1,17 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Page from "../Components/Page.js"
 import { getShips, readResponse } from "../Services/SpaceTraderApi.js";
 import { Link } from "react-router-dom";
+import PlayerShipsContext from "../Contexts/PlayerShipsContext.js";
 
 export default function ShipListPage(props) {
     const PAGE_NAME = "Ship list";
     const [error, setError] = useState(null)
-    const [isLoaded, setLoaded] = useState(false)
+    const [isLoaded, setLoaded] = useState(true)
     const [shipsData, setShipsData] = useState(null)
+    const [playerShips, setPlayerShips] = useContext(PlayerShipsContext);
 
+    /*
     useEffect(() => {
         loadShipList();
     }, []);
@@ -35,6 +38,8 @@ export default function ShipListPage(props) {
         setError(error);
         setLoaded(true);
     }
+    */
+
 
     if (!isLoaded) {
         return (
@@ -52,39 +57,36 @@ export default function ShipListPage(props) {
         );
     }
 
-    if (shipsData) {
-
-        return (
-            <Page title={PAGE_NAME}>
-                <table className="table table-striped table-hover">
-                    <thead>
-                        <tr>
-                            <td>ID</td>
-                            <td>Ship type</td>
-                            <td>Location</td>
-                            <td>Class</td>
-                            <td>Manufacturer</td>
-                            <td>Cargo</td>
-                            <td>S / P / W</td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {shipsData.ships.map((ship, index) => {
-                            return (
-                                <tr key={ship.id}>
-                                    <td><Link to={ship.id}>{ship.id}</Link></td>
-                                    <td>{ship.type}</td>
-                                    <td>{ship.location}</td>
-                                    <td>{ship.class}</td>
-                                    <td>{ship.manufacturer}</td>
-                                    <td>{ship.spaceAvailable} / {ship.maxCargo}</td>
-                                    <td>{ship.speed} / {ship.plating} / {ship.weapons}</td>
-                                </tr>
-                            );
-                        })}
-                    </tbody>
-                </table>
-            </Page>
-        )
-    }
+    return (
+        <Page title={PAGE_NAME}>
+            <table className="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <td>ID</td>
+                        <td>Ship type</td>
+                        <td>Location</td>
+                        <td>Class</td>
+                        <td>Manufacturer</td>
+                        <td>Cargo</td>
+                        <td>S / P / W</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    {playerShips.map((ship, index) => {
+                        return (
+                            <tr key={ship.id}>
+                                <td><Link to={ship.id}>{ship.id}</Link></td>
+                                <td>{ship.type}</td>
+                                <td>{ship.location}</td>
+                                <td>{ship.class}</td>
+                                <td>{ship.manufacturer}</td>
+                                <td>{ship.spaceAvailable} / {ship.maxCargo}</td>
+                                <td>{ship.speed} / {ship.plating} / {ship.weapons}</td>
+                            </tr>
+                        );
+                    })}
+                </tbody>
+            </table>
+        </Page>
+    )
 }
