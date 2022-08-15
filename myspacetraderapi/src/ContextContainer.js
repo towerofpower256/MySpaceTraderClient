@@ -10,9 +10,9 @@ import FlightPlansContext from "./Contexts/FlightPlansContext";
 import MarketDataContext from "./Contexts/MarketDataContext";
 
 
-import { getAuthToken, loadMarketData, saveMarketData, loadPlayerShipsData, savePlayerShipsData } from "./Services/LocalStorage";
+import { getAuthToken, loadMarketData, saveMarketData, loadPlayerShipsData, savePlayerShipsData, saveLoanTypes, loadLoanTypes } from "./Services/LocalStorage";
 import { getLocationMarketplace, getAllSystems, getFlightPlan, getPlayerInfo, getShips } from "./Services/SpaceTraderApi";
-import { GAMELOADSTATE_ERROR, GAMELOADSTATE_LOADING, GAMELOADSTATE_NOTLOADED, GAMELOADSTATE_LOADED, AUTOREFRESH_DEFAULT } from "./Constants";
+import { AUTOREFRESH_DEFAULT } from "./Constants";
 import { insertOrUpdate, readLocations } from "./Utils";
 
 export default function ContextContainer(props) {
@@ -145,6 +145,8 @@ export default function ContextContainer(props) {
         }, Promise.resolve())
     }
 
+    
+
 
     function autoRefreshData() {
         if (!isLoggedIn) {
@@ -178,7 +180,7 @@ export default function ContextContainer(props) {
         refreshBaseJobs.push(refreshSystems);
         refreshBaseJobs.push(refreshPlayerShips);
 
-        console.log("Running base refresh jobs");
+        console.log("=== Running base refresh jobs");
 
         refreshBaseJobs.reduce((prevPromise, nextJob) => {
             return prevPromise
@@ -186,14 +188,14 @@ export default function ContextContainer(props) {
                     return new Promise(nextJob);
                 })
                 .catch(error => {
-                    console.log("Refresh job error", error);
+                    console.log("=== Refresh job error", error);
                 });
 
         }, Promise.resolve())
             .then(() => {
                 // Post base job refresh
                 // Now refresh the supplimental data
-                console.log("Base refresh complete");
+                console.log("=== Base refresh complete");
 
                 const marketsToRefresh = [];
                 const flightPlansToRefresh = [];
@@ -217,7 +219,7 @@ export default function ContextContainer(props) {
                     .then(refreshMarketData(marketsToRefresh)
                         .finally(() => {
                             // Setup the next loop
-                            console.log("Refresh complete");
+                            console.log("=== Refresh complete");
                             autoRefreshTimer = setTimeout(autoRefreshData, AUTOREFRESH_DEFAULT);
                             setAutoRefreshWorking(false);
                         })
@@ -234,8 +236,8 @@ export default function ContextContainer(props) {
 
         if (isLoggedIn && !autoRefreshDisabled) {
 
-            if (!autoRefreshTimer) {
-                // Auto refresh timer is not set
+            if (!autoRefreshTimer && !autoRefreshWorking) {
+                // Auto refresh timer is not set && is not currently working
                 // Fire the auto refresh, it should setup the timer as its final action
                 autoRefreshData();
             }

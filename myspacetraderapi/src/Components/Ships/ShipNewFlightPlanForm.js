@@ -44,7 +44,14 @@ export default function ShipNewFlightPlanForm(props) {
             if (!stcResult.ok) {
                 toast.error("Error creating flight plan: "+stcResult.error);
             } else {
-                toast.success("Flight plan submited");
+                let _fp=stcResult.data.flightPlan;
+                if (!_fp) {
+                    toast.warning("Flight plan submited, but flight plan details missing from response");
+                } else {
+                    toast.success("Flight plan submited for "+_fp.fuelConsumed+" fuel");
+                    // TODO add new flight plan to the flight plan context
+                }
+                
             }
 
             setIsWorking(false);

@@ -26,8 +26,10 @@ import ContextContainer from "./ContextContainer";
 import LogoutPage from "./Pages/LogoutPage";
 import AllSystemsPage from "./Pages/AllSystemsPage";
 import LocationPage from "./Pages/LocationPage";
-import ToolsWebCallsPage from "./Pages/ToolsWebCallsPage";
-import ToolsContextViewerPage from "./Pages/ToolsContextViewerPage";
+import MarketPage from "./Pages/MarketPage";
+import WikiPage from "./Pages/WikiPage";
+import DevToolsPage from "./Pages/DevToolsPage";
+import MyErrorBoundary from "./Components/MyErrorBoundary";
 
 function App() {
   useEffect(() => {
@@ -45,46 +47,50 @@ function App() {
         draggable
       />
       <ContextContainer>
-        <Router>
-          <AppNavHeader />
-          <div className="container-md">
-            <div className="col">
-              <LoginWrapper>
-                <Routes>
-                  <Route index element={<Navigate to="/player" />} />
-                  <Route path="/player" element={<PlayerInfoPage />}>
+        <MyErrorBoundary>
+          <Router>
+            <AppNavHeader />
+            <div className="container-md">
+              <div className="col">
+                <MyErrorBoundary>
+                  <LoginWrapper>
+                    <Routes>
+                      <Route index element={<Navigate to="/player" />} />
+                      <Route path="/player" element={<PlayerInfoPage />}>
 
-                  </Route>
-                  <Route path="/loans" element={<LoansPage />}>
+                      </Route>
+                      <Route path="/loans" element={<LoansPage />}>
 
-                  </Route>
+                      </Route>
 
-                  <Route path="/ship" element={<ShipListPage />}>
+                      <Route path="/market" element={<MarketPage />} />
+                      <Route path="/wiki" element={<WikiPage />} />
+                      <Route path="/devtools" element={<DevToolsPage />} />
+                      <Route path="/ship" element={<ShipListPage />}>
 
-                  </Route>
-                  <Route path="/ship/:shipId" element={<ShipDetailPage />} />
+                      </Route>
+                      <Route path="/ship/:shipId" element={<ShipDetailPage />} />
 
-                  <Route path="/shipmarket" element={<ShipMarketPage />} />
+                      <Route path="/shipmarket" element={<ShipMarketPage />} />
 
-                  <Route path="/logout" element={<LogoutPage />} />
+                      <Route path="/logout" element={<LogoutPage />} />
 
-                  <Route path="/systems" element={<AllSystemsPage />} />
+                      <Route path="/systems" element={<AllSystemsPage />} />
 
-                  <Route path="/tools/webcalls" element={<ToolsWebCallsPage />} />
-                  <Route path="/tools/context" element={<ToolsContextViewerPage />} />
-                  
-                  <Route path="/location/:locationid" element={<LocationPage />} />
+                      <Route path="/location/:locationid" element={<LocationPage />} />
 
-                  <Route path="*" element={<UnknownPage />}>
-                  </Route>
-                </Routes>
+                      <Route path="*" element={<UnknownPage />}>
+                      </Route>
+                    </Routes>
 
-              </LoginWrapper>
+                  </LoginWrapper>
+                </MyErrorBoundary>
 
+              </div>
             </div>
-          </div>
 
-        </Router>
+          </Router>
+        </MyErrorBoundary>
       </ContextContainer>
 
 

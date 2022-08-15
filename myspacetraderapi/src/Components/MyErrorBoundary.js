@@ -20,7 +20,7 @@ class MyErrorBoundary extends React.Component {
             // You can render any custom fallback UI
             return (
                 <div>
-                    <p>There was an error rending this component!</p>
+                    <p>There was a rendering error!</p>
                     <p>{this.state.error}</p>
                 </div>
 

@@ -4,8 +4,14 @@ import { getShipInfo, readResponse } from "../Services/SpaceTraderApi.js";
 import { useParams } from "react-router-dom";
 import { prettyNumber, valOrDefault } from "../Utils.js";
 import ShipNewFlightPlanForm from "../Components/Ships/ShipNewFlightPlanForm.js";
+import MarketTradeForm from "../Components/MarketTradeForm/MarketTradeForm";
 import PlayerShipsContext from "../Contexts/PlayerShipsContext.js";
 import MarketDataContext from "../Contexts/MarketDataContext.js";
+
+
+import Button from "react-bootstrap/esm/Button";
+import Stack from "react-bootstrap/esm/Stack";
+import Modal from "react-bootstrap/esm/Modal";
 
 function ShipInfo(props) {
     return (
@@ -146,28 +152,8 @@ export default function ShipDetailPage(props) {
     const [isLoaded, setLoaded] = useState(true)
     const [shipData, setShipData] = useState(null)
     const [playerShips, setPlayerShips] = useContext(PlayerShipsContext);
-
-    /*
-    useEffect(() => {
-        loadShipData();
-    }, []);
-
-    function loadShipData() {
-        setLoaded(false);
-        setError(null);
-        setShipData(null);
-
-        getShipInfo(params.shipId)
-            .then(stcResponse => {
-                console.log("Loading ship data:", stcResponse);
-                setShipData(stcResponse.data);
-                setLoaded(true);
-            },
-                ex => {
-                    doError("Error reading the response payload: " + error);
-                });
-    }
-    */
+    const [showRouteModal, setShowRouteModal] = useState(false);
+    const [showTradeModal, setShowTradeModal] = useState(false);
 
     function doError(error) {
         console.error("ERROR", error);
@@ -175,7 +161,13 @@ export default function ShipDetailPage(props) {
         setLoaded(true);
     }
 
-    const ship = playerShips.find(ship => ship.id === params.shipId);
+    let ship;
+    if (Array.isArray(playerShips)) {
+        ship = playerShips.find(ship => ship.id === params.shipId);
+    } else {
+        console.error("playerShips is not an array. What?");
+    }
+    
 
 
     let shipName = "";
@@ -230,29 +222,33 @@ export default function ShipDetailPage(props) {
                         </div>
                         <div className="col-md-6 p-2">
                             <div className="card">
-                                <h3>Marketplace - {ship.location}</h3>
-                                <ShipMarketplace ship={ship} location={ship.location} />
+                                <h3>Actions</h3>
+                                <Stack direction="horizontal" gap={3}>
+                                    <Button onClick={() => setShowTradeModal(true)}>Trade</Button>
+                                    <Button onClick={() => setShowRouteModal(true)}>Route</Button>
+                                </Stack>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newFlightPlanModal">New flight plan</button>
+                <Modal show={showTradeModal} onHide={() => setShowTradeModal(false)}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Route ship</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <MarketTradeForm locationID={ship.location} shipID={ship.id} closeForm={() => setShowTradeModal(false)}/>
+                    </Modal.Body>
+                </Modal>
 
-
-                <div className="modal fade" id="newFlightPlanModal" tabIndex="-1" aria-labelledby="newFlightPlanModalLabel" aria-hidden="true">
-                    <div className="modal-dialog">
-                        <div className="modal-content">
-                            <div className="modal-header">
-                                <h5 className="modal-title" id="myExampleModalLabel">New flight plan</h5>
-                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div className="modal-body">
-                                <ShipNewFlightPlanForm ship={ship} />
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <Modal show={showRouteModal} onHide={() => setShowRouteModal(false)}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Route ship</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <ShipNewFlightPlanForm ship={ship} />
+                    </Modal.Body>
+                </Modal>
             </Page>
         );
     }

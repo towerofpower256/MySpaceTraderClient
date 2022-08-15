@@ -4,6 +4,10 @@ import Page from "../Components/Page.js"
 import { getPlayerInfo, readResponse } from "../Services/SpaceTraderApi.js";
 import { prettyNumber } from "../Utils.js";
 import Timestamp from "../Components/Timestamp.js";
+import MyPageTitle from "../Components/MyPageTitle";
+import MyPageSubTitle from "../Components/MyPageSubTitle";
+import PlayerLoansList from "../Components/PlayerLoansList.js";
+import Table from "react-bootstrap/esm/Table.js";
 
 function PlayerInfoPage(props) {
 
@@ -11,23 +15,22 @@ function PlayerInfoPage(props) {
 
     if (!playerInfo) {
         return (
-            <div>No data</div>
+            <div>No player data</div>
         );
     } else {
         return (
-            <Page title="Player info">
-                This is the player info page.
+            <div id="player-info-page">
+                <MyPageTitle>Player</MyPageTitle>
 
-                <pre>
-                    Player info data:
-                    {JSON.stringify(playerInfo)}
-                </pre>
-
-                <table className="table table-striped">
+                <Table striped>
                     <tbody>
                         <tr>
                             <td>Username:</td>
                             <td>{playerInfo.username}</td>
+                        </tr>
+                        <tr>
+                            <td>Credits:</td>
+                            <td>${prettyNumber(playerInfo.credits)}</td>
                         </tr>
                         <tr>
                             <td>Ship count:</td>
@@ -41,13 +44,12 @@ function PlayerInfoPage(props) {
                             <td>Joined:</td>
                             <td><Timestamp value={playerInfo.joinedAt} /></td>
                         </tr>
-                        <tr>
-                            <td>Credits:</td>
-                            <td>{prettyNumber(playerInfo.credits)}</td>
-                        </tr>
+
                     </tbody>
-                </table>
-            </Page >
+                </Table>
+                <MyPageSubTitle>Loans</MyPageSubTitle>
+                <PlayerLoansList />
+            </div>
         );
     }
 }

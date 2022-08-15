@@ -1,4 +1,4 @@
-import { STORAGE_ACCESS_TOKEN, STORAGE_USER_NAME, STORAGE_MARKET_DATA, STORAGE_PLAYER_SHIPS } from "../Constants";
+import { STORAGE_ACCESS_TOKEN, STORAGE_USER_NAME, STORAGE_MARKET_DATA, STORAGE_PLAYER_SHIPS, STORAGE_LOAN_TYPES } from "../Constants";
 
 export function getLocalStorageItem(key) {
     return localStorage.getItem(key);
@@ -14,7 +14,9 @@ export function removeLocalStorageItem(key) {
 
 export function getLocalStorageItemAsJson(key, defaultValue) {
     try {
-        return JSON.parse(getLocalStorageItem(key));
+        const a = getLocalStorageItem(key);
+        if (a == null) return defaultValue; // Handle values not in storage
+        return JSON.parse(a);
     } catch (ex) {
         return defaultValue || null;
     }
@@ -68,4 +70,12 @@ export function savePlayerShipsData(a) {
 
 export function loadPlayerShipsData() {
     return getLocalStorageItemAsJson(STORAGE_PLAYER_SHIPS, []);
+}
+
+export function saveLoanTypes(a) {
+    setLocalStorageItemAsJson(STORAGE_LOAN_TYPES, a);
+}
+
+export function loadLoanTypes() {
+    return getLocalStorageItemAsJson(STORAGE_LOAN_TYPES, []);
 }

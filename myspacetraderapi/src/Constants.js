@@ -2,6 +2,7 @@ export const STORAGE_ACCESS_TOKEN = "accesstoken";
 export const STORAGE_USER_NAME = "username";
 export const STORAGE_PLAYER_SHIPS = "player_ships";
 export const STORAGE_MARKET_DATA = "market_data";
+export const STORAGE_LOAN_TYPES = "loan_types";
 export const API_BASE_URL = "https://api.spacetraders.io/";
 
 export const GAMELOADSTATE_NOTLOADED = 0;

@@ -115,3 +115,23 @@ export function updateMarketData(mdContext, locationSymbol, newMD) {
     }
     
 }
+
+export function getShipFuelCount(shipObj) {
+    return getShipCargoCount(shipObj, "FUEL");
+}
+
+export function getShipCargoCount(shipObj, cargoSymbol) {
+    if (!shipObj || !Array.isArray(shipObj.cargo)) {
+        return;
+    }
+
+    const cargo = shipObj.cargo.find((c) => c.good ===cargoSymbol);
+    if (!cargo) return 0;
+    return cargo.quantity;
+}
+
+export function sortAlphabetically(a, propName) {
+    if (!Array.isArray(a)) return;
+
+    a.sort((a, b) => ("" + a[propName]).localeCompare("" + b[propName]));
+}

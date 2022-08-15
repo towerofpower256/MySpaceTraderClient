@@ -54,6 +54,22 @@ export async function getAllSystems() {
     return _doRequest("game/systems", "GET");
 }
 
+export async function getAllGoodTypes() {
+    return _doRequest("types/goods", "GET");
+}
+
+export async function getAllLoanTypes() {
+    return _doRequest("types/loans", "GET");
+}
+
+export async function getAllStructureTypes() {
+    return _doRequest("types/structures", "GET");
+}
+
+export async function getAllShipTypes() {
+    return _doRequest("types/ships", "GET");
+}
+
 export async function getLocationInfo(locationSymbol) {
     return _doRequest("locations/" + locationSymbol, "GET");
 }
@@ -64,6 +80,29 @@ export async function getLocationMarketplace(locationSymbol) {
 
 export async function getGameStatus() {
     return _doRequest("game/status", "GET");
+}
+
+export async function placeBuySellOrder(action, shipID, goodID, quantity) {
+    let endpoint;
+    if (action === "buy") endpoint = "purchase-orders";
+    else if (action === "sell") endpoint = "sell-orders";
+    else throw ("Invalid action: "+action);
+
+    return _doRequest("my/"+endpoint, "POST", {
+        body: {
+            "shipId": shipID,
+            "good": goodID,
+            "quantity": quantity
+        }
+    });
+}
+
+export async function placeSellOrder(shipID, goodID, quantity) {
+    return placeBuySellOrder("sell", shipID, goodID, quantity);
+}
+
+export async function placeBuyOrder(shipID, goodID, quantity) {
+    return placeBuySellOrder("buy", shipID, goodID, quantity);
 }
 
 export async function isGameReady() {
@@ -85,7 +124,7 @@ async function _doRequest(url, method, options) {
 
     const promise = new Promise((resolve, reject) => {
         const fullUrl = _getUri(url);
-        console.log("Making request", "URL: " + fullUrl, "Method: " + method, "Options:", options);
+        //console.log("Making request", "URL: " + fullUrl, "Method: " + method, "Options:", options);
         const stcReponse = new SpaceTraderApiResponse();
 
         // Get the auth token, handle if it's missing
@@ -113,7 +152,7 @@ async function _doRequest(url, method, options) {
         const req = fetch(fullUrl, reqOptions);
         req.then(
             response => {
-                console.log("Response: ", response);
+                //console.log("Response: ", response);
 
                 const stcResponse = new SpaceTraderApiResponse();
                 stcResponse.readResponse(response);
