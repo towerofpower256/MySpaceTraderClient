@@ -1,17 +1,80 @@
 import { useContext, useEffect, useState } from "react";
 import Page from "../Components/Page.js"
-import { getShipInfo, readResponse } from "../Services/SpaceTraderApi.js";
+import { attemptWarpJump, getShipInfo, readResponse } from "../Services/SpaceTraderApi.js";
 import { useParams } from "react-router-dom";
-import { prettyNumber, valOrDefault } from "../Utils.js";
+import { insertOrUpdate, prettyNumber, valOrDefault, timeDelta } from "../Utils.js";
 import ShipNewFlightPlanForm from "../Components/Ships/ShipNewFlightPlanForm.js";
 import MarketTradeForm from "../Components/MarketTradeForm/MarketTradeForm";
 import PlayerShipsContext from "../Contexts/PlayerShipsContext.js";
 import MarketDataContext from "../Contexts/MarketDataContext.js";
+import FlightPlansContext from "../Contexts/FlightPlansContext.js";
+import { toast } from "react-toastify";
 
 
 import Button from "react-bootstrap/esm/Button";
 import Stack from "react-bootstrap/esm/Stack";
 import Modal from "react-bootstrap/esm/Modal";
+import Spinner from "react-bootstrap/esm/Spinner";
+
+function ShipAttemptWarpButton(props) {
+    const [flightPlans, setFlightPlans] = useContext(FlightPlansContext);
+    const [isWorking, setWorking] = useState(false);
+
+    function handleClick(e) {
+        if (isWorking) return;
+        if (!props.ship) return;
+
+        setWorking(true);
+
+        attemptWarpJump(props.ship.id)
+            .then(stcResponse => {
+                if (!stcResponse.ok) {
+                    toast.error("Error attempting warp jump: " + stcResponse.errorPretty);
+                    return;
+                }
+
+                toast.success("" + props.ship.type + " warp jumped successfully.");
+                const fp = stcResponse.data.flightPlan;
+                if (fp) {
+                    // Update flight plan in result to flight plan context
+                    setFlightPlans(insertOrUpdate([...flightPlans], fp, (_fp) => _fp.id === fp.id));
+                }
+            })
+            .catch(error => {
+                toast.error("Error attemping warp jump: " + error);
+            })
+            .finally(() => {
+                setWorking(false);
+            })
+    }
+
+    return (
+        <Button onClick={handleClick} >
+            <Spinner hidden={!isWorking} animation="border" size="sm" role="status">
+                <span className="visually-hidden">Working...</span>
+            </Spinner>
+            <span>
+                {isWorking ? "Working..." : "Attempt warp"}
+            </span>
+        </Button>
+    )
+}
+
+function ShipLocationText(props) {
+    const [flightPlans, setFlightPlans] = useContext(FlightPlansContext);
+
+    let locationText = valOrDefault(props.ship.location, "(in transit)");
+    let fp = flightPlans.find((_fp) => _fp.shipId === props.ship.id);
+    if (fp) {
+        locationText = "" + timeDelta(fp.arrivesAt) + " until " + fp.destination;
+    }
+
+    return (
+        <span>
+            {locationText}
+        </span>
+    )
+}
 
 function ShipInfo(props) {
     return (
@@ -27,7 +90,9 @@ function ShipInfo(props) {
                 </tr>
                 <tr>
                     <td>Location</td>
-                    <td>{valOrDefault(props.ship.location, "(in transit)")}</td>
+                    <td>
+                        <ShipLocationText ship={props.ship} />
+                    </td>
                 </tr>
                 <tr>
                     <td>Class</td>
@@ -167,7 +232,7 @@ export default function ShipDetailPage(props) {
     } else {
         console.error("playerShips is not an array. What?");
     }
-    
+
 
 
     let shipName = "";
@@ -226,6 +291,7 @@ export default function ShipDetailPage(props) {
                                 <Stack direction="horizontal" gap={3}>
                                     <Button onClick={() => setShowTradeModal(true)}>Trade</Button>
                                     <Button onClick={() => setShowRouteModal(true)}>Route</Button>
+                                    <ShipAttemptWarpButton ship={ship} />
                                 </Stack>
                             </div>
                         </div>
@@ -237,7 +303,7 @@ export default function ShipDetailPage(props) {
                         <Modal.Title>Route ship</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <MarketTradeForm locationID={ship.location} shipID={ship.id} closeForm={() => setShowTradeModal(false)}/>
+                        <MarketTradeForm locationID={ship.location} shipID={ship.id} closeForm={() => setShowTradeModal(false)} />
                     </Modal.Body>
                 </Modal>
 

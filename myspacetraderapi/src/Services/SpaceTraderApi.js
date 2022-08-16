@@ -1,4 +1,3 @@
-import { toast } from 'react-toastify';
 import { API_BASE_URL } from '../Constants';
 import { getAuthToken } from './LocalStorage';
 import SpaceTraderApiResponse from './SpaceTraderApiResponse';
@@ -38,7 +37,7 @@ export async function getFlightPlan(flightPlanId) {
 }
 
 export async function attemptWarpJump(shipId) {
-    return _doRequest("my/warp-jumps/?shipId=" + shipId, "Post");
+    return _doRequest("my/warp-jumps/?shipId=" + shipId, "POST");
 }
 
 // Get a list of all available ships, and where you can buy them & for how much
@@ -168,14 +167,10 @@ async function _doRequest(url, method, options) {
                 ));
 
                 Promise.allSettled(promises).then(() => {
-                    if (!stcReponse.ok) {
-                        toast.error(stcReponse.errorPretty);
-                    }
                     resolve(stcResponse);
                 });
             },
             error => {
-                toast.error("Connection error: " + error);
                 _handleError(error);
                 reject(error);
             }

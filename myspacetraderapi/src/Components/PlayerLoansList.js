@@ -56,7 +56,7 @@ function NewLoanForm(props) {
                         <option value="">--- Select a loan ---</option>
                         {LoanTypes.loans.map((loan) => {
                             return (
-                                <option value={loan.type}>{loan.type}</option>
+                                <option value={loan.type} key={loan.type}>{loan.type}</option>
                             )
                         })
                         }
@@ -202,7 +202,7 @@ export default function PlayerLoansList(props) {
         <Container fluid>
             <Row>
                 {loanItems.map((item, idx) => {
-                    return (<Col md={3}>
+                    return (<Col md={3} key={idx}>
                         {item}
                     </Col>
                     );

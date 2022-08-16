@@ -82,6 +82,15 @@ export default function ContextContainer(props) {
             })
     }
 
+    // TODO something is wrong, flightPlans is always empty. Don't know why.
+    function cleanFlightPlanContext(resolve, reject) {
+        // Remove any flight plans in the past
+        //const flightPlansFiltered = [...flightPlans].filter((fp) => new Date(fp.arrivesAt) - new Date() >= 0); // Clean away old flight plans, only incude ones in the future
+        //setFlightPlans(flightPlansFiltered);
+
+        resolve();
+    }
+
     function refreshFlightPlans(flightPlans) {
         return flightPlans.reduce((prevPromise, nextJob) => {
             return new Promise((resolve, reject) => {
@@ -98,8 +107,8 @@ export default function ContextContainer(props) {
                             return;
                         }
 
-                        // TO DO update flight plan with result
-                        const _flightPlans = insertOrUpdate([...flightPlans], newFP, (fp) => fp.id === nextJob);
+                        let _flightPlans = insertOrUpdate([...flightPlans], newFP, (fp) => fp.id === nextJob);
+
                         setFlightPlans(_flightPlans);
 
                         resolve();
@@ -130,7 +139,7 @@ export default function ContextContainer(props) {
                             return;
                         }
 
-                        const md = {location: nextJob, updatedAt: new Date(), goods: newMD};
+                        const md = { location: nextJob, updatedAt: new Date(), goods: newMD };
                         const _marketData = insertOrUpdate([...marketData], md, (md) => md.location == nextJob);
                         saveMarketData(_marketData);
                         setMarketData(_marketData);
@@ -145,7 +154,7 @@ export default function ContextContainer(props) {
         }, Promise.resolve())
     }
 
-    
+
 
 
     function autoRefreshData() {
@@ -179,6 +188,7 @@ export default function ContextContainer(props) {
         refreshBaseJobs.push(refreshPlayerInfo);
         refreshBaseJobs.push(refreshSystems);
         refreshBaseJobs.push(refreshPlayerShips);
+        refreshBaseJobs.push(cleanFlightPlanContext);
 
         console.log("=== Running base refresh jobs");
 

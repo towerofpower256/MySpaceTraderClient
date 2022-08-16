@@ -30,6 +30,7 @@ import MarketPage from "./Pages/MarketPage";
 import WikiPage from "./Pages/WikiPage";
 import DevToolsPage from "./Pages/DevToolsPage";
 import MyErrorBoundary from "./Components/MyErrorBoundary";
+import MyBuggyComponent from "./Components/MyBuggyComponent";
 
 function App() {
   useEffect(() => {
@@ -56,29 +57,24 @@ function App() {
                   <LoginWrapper>
                     <Routes>
                       <Route index element={<Navigate to="/player" />} />
-                      <Route path="/player" element={<PlayerInfoPage />}>
-
-                      </Route>
-                      <Route path="/loans" element={<LoansPage />}>
-
-                      </Route>
+                      
+                      <Route path="/player" element={<PlayerInfoPage />} />
+                      <Route path="/loans" element={<LoansPage />} />
 
                       <Route path="/market" element={<MarketPage />} />
                       <Route path="/wiki" element={<WikiPage />} />
                       <Route path="/devtools" element={<DevToolsPage />} />
-                      <Route path="/ship" element={<ShipListPage />}>
 
-                      </Route>
+                      <Route path="/ship" element={<ShipListPage />} />
                       <Route path="/ship/:shipId" element={<ShipDetailPage />} />
 
                       <Route path="/shipmarket" element={<ShipMarketPage />} />
-
-                      <Route path="/logout" element={<LogoutPage />} />
 
                       <Route path="/systems" element={<AllSystemsPage />} />
 
                       <Route path="/location/:locationid" element={<LocationPage />} />
 
+                      <Route path="/logout" element={<LogoutPage />} />
                       <Route path="*" element={<UnknownPage />}>
                       </Route>
                     </Routes>
@@ -92,9 +88,6 @@ function App() {
           </Router>
         </MyErrorBoundary>
       </ContextContainer>
-
-
-
     </div>
   );
 }

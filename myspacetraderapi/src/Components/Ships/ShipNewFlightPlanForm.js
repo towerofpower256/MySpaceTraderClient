@@ -1,7 +1,8 @@
 import { useContext, useState } from "react";
-import { getLocationsBySystem, getLocation, calcTravel } from "../../Utils";
+import { getLocationsBySystem, getLocation, calcTravel, insertOrUpdate } from "../../Utils";
 import SystemsContext from "../../Contexts/SystemsContext";
 import PlayerShipsContext from "../../Contexts/PlayerShipsContext";
+import FlightPlansContext from "../../Contexts/FlightPlansContext";
 import MyButton from "../MyButton"
 import { submitFlightPlan } from "../../Services/SpaceTraderApi";
 import { toast } from "react-toastify";
@@ -22,7 +23,7 @@ function getDestinationsFromLocation(startLocationSymbol, systemList) {
     });
 
     // Sort based on distance (shortest to largest)
-    destinations.sort((a, b) => {return a._distance - b._distance});
+    destinations.sort((a, b) => { return a._distance - b._distance });
 
     return destinations;
 }
@@ -31,6 +32,7 @@ export default function ShipNewFlightPlanForm(props) {
     const [isWorking, setIsWorking] = useState(false);
     const [systems, setSystems] = useContext(SystemsContext);
     const [playerShips, setPlayerShips] = useContext(PlayerShipsContext);
+    const [flightPlans, setFlightPlans] = useContext(FlightPlansContext);
 
     function handleClick(e) {
         if (isWorking) return;
@@ -40,32 +42,32 @@ export default function ShipNewFlightPlanForm(props) {
 
         setIsWorking(true);
         submitFlightPlan(shipId, locationSymbol)
-        .then(stcResult => {
-            if (!stcResult.ok) {
-                toast.error("Error creating flight plan: "+stcResult.error);
-            } else {
-                let _fp=stcResult.data.flightPlan;
-                if (!_fp) {
-                    toast.warning("Flight plan submited, but flight plan details missing from response");
+            .then(stcResult => {
+                if (!stcResult.ok) {
+                    toast.error("Error creating flight plan: " + stcResult.error);
                 } else {
-                    toast.success("Flight plan submited for "+_fp.fuelConsumed+" fuel");
-                    // TODO add new flight plan to the flight plan context
-                }
-                
-            }
+                    let _fp = stcResult.data.flightPlan;
+                    if (!_fp) {
+                        toast.warning("Flight plan submited, but flight plan details missing from response");
+                    } else {
+                        toast.success("Flight plan submited for " + _fp.fuelConsumed + " fuel");
+                        setFlightPlans(insertOrUpdate([...flightPlans], _fp, (fp) => fp.id === _fp.id))
+                    }
 
-            setIsWorking(false);
-        },
-        error => {
-            console.log(error);
-            toast.error("Error creating flight plan: "+error);
-            setIsWorking(false);
-        })
+                }
+
+                setIsWorking(false);
+            },
+                error => {
+                    console.log(error);
+                    toast.error("Error creating flight plan: " + error);
+                    setIsWorking(false);
+                })
 
     }
 
     function hideModal() {
-        
+
     }
 
     const destinations = getDestinationsFromLocation(props.ship.location, systems);
@@ -75,7 +77,7 @@ export default function ShipNewFlightPlanForm(props) {
     );
     if (destinations.length > 0) {
         destinationsHtml = destinations.map((d, idx) => {
-            const distanceText = (d._distance === 0 ? "Current location" : "~ "+Math.ceil(d._distance));
+            const distanceText = (d._distance === 0 ? "Current location" : "~ " + Math.ceil(d._distance));
             return (
                 <tr key={idx}>
                     <td>{d.symbol}</td>
