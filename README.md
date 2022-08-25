@@ -8,48 +8,46 @@ This is a practice project to teach myself some ReactJS and web development skil
 # Roadmap
 
 * [x] Login
-* [ ] Register a new user
+* [x] Register a new user
 * [x] Remember logged in user
 * [ ] Check game status and gracefully handle when game not available
 * [ ] Leaderboard
-* [ ] Pre-load game data (good types, ship types, systems)
-* [ ] User data always visible (e.g. player credits in header)
+* [x] Pre-load game data (good types, ship types, systems)
+* [x] User data always visible (e.g. player credits in header)
 * [ ] Icons / indicators for ship types
 * [ ] Icons / indicators for good types
 * [ ] Icons / indicators for systems, locations, structures
 * [x] Pretty formatted numbers
-* [ ] Pretty formatted timestamps
+* [x] Pretty formatted timestamps
 * [ ] Countdown functionality for timestamps in the future (e.g. flight plan ETA's)
 * [x] View user info
 * [x] View user's ships
-* [ ] View a specific ship
-* [ ] View cargo in a ship
+* [x] View a specific ship
+* [x] View cargo in a ship
 * [ ] Jettison cargo from a ship
 * [ ] Scrap ship for credits
 * [ ] Transfer cargo between ships
-* [ ] Move a ship to a new location
+* [x] Move a ship to a new location
 * [ ] Warp travel
-* [ ] View the goods market at a location
-* [ ] Cache market data
-* [ ] Make a trade (sell / buy)
+* [x] View the goods market at a location
+* [x] Cache market data
+* [x] Make a trade (sell / buy)
 * [ ] Handling trades larger than the ship's loading speed
-* [ ] View ships that are available to buy
+* [x] View ships that are available to buy
 * [ ] Buy a ship
 * [ ] View player ships that are moving
 * [x] View loans
-* [ ] Pay off a loan
-* [ ] Take out a new loan
-* [ ] Navigate a ship to a new location
+* [x] Pay off a loan
+* [x] Take out a new loan
 * [ ] List of systems
 * [ ] Icons for systems and locations (e.g. allows construction, has player ships, is warp gate, etc)
 * [ ] Visual map map of systems
-* [ ] List of locations in a system
+* [x] List of locations in a system
 * [ ] Visual map of locations in a system
-* [ ] View a specific system
 * [ ] List of ships in a system
 * [ ] List of all flight plans in a system / in-flight ships
 * [ ] List of structures at a location
-* [ ] Auto update user data when goods are bought / sold
-* [ ] Auto update user data when ships are bought
-* [ ] Auto update user data when loans are taken out / paid off
-* [ ] Structures functionality
+* [x] Auto update user data when goods are bought / sold
+* [x] Auto update user data when ships are bought
+* [x] Auto update user data when loans are taken out / paid off
+* [ ] Structure functionality
