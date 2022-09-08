@@ -1,5 +1,8 @@
 import { useContext, useState } from "react";
-import { getLocationsBySystem, getLocation, calcTravel, insertOrUpdate } from "../../Utils";
+import getLocationsBySystem from "../../Utils/getLocationsBySystem";
+import getLocation from "../../Utils/getLocation";
+import calcTravel from "../../Utils/calcTravel";
+import insertOrUpdate from "../../Utils/insertOrUpdate";
 import SystemsContext from "../../Contexts/SystemsContext";
 import PlayerShipsContext from "../../Contexts/PlayerShipsContext";
 import FlightPlansContext from "../../Contexts/FlightPlansContext";

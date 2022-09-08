@@ -9,10 +9,11 @@ export default function calcTravel(fromLocation, toLocation) {
     r.push(distance);
 
     const fuelPenalty = (fromLocation.type === 'PLANET' ? 2 : 0);
-    const fuelCost = Math.round(Math.round(distance) / 4) + fuelPenalty + 1;
+    const fuelCost = Math.round(Math.floor(distance) / 8) + fuelPenalty + 1;
     r.push(fuelCost);
 
     // Calc travel time
+    // TODO
 
     return r;
 }

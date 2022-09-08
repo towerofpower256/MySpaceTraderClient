@@ -1,5 +1,6 @@
 import { useState, useContext } from "react";
-import { prettyNumber, sortAlphabetically } from "../../Utils";
+import prettyNumber from "../../Utils/prettyNumber";
+import sortAlphabetically from "../../Utils/sortAlphabetically";
 import MarketDataContext from "../../Contexts/MarketDataContext";
 
 import Stack from "react-bootstrap/esm/Stack";

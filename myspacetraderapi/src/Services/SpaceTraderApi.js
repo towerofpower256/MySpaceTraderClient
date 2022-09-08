@@ -28,7 +28,7 @@ export async function getShipInfo(id) {
 
 export async function submitFlightPlan(shipId, destination) {
     return _doRequest("my/flight-plans", "POST", {
-        body: {shipId: shipId, destination: destination}
+        body: { shipId: shipId, destination: destination }
     });
 }
 
@@ -74,20 +74,53 @@ export async function getLocationInfo(locationSymbol) {
 }
 
 export async function getLocationMarketplace(locationSymbol) {
-    return _doRequest("locations/"+locationSymbol+"/marketplace", "GET");
+    return _doRequest("locations/" + locationSymbol + "/marketplace", "GET");
 }
 
 export async function getGameStatus() {
     return _doRequest("game/status", "GET");
 }
 
+export async function placeBuySellOrderHelper(action, shipID, goodID, quantity, loadingSpeed, onPageComplete) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let totalValue = 0;
+            loadingSpeed = parseInt(loadingSpeed);
+            if (!loadingSpeed || isNaN(loadingSpeed) || loadingSpeed < 1) {
+                throw "loadingSpeed is not a valid number greater than 0";
+            }
+
+            let stcResponse;
+            while (quantity > 0) {
+                stcResponse = await placeBuySellOrder(action, shipID, goodID, Math.min(quantity, loadingSpeed));
+                if (!stcResponse.ok) {
+                    throw stcResponse.errorPretty;
+                }
+
+                let od = stcResponse.data.order;
+                if (od) {
+                    totalValue += parseInt(od.total);
+                }
+
+                quantity -= loadingSpeed;
+
+                if (typeof onPageComplete === "function")
+                    onPageComplete(quantity, stcResponse);
+            }
+            resolve(totalValue); // Successful trade
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
 export async function placeBuySellOrder(action, shipID, goodID, quantity) {
     let endpoint;
     if (action === "buy") endpoint = "purchase-orders";
     else if (action === "sell") endpoint = "sell-orders";
-    else throw ("Invalid action: "+action);
+    else throw ("Invalid action: " + action);
 
-    return _doRequest("my/"+endpoint, "POST", {
+    return _doRequest("my/" + endpoint, "POST", {
         body: {
             "shipId": shipID,
             "good": goodID,
@@ -114,7 +147,7 @@ export async function isGameReady() {
             isOK = false;
         });
 
-    console.log("isGameReady: "+isOK);
+    console.log("isGameReady: " + isOK);
     return isOK;
 }
 
@@ -139,7 +172,7 @@ async function _doRequest(url, method, options) {
             method: method,
             cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
             headers: {
-                "Authorization": "Bearer "+authToken,
+                "Authorization": "Bearer " + authToken,
                 "Accept": "application/json",
                 "Content-Type": "application/json"
             }

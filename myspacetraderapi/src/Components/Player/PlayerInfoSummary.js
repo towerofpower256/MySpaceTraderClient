@@ -8,7 +8,7 @@ export default function PlayerInfoSummary(props) {
 
     return (
         <div>
-            <Table size="sm" className="text-start">
+            <table>
                 <tbody>
                     <tr>
                         <th>Username:</th>
@@ -19,19 +19,19 @@ export default function PlayerInfoSummary(props) {
                         <td>${prettyNumber(playerInfo.credits)}</td>
                     </tr>
                     <tr>
-                        <td>Ships:</td>
+                        <th>Ships:</th>
                         <td>{prettyNumber(playerInfo.shipCount)}</td>
                     </tr>
                     <tr>
-                        <td>Structures:</td>
+                        <th>Structures:</th>
                         <td>{prettyNumber(playerInfo.structureCount)}</td>
                     </tr>
                     <tr>
-                        <td>Joined:</td>
+                        <th>Joined:</th>
                         <td><Timestamp value={playerInfo.joinedAt} /></td>
                     </tr>
                 </tbody>
-            </Table>
+            </table>
         </div>
     )
 }

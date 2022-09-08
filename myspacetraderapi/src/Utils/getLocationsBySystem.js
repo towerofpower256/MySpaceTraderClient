@@ -1,4 +1,7 @@
+import { loadSystemsData } from "../Services/LocalStorage";
+
 export default function getLocationsBySystem(systemSymbol, systems) {
+    if (!systems) systems = loadSystemsData();
     if (!systems || !systems.all_locations || !systems.all_locations.length) return []; // Systems is empty or not an array, return nothing
 
     const r = [];

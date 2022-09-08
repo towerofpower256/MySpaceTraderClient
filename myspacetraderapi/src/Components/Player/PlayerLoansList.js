@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { getLoans, payLoan, takeOutLoan } from "../Services/SpaceTraderApi";
+import { getLoans, payLoan, takeOutLoan } from "../../Services/SpaceTraderApi";
 import { toast } from "react-toastify";
-import { prettyNumber, valOrDefault } from "../Utils";
-import Timestamp from "./Timestamp";
-import LoanTypes from "../Data/LoanTypes.js";
+import prettyNumber from "../../Utils/prettyNumber";
+import Timestamp from "../Timestamp";
+import LoanTypes from "../../Data/LoanTypes.js";
 
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";

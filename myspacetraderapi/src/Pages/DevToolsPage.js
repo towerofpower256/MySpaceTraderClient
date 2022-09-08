@@ -4,8 +4,11 @@ import MyPageTitle from '../Components/MyPageTitle';
 
 import ToolsContextViewer from "../Components/Tools/ToolsContextViewer";
 import ToolWebCalls from '../Components/Tools/ToolWebCalls';
+import setPageTitle from '../Utils/setPageTitle';
 
 export default function DevToolsPage(props) {
+    setPageTitle("Dev Tools");
+    
     return (
         <div>
             <MyPageTitle>Dev Tools</MyPageTitle>

@@ -1,5 +1,10 @@
 import { useState, useContext } from "react";
-import { prettyNumber, getShipFuelCount, sortAlphabetically, getShipCargoCount, insertOrUpdate } from "../../Utils";
+
+import prettyNumber from "../../Utils/prettyNumber";
+import sortAlphabetically from "../../Utils/sortAlphabetically";
+import getShipFuelCount from "../../Utils/getShipFuelCount";
+import getShipCargoCount from "../../Utils/getShipCargoCount";
+import insertOrUpdate from "../../Utils/insertOrUpdate";
 import PlayerShipsContext from "../../Contexts/PlayerShipsContext";
 import PlayerInfoContext from "../../Contexts/PlayerInfoContext";
 import MarketDataContext from "../../Contexts/MarketDataContext";
@@ -19,6 +24,7 @@ import MyPageSubTitle from "../MyPageSubTitle";
 import MarketTradeFormLocationSelect from "./MarketTradeFormLocationSelect";
 import MarketTradeFormShipSelect from "./MarketTradeFormShipSelect";
 import MarketTradeFormGoodSelect from "./MarketTradeFormGoodSelect";
+import updateTradeHistory from "../../Utils/updateTradeHistory";
 
 
 export default function MarketTradeForm(props) {
@@ -133,16 +139,20 @@ function MarketTradeFormMainForm(props) {
                 }
 
                 // Trade successful
+                if (stcResponse.data.credits) {
+                    playerInfo.credits = stcResponse.data.credits;
+                    setPlayerInfo({...playerInfo});
+                }
+
+                if (stcResponse.data.ship) {
+                    insertOrUpdate(ships, stcResponse.data.ship, (_ship) => ship.id === stcResponse.data.ship.id) ;
+                }
+
                 let od = stcResponse.data.order;
                 if (od) {
                     toast.success("Traded " + prettyNumber(od.quantity) + "x " + od.good + " for $" + prettyNumber(od.total) + " at $" + prettyNumber(od.pricePerUnit) + "/unit");
-
-                    // Update contexts with response data
-                    playerInfo.credits = od.credits;
                     
-                    if (stcResponse.data.ship) {
-                        insertOrUpdate(ships, stcResponse.data.ship, (_ship) => ship.id === stcResponse.data.ship.id) ;
-                    }
+                    updateTradeHistory(od, tradeAction, location.symbol);
                 } else {
                     toast.warning("Trade completed, but response was missing trade info");
                 }

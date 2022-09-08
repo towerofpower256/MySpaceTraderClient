@@ -4,5 +4,5 @@ export default function calcFuelCost(fromLocation, toLocation) {
     const penalty = fromLocation.type === 'PLANET' ? 2 : 0; // There's a fuel penalty when departing a planet
     const distance = calcDistance(fromLocation.x, fromLocation.y, toLocation.x, toLocation.y);
 
-    return Math.round(Math.round(distance) / 4) + penalty + 1; // Round the distance down, divide by 4 (why?), round that down, apply the penalty, then add on 1 to round it up
+    return Math.round(Math.floor(distance) / 8) + penalty + 1; // Round the distance down, divide by 8 (why?), round that down, apply the penalty, then add on 1 to round it up
 }

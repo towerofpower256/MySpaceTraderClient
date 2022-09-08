@@ -1,15 +1,18 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import LoggedInContext from "../Contexts/LoggedInContext";
 import { clearAuth } from "../Services/LocalStorage";
 import { toast } from "react-toastify";
-
-
+import setPageTitle from "../Utils/setPageTitle";
 
 
 export default function LogoutPage(props) {
     const [isLoggedIn, setLoggedIn] = useContext(LoggedInContext);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        setPageTitle("Logout");
+    })
 
     function handleLogoutClick(e) {
         e.preventDefault();

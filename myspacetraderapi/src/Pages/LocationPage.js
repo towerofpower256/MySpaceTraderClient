@@ -1,9 +1,71 @@
-import { useEffect, useState } from "react";
+import { useContext } from "react";
 import { useParams } from "react-router-dom";
-import Page from "../Components/Page";
-import { getLocationInfo } from "../Services/SpaceTraderApi";
+import MyPageTitle from "../Components/MyPageTitle";
+import getLocationName from "../Utils/getLocationName";
+import SystemsContext from "../Contexts/SystemsContext";
+import Table from "react-bootstrap/esm/Table";
 
 
+export default function Locationpage(props) {
+    let params = useParams();
+
+    const [systems, setSystems] = useContext(SystemsContext);
+
+    function PageWrapper(props) {
+        const locationName = (props.location ? getLocationName(props.location) : "");
+        return (
+            <div>
+                <MyPageTitle>Location - {locationName}</MyPageTitle>
+                {props.children}
+            </div>
+        )
+    }
+
+    if (!systems || !Array.isArray(systems.all_locations)) {
+        return (
+            <PageWrapper>
+                No systems data
+            </PageWrapper>
+        )
+    }
+
+    const location = systems.all_locations.find((l) => l.symbol === params.locationid);
+
+    if (!location) {
+        return (
+            <PageWrapper>
+                Unknown location '{params.locationid}';
+            </PageWrapper>
+        )
+    }
+
+    return (
+        <PageWrapper location={location}>
+            <table>
+                <tbody>
+                    <tr>
+                        <th>Symbol:</th>
+                        <td>{location.symbol}</td>
+                    </tr>
+                    <tr>
+                        <th>Name:</th>
+                        <td>{location.name}</td>
+                    </tr>
+                    <tr>
+                        <th>Type:</th>
+                        <td>{location.type}</td>
+                    </tr>
+                    <tr>
+                        <th>Location</th>
+                        <td>X: {location.x}, Y: {location.y}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </PageWrapper>
+    )
+}
+
+/*
 export default function LocationPage(props) {
     const params = useParams();
 
@@ -48,28 +110,39 @@ export default function LocationPage(props) {
         setLoaded(true);
     }
 
+    function PageWrapper(props) {
+        return (
+            <div>
+                <MyPageTitle>Location {getLocationName(props.location)}</MyPageTitle>
+                {props.children}
+            </div>
+        )
+    }
+
     if (!isLoaded) {
         return (
-            <Page title="Systems">
+            <PageWrapper>
                 <pre>It's loading</pre>
-            </Page>
+            </PageWrapper>
         );
     }
 
     if (error) {
         return (
-            <Page title="Systems">
+            <PageWrapper>
                 <pre>ERROR: {error}</pre>
-            </Page>
+            </PageWrapper>
         );
     }
 
     return (
-        <div data-id={locationInfo.symbol} className="col row">
-            <div className="col-md-6">
-                <LocationPageInfo location={locationInfo} />
+        <PageWrapper>
+            <div data-id={locationInfo.symbol} className="col row">
+                <div className="col-md-6">
+                    <LocationPageInfo location={locationInfo} />
+                </div>
             </div>
-        </div>
+        </PageWrapper>
     )
 }
 
@@ -105,9 +178,10 @@ function LocationPageInfo(props) {
                 </tr>
                 <tr>
                     <th>Docked ships</th>
-                    <td>{l.docketShips}</td>
+                    <td>{l.dockedShips}</td>
                 </tr>
             </tbody>
         </table>
     )
 }
+*/

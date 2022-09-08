@@ -1,14 +1,19 @@
 import { useContext, useEffect, useState } from "react";
-import Page from "../Components/Page.js"
 import { attemptWarpJump, getShipInfo, readResponse } from "../Services/SpaceTraderApi.js";
 import { useParams } from "react-router-dom";
-import { insertOrUpdate, prettyNumber, valOrDefault, timeDelta } from "../Utils.js";
+import insertOrUpdate from "../Utils/insertOrUpdate"
+import prettyNumber from "../Utils/prettyNumber"
+import valOrDefault from "../Utils/valOrDefault"
+import timeDelta from "../Utils/timeDelta"
 import ShipNewFlightPlanForm from "../Components/Ships/ShipNewFlightPlanForm.js";
 import MarketTradeForm from "../Components/MarketTradeForm/MarketTradeForm";
 import PlayerShipsContext from "../Contexts/PlayerShipsContext.js";
 import MarketDataContext from "../Contexts/MarketDataContext.js";
 import FlightPlansContext from "../Contexts/FlightPlansContext.js";
 import { toast } from "react-toastify";
+import ShipAttemptWarpButton from "../Components/Ships/ShipAttemptWarpButton"
+import MyPageTitle from "../Components/MyPageTitle.js";
+import TimestampCount from "../Components/TimestampCount.js";
 
 
 import Button from "react-bootstrap/esm/Button";
@@ -16,63 +21,20 @@ import Stack from "react-bootstrap/esm/Stack";
 import Modal from "react-bootstrap/esm/Modal";
 import Spinner from "react-bootstrap/esm/Spinner";
 
-function ShipAttemptWarpButton(props) {
-    const [flightPlans, setFlightPlans] = useContext(FlightPlansContext);
-    const [isWorking, setWorking] = useState(false);
 
-    function handleClick(e) {
-        if (isWorking) return;
-        if (!props.ship) return;
-
-        setWorking(true);
-
-        attemptWarpJump(props.ship.id)
-            .then(stcResponse => {
-                if (!stcResponse.ok) {
-                    toast.error("Error attempting warp jump: " + stcResponse.errorPretty);
-                    return;
-                }
-
-                toast.success("" + props.ship.type + " warp jumped successfully.");
-                const fp = stcResponse.data.flightPlan;
-                if (fp) {
-                    // Update flight plan in result to flight plan context
-                    setFlightPlans(insertOrUpdate([...flightPlans], fp, (_fp) => _fp.id === fp.id));
-                }
-            })
-            .catch(error => {
-                toast.error("Error attemping warp jump: " + error);
-            })
-            .finally(() => {
-                setWorking(false);
-            })
-    }
-
-    return (
-        <Button onClick={handleClick} >
-            <Spinner hidden={!isWorking} animation="border" size="sm" role="status">
-                <span className="visually-hidden">Working...</span>
-            </Spinner>
-            <span>
-                {isWorking ? "Working..." : "Attempt warp"}
-            </span>
-        </Button>
-    )
-}
 
 function ShipLocationText(props) {
     const [flightPlans, setFlightPlans] = useContext(FlightPlansContext);
 
-    let locationText = valOrDefault(props.ship.location, "(in transit)");
     let fp = flightPlans.find((_fp) => _fp.shipId === props.ship.id);
     if (fp) {
-        locationText = "" + timeDelta(fp.arrivesAt) + " until " + fp.destination;
+        if (new Date(fp.arrivesAt) > new Date()) {
+            return <TimestampCount value={fp.arrivesAt} variant="raw" formatter={(a) => a+" until "+fp.destination}/>
+        }
     }
 
     return (
-        <span>
-            {locationText}
-        </span>
+        <span>{valOrDefault(props.ship.location, "(in transit)")}</span>
     )
 }
 
@@ -220,6 +182,15 @@ export default function ShipDetailPage(props) {
     const [showRouteModal, setShowRouteModal] = useState(false);
     const [showTradeModal, setShowTradeModal] = useState(false);
 
+    function PageWrapper(props) {
+        return (
+            <div>
+                <MyPageTitle>Ship {props.ship ? props.ship.type : ""}</MyPageTitle>
+                {props.children}
+            </div>
+        )
+    }
+
     function doError(error) {
         console.error("ERROR", error);
         setError(error);
@@ -239,29 +210,28 @@ export default function ShipDetailPage(props) {
     if (ship) {
         shipName = ship.type;
     }
-    let PAGE_NAME = `Ship - ${shipName || ""} - ${params.shipId}`;
 
     if (!isLoaded) {
         return (
-            <Page title={PAGE_NAME}>
+            <PageWrapper>
                 <pre>It's loading</pre>
-            </Page>
+            </PageWrapper>
         );
     }
 
     if (error) {
         return (
-            <Page title={PAGE_NAME}>
+            <PageWrapper>
                 <pre>ERROR: {error}</pre>
-            </Page>
+            </PageWrapper>
         );
     }
 
     if (!ship) {
         return (
-            <Page title={PAGE_NAME}>
+            <PageWrapper>
                 Unknown ship: {params.shipId}
-            </Page>
+            </PageWrapper>
         )
     }
 
@@ -270,7 +240,7 @@ export default function ShipDetailPage(props) {
         //let ship = shipData.ship;
 
         return (
-            <Page title={PAGE_NAME}>
+            <PageWrapper ship={ship}>
                 <div className="container">
                     <div className="row">
                         <div className="col-md-6 p-2">
@@ -315,7 +285,7 @@ export default function ShipDetailPage(props) {
                         <ShipNewFlightPlanForm ship={ship} />
                     </Modal.Body>
                 </Modal>
-            </Page>
+            </PageWrapper>
         );
     }
 }

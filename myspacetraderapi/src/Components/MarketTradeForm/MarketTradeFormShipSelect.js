@@ -1,5 +1,7 @@
 import { useState, useContext } from "react";
-import { prettyNumber, sortAlphabetically, getShipFuelCount } from "../../Utils";
+import prettyNumber from "../../Utils/prettyNumber";
+import sortAlphabetically from "../../Utils/sortAlphabetically";
+import getShipFuelCount from "../../Utils/getShipFuelCount";
 
 import SystemsContext from "../../Contexts/SystemsContext";
 import PlayerShipsContext from "../../Contexts/PlayerShipsContext";

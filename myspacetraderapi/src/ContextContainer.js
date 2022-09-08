@@ -2,239 +2,84 @@ import { useState, useEffect } from "react";
 
 import LoggedInUserInfoContext from "./Contexts/LoggedInUserInfoContext";
 import LoggedInContext from "./Contexts/LoggedInContext";
-import GameLoadingContext from "./Contexts/GameLoadingContext";
 import SystemsContext from "./Contexts/SystemsContext";
 import PlayerInfoContext from "./Contexts/PlayerInfoContext";
+import PlayerInfoContextSet from "./Contexts/PlayerInfoContextSet";
 import PlayerShipsContext from "./Contexts/PlayerShipsContext";
+import PlayerShipsContextSet from "./Contexts/PlayerShipsContextSet";
 import FlightPlansContext from "./Contexts/FlightPlansContext";
+import FlightPlansContextSet from "./Contexts/FlightPlansContextSet";
 import MarketDataContext from "./Contexts/MarketDataContext";
+import AppSettingsContext from "./Contexts/AppSettingsContext";
+import RefreshWorkerContext from "./Contexts/RefreshWorkerContext";
+import RefreshWorker from "./Services/RefreshWorker";
 
-
-import { getAuthToken, loadMarketData, saveMarketData, loadPlayerShipsData, savePlayerShipsData, saveLoanTypes, loadLoanTypes } from "./Services/LocalStorage";
-import { getLocationMarketplace, getAllSystems, getFlightPlan, getPlayerInfo, getShips } from "./Services/SpaceTraderApi";
-import { AUTOREFRESH_DEFAULT } from "./Constants";
-import { insertOrUpdate, readLocations } from "./Utils";
+import {
+    getAuthToken,
+    loadMarketData,
+    saveMarketData,
+    loadPlayerShipsData,
+    savePlayerShipsData,
+    saveLoanTypes,
+    loadLoanTypes,
+    saveAppSettings,
+    loadAppSettings,
+    saveSystemsData,
+    loadSystemsData,
+    saveSystemsLastLoad,
+    loadSystemsLastLoad,
+    saveFlightPlanData,
+    loadFlightPlanData,
+    savePlayerInfo,
+    loadPlayerInfo
+} from "./Services/LocalStorage";
+import updateFlightPlanHistory from "./Utils/updateFlightPlanHistory";
 
 export default function ContextContainer(props) {
     const [isLoggedIn, setLoggedIn] = useState(!!getAuthToken()); // User is considered logged in if there's an auth token in storage
-    const [autoRefreshDisabled, setAutoRefreshDisabled] = useState(false);
     const [autoRefreshWorking, setAutoRefreshWorking] = useState(false);
 
     // Setup contexts
+    const [appSettings, _setAppSettings] = useState(loadAppSettings());
     const [loggedInUserInfo, setLoggedInUserInfo] = useState({});
-    const [systems, setSystems] = useState({});
-    const [playerInfo, setPlayerInfo] = useState({});
-    const [playerShips, setPlayerShips] = useState(loadPlayerShipsData());
-    const [flightPlans, setFlightPlans] = useState([]);
-    const [marketData, setMarketData] = useState(loadMarketData());
+    const [systems, _setSystems] = useState(loadSystemsData());
+    const [playerInfo, _setPlayerInfo] = useState(loadPlayerInfo());
+    const [playerShips, _setPlayerShips] = useState(loadPlayerShipsData());
+    const [flightPlans, _setFlightPlans] = useState(loadFlightPlanData());
+    const [marketData, _setMarketData] = useState(loadMarketData());
+    const [refreshWorkerState, setRefreshWorkerState] = useState({});
 
-    let _playerShips = undefined;
-    let autoRefreshTimer = undefined;
-
-    function refreshPlayerInfo(resolve, reject) {
-        console.log("Refreshing player info");
-        getPlayerInfo()
-            .then(stcResponse => {
-                if (!stcResponse.ok) {
-                    reject(stcResponse.errorPretty);
-                }
-                setPlayerInfo(stcResponse.data.user);
-                console.log("Loaded player info", stcResponse.data.user);
-                resolve();
-            })
-            .catch(error => {
-                reject(error);
-            })
+    function setPlayerInfo(a) {
+        savePlayerInfo(a);
+        _setPlayerInfo(a);
     }
 
-    function refreshSystems(resolve, reject) {
-        console.log("Refreshing systems info");
-        getAllSystems()
-            .then(stcResponse => {
-                if (!stcResponse.ok) {
-                    reject(stcResponse.errorPretty);
-                }
-                const systemData = readLocations(stcResponse.data.systems);
-                setSystems(systemData);
-                console.log("Loaded systems", systemData);
-                resolve();
-            })
-            .catch(error => {
-                reject(error);
-            });
+    function setAppSettings(a) {
+        saveAppSettings(a);
+        _setAppSettings(a);
     }
 
-    function refreshPlayerShips(resolve, reject) {
-        console.log("Refreshing player ships");
-        getShips()
-            .then(stcResponse => {
-                if (!stcResponse.ok) {
-                    reject(stcResponse.errorPretty);
-                }
-                _playerShips = stcResponse.data.ships; // Need access to this immediately before the state finishes updating
-                savePlayerShipsData(_playerShips);
-                setPlayerShips(_playerShips);
-                console.log("Loaded player ships", stcResponse.data.ships);
-                resolve();
-            })
-            .catch(error => {
-                reject(error);
-            })
-    }
-
-    // TODO something is wrong, flightPlans is always empty. Don't know why.
-    function cleanFlightPlanContext(resolve, reject) {
-        // Remove any flight plans in the past
-        //const flightPlansFiltered = [...flightPlans].filter((fp) => new Date(fp.arrivesAt) - new Date() >= 0); // Clean away old flight plans, only incude ones in the future
-        //setFlightPlans(flightPlansFiltered);
-
-        resolve();
-    }
-
-    function refreshFlightPlans(flightPlans) {
-        return flightPlans.reduce((prevPromise, nextJob) => {
-            return new Promise((resolve, reject) => {
-                console.log("Refreshing flight plan", nextJob);
-                getFlightPlan(nextJob)
-                    .then(stcResponse => {
-                        if (!stcResponse.ok) {
-                            reject(stcResponse.errorPretty);
-                        }
-
-                        const newFP = stcResponse.data.flightPlan;
-                        if (!newFP) {
-                            reject("'flightPlan' is missing from response data");
-                            return;
-                        }
-
-                        let _flightPlans = insertOrUpdate([...flightPlans], newFP, (fp) => fp.id === nextJob);
-
-                        setFlightPlans(_flightPlans);
-
-                        resolve();
-                    },
-                        error => {
-                            console.error("Error refreshing flight plan", nextJob, error);
-                            reject(error);
-                        })
-            })
-        }, Promise.resolve())
-
-    }
-
-    function refreshMarketData(marketLocations) {
-        return marketLocations.reduce((prevPromise, nextJob) => {
-            return new Promise((resolve, reject) => {
-                console.log("Refreshing market data", nextJob);
-                getLocationMarketplace(nextJob)
-                    .then(stcResponse => {
-                        if (!stcResponse.ok) {
-                            reject(stcResponse.errorPretty);
-                            return;
-                        }
-
-                        const newMD = stcResponse.data.marketplace;
-                        if (!newMD) {
-                            reject("'marketplace' is missing from response data");
-                            return;
-                        }
-
-                        const md = { location: nextJob, updatedAt: new Date(), goods: newMD };
-                        const _marketData = insertOrUpdate([...marketData], md, (md) => md.location == nextJob);
-                        saveMarketData(_marketData);
-                        setMarketData(_marketData);
-
-                        resolve();
-                    },
-                        error => {
-                            console.error("Error refreshing market data", nextJob, error);
-                            reject(error);
-                        })
-            })
-        }, Promise.resolve())
-    }
-
-
-
-
-    function autoRefreshData() {
-        if (!isLoggedIn) {
-            return; // User is not logged in, don't even try refreshing
+    function setFlightPlans(a) {
+        saveFlightPlanData(a);
+        if (Array.isArray(a)) {
+            a.forEach((fp) => updateFlightPlanHistory(fp)); // Feels sloppy, going through everything in the context.
         }
+        _setFlightPlans(a);
+    }
 
-        if (autoRefreshWorking) {
-            return; // Auto sync is already working, don't start refreshing again
-        }
+    function setPlayerShips(a) {
+        savePlayerShipsData(a);
+        _setPlayerShips(a);
+    }
 
-        if (autoRefreshDisabled) {
-            return; // Auto refresh is disabled, don't refresh
-        }
+    function setSystems(a) {
+        saveSystemsData(a);
+        _setSystems(a);
+    }
 
-        setAutoRefreshWorking(true);
-        console.log("Running autoRefreshData");
-
-        const refreshError = false;
-        const refreshBaseJobs = [];
-
-        /*
-        loadJobs.push({
-            name: "DEBUG load job",
-            func: (resolve, reject) => {
-                throw "Test error";
-            }
-        });
-        */
-
-        refreshBaseJobs.push(refreshPlayerInfo);
-        refreshBaseJobs.push(refreshSystems);
-        refreshBaseJobs.push(refreshPlayerShips);
-        refreshBaseJobs.push(cleanFlightPlanContext);
-
-        console.log("=== Running base refresh jobs");
-
-        refreshBaseJobs.reduce((prevPromise, nextJob) => {
-            return prevPromise
-                .then(value => {
-                    return new Promise(nextJob);
-                })
-                .catch(error => {
-                    console.log("=== Refresh job error", error);
-                });
-
-        }, Promise.resolve())
-            .then(() => {
-                // Post base job refresh
-                // Now refresh the supplimental data
-                console.log("=== Base refresh complete");
-
-                const marketsToRefresh = [];
-                const flightPlansToRefresh = [];
-
-                _playerShips.forEach((ship, idx) => {
-                    if (ship) {
-                        if (ship.location && !marketsToRefresh.includes(ship.location)) {
-                            marketsToRefresh.push(ship.location);
-                        }
-
-                        if (ship.flightPlanId && !flightPlansToRefresh.includes(ship.flightPlanId)) {
-                            flightPlansToRefresh.push(ship.flightPlanId);
-                        }
-                    }
-                });
-
-                console.log("marketsToRefresh", marketsToRefresh);
-                console.log("flightPlansToRefresh", flightPlansToRefresh);
-
-                refreshFlightPlans(flightPlansToRefresh)
-                    .then(refreshMarketData(marketsToRefresh)
-                        .finally(() => {
-                            // Setup the next loop
-                            console.log("=== Refresh complete");
-                            autoRefreshTimer = setTimeout(autoRefreshData, AUTOREFRESH_DEFAULT);
-                            setAutoRefreshWorking(false);
-                        })
-                    )
-            })
+    function setMarketData(a) {
+        saveMarketData(a);
+        _setMarketData(a);
     }
 
     useEffect(() => {
@@ -244,40 +89,34 @@ export default function ContextContainer(props) {
         }
         // remember logged in user
 
-        if (isLoggedIn && !autoRefreshDisabled) {
-
-            if (!autoRefreshTimer && !autoRefreshWorking) {
-                // Auto refresh timer is not set && is not currently working
-                // Fire the auto refresh, it should setup the timer as its final action
-                autoRefreshData();
-            }
-
-        } else {
-            // Should not auto refresh.
-            // Clear interval if needed.
-            if (autoRefreshTimer) {
-                console.log("Should not refresh, clearing auto refresh timer");
-                clearTimeout(autoRefreshTimer);
-            }
-        }
-
-    }, [isLoggedIn, autoRefreshDisabled]);
+    }, [isLoggedIn]);
 
     return (
-        <LoggedInUserInfoContext.Provider value={[loggedInUserInfo, setLoggedInUserInfo]}>
-            <LoggedInContext.Provider value={[isLoggedIn, setLoggedIn]}>
-                <SystemsContext.Provider value={[systems, setSystems]}>
-                    <PlayerInfoContext.Provider value={[playerInfo, setPlayerInfo]}>
-                        <PlayerShipsContext.Provider value={[playerShips, setPlayerShips]}>
-                            <FlightPlansContext.Provider value={[flightPlans, setFlightPlans]}>
-                                <MarketDataContext.Provider value={[marketData, setMarketData]}>
-                                    {props.children}
-                                </MarketDataContext.Provider>
-                            </FlightPlansContext.Provider>
-                        </PlayerShipsContext.Provider>
-                    </PlayerInfoContext.Provider>
-                </SystemsContext.Provider>
-            </LoggedInContext.Provider>
-        </LoggedInUserInfoContext.Provider>
+        <AppSettingsContext.Provider value={[appSettings, setAppSettings]}>
+            <LoggedInUserInfoContext.Provider value={[loggedInUserInfo, setLoggedInUserInfo]}>
+                <LoggedInContext.Provider value={[isLoggedIn, setLoggedIn]}>
+                    <SystemsContext.Provider value={[systems, setSystems]}>
+                        <PlayerInfoContext.Provider value={[playerInfo, setPlayerInfo]}>
+                            <PlayerInfoContextSet.Provider value={[setPlayerInfo]}>
+                                <PlayerShipsContext.Provider value={[playerShips, setPlayerShips]}>
+                                    <PlayerShipsContextSet.Provider value={[setPlayerShips]}>
+                                        <FlightPlansContext.Provider value={[flightPlans, setFlightPlans]}>
+                                            <FlightPlansContextSet.Provider value={[setFlightPlans]} >
+                                            <MarketDataContext.Provider value={[marketData, setMarketData]}>
+                                                <RefreshWorkerContext.Provider value={[refreshWorkerState, setRefreshWorkerState]}>
+                                                    <RefreshWorker />
+                                                    {props.children}
+                                                </RefreshWorkerContext.Provider>
+                                            </MarketDataContext.Provider>
+                                            </FlightPlansContextSet.Provider>
+                                        </FlightPlansContext.Provider>
+                                    </PlayerShipsContextSet.Provider>
+                                </PlayerShipsContext.Provider>
+                            </PlayerInfoContextSet.Provider>
+                        </PlayerInfoContext.Provider>
+                    </SystemsContext.Provider>
+                </LoggedInContext.Provider>
+            </LoggedInUserInfoContext.Provider>
+        </AppSettingsContext.Provider>
     )
 }

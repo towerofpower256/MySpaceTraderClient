@@ -1,9 +1,10 @@
-import { useContext, useState } from "react"
+import { useContext, useState, useEffect } from "react"
 import { toast } from "react-toastify";
 import { setAuthToken, setUserName } from "../Services/LocalStorage";
 import { getPlayerInfo, readResponse } from "../Services/SpaceTraderApi";
 import LoggedInContext from "../Contexts/LoggedInContext"
 import LoggedInUserInfoContext from "../Contexts/LoggedInUserInfoContext";
+import setPageTitle from "../Utils/setPageTitle";
 
 export default function LoginPage(props) {
     const [loggedInUserInfo, setLoggedInUserInfo] = useContext(LoggedInUserInfoContext)
@@ -18,6 +19,10 @@ export default function LoginPage(props) {
         setLoginError(false);
         setLoginToken(e.target.value);
     }
+
+    useEffect(() => {
+        setPageTitle("Login");
+    })
 
     function handleRegisterUsernameChange(e) {
         setRegisterUsername = e.target.value;

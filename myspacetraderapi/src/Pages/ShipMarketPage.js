@@ -1,13 +1,18 @@
 import { useEffect, useState } from "react";
-import Page from "../Components/Page.js"
-import { getShipMarket, readResponse } from "../Services/SpaceTraderApi.js";
-import { prettyNumber } from "../Utils.js";
+import MarketHeader from "./Components/MarketHeader.js";
+import MyPageSubTitle from "../Components/MyPageSubTitle.js";
+import MyPageTitle from "../Components/MyPageTitle.js"
+import { getShipMarket, buyNewShip } from "../Services/SpaceTraderApi.js";
+import prettyNumber from "../Utils/prettyNumber.js";
+import { loadPlayerShipsData, savePlayerShipsData } from "../Services/LocalStorage.js";
+import insertOrUpdate from "../Utils/insertOrUpdate.js";
+import { toast } from "react-toastify";
+import Button from "react-bootstrap/esm/Button.js";
 
 export default function ShipMarketPage(props) {
-    const PAGE_NAME = "Buy a new ship";
     const [error, setError] = useState(null)
     const [isLoaded, setLoaded] = useState(false)
-    const [shipsData, setShipsData] = useState(null)
+    const [shipsData, setShipsData] = useState(null);
 
     useEffect(() => {
         loadAvailableShips();
@@ -35,19 +40,29 @@ export default function ShipMarketPage(props) {
         setLoaded(true);
     }
 
+    function PageWrapper(props) {
+        return (
+            <div>
+                <MarketHeader />
+                <MyPageSubTitle>Ship Market</MyPageSubTitle>
+                {props.children}
+            </div>
+        )
+    }
+
     if (!isLoaded) {
         return (
-            <Page title={PAGE_NAME}>
+            <PageWrapper>
                 <pre>It's loading</pre>
-            </Page>
+            </PageWrapper>
         );
     }
 
     if (error) {
         return (
-            <Page title={PAGE_NAME}>
+            <PageWrapper>
                 <pre>ERROR: {error}</pre>
-            </Page>
+            </PageWrapper>
         );
     }
 
@@ -60,18 +75,20 @@ export default function ShipMarketPage(props) {
         });
 
         return (
-            <Page title={PAGE_NAME}>
+            <PageWrapper>
                 <div className="container">
                     <div className="row">
                         {shipItems}
                     </div>
                 </div>
-            </Page>
+            </PageWrapper>
         );
     }
 }
 
 function ShipMarketItem(props) {
+    const [isWorking, setWorking] = useState(false);
+
     let st = props.ship;
 
     let purchaseLocationItems = st.purchaseLocations.map((pl, index) => {
@@ -80,13 +97,44 @@ function ShipMarketItem(props) {
                 <td>{pl.system}</td>
                 <td>{pl.location}</td>
                 <td>{prettyNumber(pl.price)}</td>
-                <td><button className="btn btn-info btn-sm" data-ship={st.type} data-location={pl.location} data-price={pl.price} onClick={handleBuyShipClick}>Buy</button></td>
+                <td>
+                    <Button size="sm" variant="info" disabled={isWorking}
+                        data-ship={st.type} data-location={pl.location} data-price={pl.price}
+                        onClick={handleBuyShipClick}
+                    >Buy</Button>
+                </td>
             </tr>
         );
     });
 
     function handleBuyShipClick(e) {
+        purchaseShip(e.target.dataset.location, e.target.dataset.ship);
+    }
 
+    function purchaseShip(location, shipType) {
+        if (isWorking) return;
+
+        buyNewShip(location, shipType)
+            .then(stcResponse => {
+                if (!stcResponse.ok) {
+                    toast.error(stcResponse.errorPretty);
+                    return;
+                }
+
+                // TODO update player credits
+                //const credits = stcResponse.data.credits
+
+                const newShip = stcResponse.data.ship;
+                if (newShip) {
+                    savePlayerShipsData(insertOrUpdate(loadPlayerShipsData(), newShip, (ship) => ship.id === newShip.id));
+                    toast.success("Purchased new ship: " + newShip.type);
+                } else {
+                    toast.warn("Purchase was successful, but ship details were missing from the response");
+                }
+            })
+            .finally(() => {
+                setWorking(false);
+            })
     }
 
     return (

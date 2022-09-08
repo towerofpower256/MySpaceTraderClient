@@ -2,8 +2,6 @@
 import {
   HashRouter as Router,
   Route,
-  Link,
-  Redirect,
   Routes,
   Navigate
 } from "react-router-dom";
@@ -14,27 +12,31 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useEffect } from "react";
 
 import './App.css';
-import AppNavHeader from "./Components/AppNavHeader.js";
+import AppNavHeader from "./Layout/AppNavHeader.js";
 import PlayerInfoPage from "./Pages/PlayerInfoPage.js";
 import UnknownPage from "./Pages/UnknownPage";
-import LoansPage from "./Pages/LoansPage";
-import ShipListPage from "./Pages/ShipListPage";
-import ShipDetailPage from "./Pages/ShipDetailPage";
 import ShipMarketPage from "./Pages/ShipMarketPage";
 import LoginWrapper from "./Components/LoginWrapper";
 import ContextContainer from "./ContextContainer";
 import LogoutPage from "./Pages/LogoutPage";
-import AllSystemsPage from "./Pages/AllSystemsPage";
 import LocationPage from "./Pages/LocationPage";
-import MarketPage from "./Pages/MarketPage";
-import WikiPage from "./Pages/WikiPage";
+import HelpPage from "./Pages/HelpPage";
+import HelpTypesPage from "./Pages/HelpTypesPage";
 import DevToolsPage from "./Pages/DevToolsPage";
-import MyErrorBoundary from "./Components/MyErrorBoundary";
-import MyBuggyComponent from "./Components/MyBuggyComponent";
+import MyErrorBoundary from "./Layout/MyErrorBoundary";
+import SystemsPage from "./Pages/SystemsPage";
+import MarketDashboardPage from "./Pages/MarketDashboardPage";
+import MarketReportPage from "./Pages/MarketReportPage";
+import MarketRouteFinderPage from "./Pages/MarketRouteFinder";
+import HistoryPage from "./Pages/HistoryPage";
+import setPageTitle from "./Utils/setPageTitle";
+import CommandShipPage from "./Pages/CommandShipPage";
+//import MyBuggyComponent from "./Components/MyBuggyComponent";
 
 function App() {
   useEffect(() => {
     toast("Starting");
+    //setPageTitle();
   }, []);
 
   return (
@@ -52,27 +54,27 @@ function App() {
           <Router>
             <AppNavHeader />
             <div className="container-md">
-              <div className="col">
+              <div className="col text-start">
                 <MyErrorBoundary>
                   <LoginWrapper>
                     <Routes>
                       <Route index element={<Navigate to="/player" />} />
                       
                       <Route path="/player" element={<PlayerInfoPage />} />
-                      <Route path="/loans" element={<LoansPage />} />
+                      <Route path="/command" element={<CommandShipPage />} />
 
-                      <Route path="/market" element={<MarketPage />} />
-                      <Route path="/wiki" element={<WikiPage />} />
+                      <Route path="/market/" element={<MarketDashboardPage />} />
+                      <Route path="/market/report" element={<MarketReportPage />} />
+                      <Route path="/market/finder" element={<MarketRouteFinderPage />} />
+                      <Route path="/market/ship" element={<ShipMarketPage />} />
+                      <Route path="/help" element={<HelpPage />} />
+                      <Route path="/help/types" element={<HelpTypesPage />} />
                       <Route path="/devtools" element={<DevToolsPage />} />
+                      
+                      <Route path="/history" element={<HistoryPage />} />
 
-                      <Route path="/ship" element={<ShipListPage />} />
-                      <Route path="/ship/:shipId" element={<ShipDetailPage />} />
-
-                      <Route path="/shipmarket" element={<ShipMarketPage />} />
-
-                      <Route path="/systems" element={<AllSystemsPage />} />
-
-                      <Route path="/location/:locationid" element={<LocationPage />} />
+                      <Route path="/locations" element={<SystemsPage />} />
+                      <Route path="/locations/:locationid" element={<LocationPage />} />
 
                       <Route path="/logout" element={<LogoutPage />} />
                       <Route path="*" element={<UnknownPage />}>
