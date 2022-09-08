@@ -19,7 +19,7 @@ This is a practice project to teach myself some ReactJS and web development skil
 * [ ] Icons / indicators for systems, locations, structures
 * [x] Pretty formatted numbers
 * [x] Pretty formatted timestamps
-* [ ] Countdown functionality for timestamps in the future (e.g. flight plan ETA's)
+* [x] Countdown functionality for timestamps in the future (e.g. flight plan ETA's)
 * [x] View user info
 * [x] View user's ships
 * [x] View a specific ship
@@ -32,10 +32,10 @@ This is a practice project to teach myself some ReactJS and web development skil
 * [x] View the goods market at a location
 * [x] Cache market data
 * [x] Make a trade (sell / buy)
-* [ ] Handling trades larger than the ship's loading speed
+* [x] Handling trades larger than the ship's loading speed
 * [x] View ships that are available to buy
-* [ ] Buy a ship
-* [ ] View player ships that are moving
+* [x] Buy a ship
+* [x] View player ships that are moving
 * [x] View loans
 * [x] Pay off a loan
 * [x] Take out a new loan
@@ -44,8 +44,8 @@ This is a practice project to teach myself some ReactJS and web development skil
 * [ ] Visual map map of systems
 * [x] List of locations in a system
 * [ ] Visual map of locations in a system
-* [ ] List of ships in a system
-* [ ] List of all flight plans in a system / in-flight ships
+* [ ] List of all ships in a system (not just player)
+* [ ] List of all flight plans in a system / in-flight ships (not just player)
 * [ ] List of structures at a location
 * [x] Auto update user data when goods are bought / sold
 * [x] Auto update user data when ships are bought
