@@ -19,18 +19,19 @@ import ShipMarketPage from "./Pages/ShipMarketPage";
 import LoginWrapper from "./Components/LoginWrapper";
 import ContextContainer from "./ContextContainer";
 import LogoutPage from "./Pages/LogoutPage";
-import LocationPage from "./Pages/LocationPage";
+//import LocationPage from "./Pages/LocationPage";
 import HelpPage from "./Pages/HelpPage";
 import HelpTypesPage from "./Pages/HelpTypesPage";
 import DevToolsPage from "./Pages/DevToolsPage";
 import MyErrorBoundary from "./Layout/MyErrorBoundary";
-import SystemsPage from "./Pages/SystemsPage";
+//import SystemsPage from "./Pages/SystemsPage";
 import MarketDashboardPage from "./Pages/MarketDashboardPage";
 import MarketReportPage from "./Pages/MarketReportPage";
 import MarketRouteFinderPage from "./Pages/MarketRouteFinder";
 import HistoryPage from "./Pages/HistoryPage";
 import setPageTitle from "./Utils/setPageTitle";
 import CommandShipPage from "./Pages/CommandShipPage";
+import LocationsPage from "./Pages/LocationsPage";
 //import MyBuggyComponent from "./Components/MyBuggyComponent";
 
 function App() {
@@ -64,6 +65,7 @@ function App() {
                       <Route path="/command" element={<CommandShipPage />} />
 
                       <Route path="/market/" element={<MarketDashboardPage />} />
+                      <Route path="/market/:systemid" element={<MarketDashboardPage />} />
                       <Route path="/market/report" element={<MarketReportPage />} />
                       <Route path="/market/finder" element={<MarketRouteFinderPage />} />
                       <Route path="/market/ship" element={<ShipMarketPage />} />
@@ -73,8 +75,9 @@ function App() {
                       
                       <Route path="/history" element={<HistoryPage />} />
 
-                      <Route path="/locations" element={<SystemsPage />} />
-                      <Route path="/locations/:locationid" element={<LocationPage />} />
+                      <Route path="/locations" element={<LocationsPage />} />
+                      <Route path="/locations/system/:systemid" element={<LocationsPage />} />
+                      <Route path="/locations/:locationid" element={<div />} />
 
                       <Route path="/logout" element={<LogoutPage />} />
                       <Route path="*" element={<UnknownPage />}>

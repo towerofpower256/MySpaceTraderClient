@@ -16,12 +16,11 @@ import CommandShipLocation from "./CommandShipLocation";
 import ShipCargoBadge from "../../Components/ShipCargoBadge";
 import ShipFuelBadge from "../../Components/ShipFuelBadge";
 
-
 export default function CommandShipRow(props) {
     const [playerShips, setPlayerShips] = useContext(PlayerShipsContext);
     const shipId = props.shipId;
 
-    const ship = playerShips.find((s) => s.id === shipId);
+    const ship = (playerShips || []).find((s) => s.id === shipId);
 
     if (!ship) {
         // TODO maybe handle more gracefully?

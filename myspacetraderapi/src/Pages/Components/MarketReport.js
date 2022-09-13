@@ -11,12 +11,12 @@ import MarketDataContext from "../../Contexts/MarketDataContext";
 import getGoodName from "../../Utils/getGoodName";
 import prettyNumber from "../../Utils/prettyNumber";
 import durationString from "../../Utils/durationString";
-import { loadGoodTypes } from "../../Services/LocalStorage";
+import { loadGoodTypes, loadMarketData } from "../../Services/LocalStorage";
 
 
 export default function MarketReport(props) {
-    const [systems, setSystems] = useContext(SystemsContext);
-    const [marketData, setMarketData] = useContext(MarketDataContext);
+    //const [systems, setSystems] = useContext(SystemsContext);
+    //const [marketData, setMarketData] = useContext(MarketDataContext);
     const [state, setState] = useState({});
     const [reportData, setReportData] = useState([]);
 
@@ -45,10 +45,6 @@ export default function MarketReport(props) {
         setState({ ...state });
     }
 
-    function handleTradeClick(e) {
-
-    }
-
     function setGoodFilter(a) {
         state.filterGood = a;
         setState({ ...state });
@@ -66,7 +62,7 @@ export default function MarketReport(props) {
     function refreshReport() {
         // GET
         let _reportData = [];
-        marketData.forEach((md) => {
+        loadMarketData().forEach((md) => {
             md.goods.forEach((good) => {
                 _reportData.push({
                     ...good,
@@ -108,17 +104,21 @@ export default function MarketReport(props) {
         }
     }
 
+    /*
     if (!systems || !Array.isArray(systems.all_locations) || !Array.isArray(systems.systems)) {
         return (<PageWrapper>
             No systems data.
         </PageWrapper>)
     }
+    */
 
+    /*
     if (!Array.isArray(marketData)) {
         return (<PageWrapper>
             No market data.
         </PageWrapper>)
     }
+    */
 
 
 
@@ -158,7 +158,7 @@ export default function MarketReport(props) {
                 </InputGroup>
                 <Button variant="primary" onClick={() => refreshReport()}>Refresh report</Button>
             </div>
-            <Table striped id="market-report-table" size="sm">
+            <Table striped id="market-report-table" size="sm" responsive>
                 <thead>
                     <tr>
                         <ReportColHeader name="location" datatype="string">Location</ReportColHeader>
@@ -168,7 +168,6 @@ export default function MarketReport(props) {
                         <ReportColHeader name="sellPricePerUnit" className="text-end" datatype="number">Sell</ReportColHeader>
                         <ReportColHeader name="spread" className="text-end" datatype="number">Spread</ReportColHeader>
                         <th className="text-end" datatype="date">Last seen</th>
-                        <th></th>
                     </tr>
                 </thead>
                 <tbody className="fw-light">
@@ -182,13 +181,6 @@ export default function MarketReport(props) {
                                 <td className="text-end">${prettyNumber(mdGood.sellPricePerUnit)}</td>
                                 <td className="text-end">&plusmn; ${prettyNumber(mdGood.spread)}</td>
                                 <td className="text-end">{durationString(new Date(mdGood.updatedAt) - new Date(), { hide_seconds: true })}</td>
-                                <td className="text-end">
-                                    <Button size="sm" className="w-100 me-1" variant="outline-primary"
-                                        data-location-id={mdGood.location} data-good-id={mdGood.symbol}
-                                        onClick={handleTradeClick}>
-                                        Trade
-                                    </Button>
-                                </td>
                             </tr>
                         )
                     })}

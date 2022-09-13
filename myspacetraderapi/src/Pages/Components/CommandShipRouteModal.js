@@ -1,6 +1,6 @@
 import { useState, useContext } from "react";
 import { loadPlayerShipsData, saveFlightPlanData, loadFlightPlanData } from "../../Services/LocalStorage";
-import { submitFlightPlan } from "../../Services/SpaceTraderApi";
+import { submitFlightPlan, attemptWarpJump } from "../../Services/SpaceTraderApi";
 import { toast } from "react-toastify";
 import { MdMoveToInbox, MdDoubleArrow } from "react-icons/md";
 import { GiJerrycan } from 'react-icons/gi';
@@ -72,16 +72,7 @@ export default function CommandShipRouteModal(props) {
                     if (!_fp) {
                         toast.warning("Flight plan submited, but flight plan details missing from response");
                     } else {
-                        toast.success([
-                            "Flight plan submited to",
-                            getLocationName(_fp.destination),
-                            "for",
-                            prettyNumber(_fp.fuelConsumed),
-                            "fuel"
-                        ].join(" "));
-
-                        setFlightPlans(insertOrUpdate(loadFlightPlanData(), _fp, (fp) => fp.id === _fp.id));
-                        updateFlightPlanHistory(_fp);
+                        handleSuccessfulFlightPlan(_fp);
                     }
 
                     doOnComplete();
@@ -98,11 +89,49 @@ export default function CommandShipRouteModal(props) {
             console.error(ex);
             setWorking(false);
         }
-
-
-
     }
 
+    function attemptWarpJumpClick() {
+        if (isWorking) return;
+        if (!ship) return;
+
+        setWorking(true);
+        attemptWarpJump(ship.id)
+            .then(stcResponse => {
+                if (!stcResponse.ok) {
+                    toast.error("Error attempting warp jump. " + stcResponse.errorPretty);
+                    return;
+                }
+
+                const fp = stcResponse.data.flightPlan;
+                if (!fp) {
+                    toast.warn("Warp jump successful, but response was missing flight plan details.");
+                } else {
+                    handleSuccessfulFlightPlan(fp);
+                }
+
+                doOnComplete();
+            })
+            .catch(error => {
+                toast.error("Error attempting warp jump. " + error);
+            })
+            .finally(() => {
+                setWorking(false);
+            })
+    }
+
+    function handleSuccessfulFlightPlan(_fp) {
+        toast.success([
+            "Flight plan submited to",
+            getLocationName(_fp.destination),
+            "for",
+            prettyNumber(_fp.fuelConsumed),
+            "fuel"
+        ].join(" "));
+
+        setFlightPlans(insertOrUpdate(loadFlightPlanData(), _fp, (fp) => fp.id === _fp.id));
+        updateFlightPlanHistory(_fp);
+    }
 
 
     if (!shipId || shipId === "") {
@@ -131,7 +160,6 @@ export default function CommandShipRouteModal(props) {
 
     return (
         <PageWrapper>
-            <div>Routing ship <span className="fw-bold">{ship.type}</span></div>
             <div>
                 <Badge bg="light" className="text-dark">
                     <CommandShipLocation ship={ship} />
@@ -148,6 +176,16 @@ export default function CommandShipRouteModal(props) {
                 <Badge bg="light" title="Speed" className="text-dark me-2 fw-normal">
                     <MdDoubleArrow className="me-2" />{ship.speed}
                 </Badge>
+            </div>
+            <div className="mt-3">
+                <Button variant="secondary" className="w-100" size="sm" disabled={isWorking}
+                    onClick={() => attemptWarpJumpClick()}
+                >
+                    {isWorking && <Spinner animation="border" role="status" size="sm">
+                        <span className="visually-hidden">Loading...</span>
+                    </Spinner>}
+                    Attempt warp jump
+                </Button>
             </div>
             <hr />
             <h3>Destination</h3>

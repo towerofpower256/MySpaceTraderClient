@@ -15,7 +15,7 @@ export const STORAGE_FLIGHT_PLAN_HISTORY = "flight_plan_history";
 export const STORAGE_PLAYER_INFO = "player_info";
 
 
-export const PAGE_TITLE = "MySpaceTraderApi";
+export const PAGE_TITLE = "MySpaceTraderClient";
 
 export const API_BASE_URL = "https://api.spacetraders.io/";
 

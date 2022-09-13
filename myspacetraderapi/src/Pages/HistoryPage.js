@@ -46,7 +46,7 @@ function TradeHistory(props) {
         <div>
             <MyPageSubTitle>Trade History</MyPageSubTitle>
             <Button variant="primary" onClick={() => updateData()}>Refresh</Button>
-            <Table striped size="sm">
+            <Table striped size="sm" responsive>
                 <thead>
                     <tr>
                         <th>When</th>
@@ -94,7 +94,7 @@ function FlightPlanHistory(props) {
         <div>
             <MyPageSubTitle>Flight Plan History</MyPageSubTitle>
             <Button variant="primary" onClick={() => updateData()}>Refresh</Button>
-            <Table striped size="sm">
+            <Table striped size="sm" responsive>
                 <thead>
                     <tr>
                         <th>Departure</th>

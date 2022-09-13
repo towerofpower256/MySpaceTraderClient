@@ -12,6 +12,7 @@ import calcTravel from "../Utils/calcTravel";
 import CommandShipRow from "./Components/CommandShipRow";
 import CommandShipTradeModal from "./Components/CommandShipTradeModal";
 import CommandShipRouteModal from "./Components/CommandShipRouteModal";
+import CommandShipManageModal from "./Components/CommandShipManageModal";
 import MyPageTitle from "../Components/MyPageTitle";
 import MyPageSubTitle from "../Components/MyPageSubTitle";
 import Table from "react-bootstrap/esm/Table";
@@ -27,6 +28,8 @@ export default function CommandShipPage(props) {
     const [tradeModalState, setTradeModalState] = useState({});
     const [manageModalState, setManageModalState] = useState({});
 
+
+    
     function reloadData() {
         setData(loadPlayerShipsData());
     }
@@ -81,7 +84,7 @@ export default function CommandShipPage(props) {
             <MyPageTitle>Command</MyPageTitle>
             <MyPageSubTitle>Ships</MyPageSubTitle>
             <Button variant="primary" onClick={() => reloadData()}>Reload</Button>
-            <Table striped hover>
+            <Table striped hover responsive>
                 <tbody>
                     {data.map((ship, idx) => {
                         return (
@@ -94,7 +97,8 @@ export default function CommandShipPage(props) {
             <Modal show={manageModalState.show} onHide={() => closeManageModal()}>
                 <CommandShipManageModal
                     shipId={manageModalState.shipId}
-                    onComplete={() => { closeManageModal(); reloadData(); }} />
+                    onComplete={() => { closeManageModal(); reloadData(); }} 
+                    close={closeManageModal}/>
             </Modal>
 
 
@@ -103,13 +107,15 @@ export default function CommandShipPage(props) {
                 <CommandShipRouteModal
                     shipId={routeModalState.shipId}
                     onComplete={() => { refreshShipData(routeModalState.shipId).then(() => reloadData()); closeRouteModal(); reloadData(); }}
+                    close={closeRouteModal}
                 />
             </Modal>
 
             <Modal show={tradeModalState.show} onHide={() => closeTradeModal()}>
                 <CommandShipTradeModal
                     shipId={tradeModalState.shipId}
-                    onComplete={() => { closeTradeModal(); reloadData(); }} />
+                    onComplete={() => { closeTradeModal(); reloadData(); }} 
+                    close={closeTradeModal}/>
             </Modal>
         </div>
     )
@@ -117,13 +123,7 @@ export default function CommandShipPage(props) {
 
 
 
-function CommandShipManageModal(props) {
-    return (
-        <div>
-            Under construction.
-        </div>
-    )
-}
+
 
 
 
