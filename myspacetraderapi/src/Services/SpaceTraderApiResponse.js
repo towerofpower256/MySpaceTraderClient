@@ -36,7 +36,7 @@ class SpaceTraderApiResponse {
             this.errorCode = -1;
         }
 
-        this.errorPretty = "("+this.errorCode+") "+this.error+". Error data: "+JSON.stringify(this.errorData);
+        this.errorPretty = "("+this.errorCode+") "+this.error+"."+(Array.isArray(this.errorData) ? " Error data: "+JSON.stringify(this.errorData) : "");
 
         console.error(this.errorCode + " " + this.error);
     }

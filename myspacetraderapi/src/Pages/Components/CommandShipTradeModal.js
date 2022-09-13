@@ -145,7 +145,7 @@ function CommandShipTradeSelectGood(props) {
                                 <CommandShipTradeGoodCard marketData={good} ship={ship} />
                             </td>
                             <td className="align-middle">
-                                <Button variant="" className="text-success"
+                                <Button variant="" className={good.quantityAvailable > 0 ? "text-success" : "text-muted"}
                                     onClick={() => {
                                         props.setSelectedGood(good);
                                         props.setTradeAction("buy");
@@ -153,7 +153,7 @@ function CommandShipTradeSelectGood(props) {
                                 >Buy</Button>
                             </td>
                             <td className="align-middle">
-                                <Button variant="" className="text-primary"
+                                <Button variant="" className={getShipCargoCount(ship, good.symbol) > 0 ? "text-primary" : "text-muted"}
                                     onClick={() => {
                                         props.setSelectedGood(good);
                                         props.setTradeAction("sell");

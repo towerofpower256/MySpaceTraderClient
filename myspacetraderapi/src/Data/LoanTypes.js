@@ -1,6 +1,5 @@
-// https://api.spacetraders.io/types/loans
 const LoanTypes = {
-    "loans": [
+    loans: [
         {
             "type": "STARTUP",
             "amount": 200000,
@@ -11,4 +10,4 @@ const LoanTypes = {
     ]
 }
 
-export default LoanTypes;
+export default LoanTypes; 

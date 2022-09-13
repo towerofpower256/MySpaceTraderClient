@@ -49,6 +49,26 @@ export async function buyNewShip(locationID, typeID) {
     return _doRequest("my/ships?location=" + encodeURIComponent(locationID) + "&type=" + encodeURIComponent(typeID), "POST");
 }
 
+export async function jettisonCargo(shipId, good, quantity) {
+    return _doRequest("my/ships/" + shipId + "/jettison", "POST", {
+        body: {
+            good: good, quantity: quantity
+        }
+    })
+}
+
+export async function transferCargoBetweenShips(fromShipId, toShipId, good, quantity) {
+    return _doRequest("my/ships/" + fromShipId + "/transfer", "POST", {
+        body: {
+            toShipId: toShipId, good: good, quantity: quantity
+        }
+    })
+}
+
+export async function scrapShip(shipId) {
+    return _doRequest("my/ships/" + shipId, "DELETE");
+}
+
 export async function getAllSystems() {
     return _doRequest("game/systems", "GET");
 }
@@ -81,6 +101,13 @@ export async function getGameStatus() {
     return _doRequest("game/status", "GET");
 }
 
+export async function getSystemDockedShips(systemId) {
+    return _doRequest("systems/" + systemId + "/ships", "GET");
+}
+
+export async function getSystemFlightPlans(systemId) {
+    return _doRequest("systems/" + systemId + "/flight-plans", "GET");
+}
 export async function placeBuySellOrderHelper(action, shipID, goodID, quantity, loadingSpeed, onPageComplete) {
     return new Promise(async (resolve, reject) => {
         try {

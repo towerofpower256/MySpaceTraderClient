@@ -40,12 +40,12 @@ export default function RefreshWorkerJobs(props) {
     // On mount
     useEffect(() => {
         addJob({
-            name:"flight_plan_cleaner",
-            interval:1000, // 1 second
-            func: function(resolve, reject) {
+            name: "flight_plan_cleaner",
+            interval: 1000, // 1 second
+            func: function (resolve, reject) {
                 let didUpdate = false;
                 const _flightPlans = [];
-                
+
                 // remove any flight plans where the arrivesAt is in the past
                 loadFlightPlanData().forEach((fp) => {
                     if (new Date(fp.arrivesAt) > new Date()) {
@@ -55,7 +55,7 @@ export default function RefreshWorkerJobs(props) {
                     }
                 });
                 if (didUpdate) setFlightPlans(_flightPlans);
-                
+
                 resolve();
             }
         });
@@ -168,7 +168,7 @@ export default function RefreshWorkerJobs(props) {
             func: function (resolve, reject) {
                 // Get a list of ships to fetch flight plans for
                 const marketsToRefresh = [];
-                
+
                 loadPlayerShipsData().forEach((ship, idx) => {
                     if (ship.location && !marketsToRefresh.includes(ship.location)) {
                         marketsToRefresh.push(ship.location);
@@ -178,32 +178,37 @@ export default function RefreshWorkerJobs(props) {
                 console.log("marketsToRefresh", marketsToRefresh);
 
                 marketsToRefresh.reduce((prevPromise, nextJob) => {
-                    return new Promise((resolve, reject) => {
-                        console.log("Refreshing market data", nextJob);
-                        getLocationMarketplace(nextJob)
-                            .then(stcResponse => {
-                                if (!stcResponse.ok) {
-                                    reject(stcResponse.errorPretty);
-                                    return;
-                                }
+                    return prevPromise
+                    .then(value => {
+                        return new Promise((_resolve, _reject) => {
+                            console.log("Refreshing market data", nextJob);
+                            getLocationMarketplace(nextJob)
+                                .then(stcResponse => {
+                                    if (!stcResponse.ok) {
+                                        _reject(stcResponse.errorPretty);
+                                        return;
+                                    }
 
-                                const newMD = stcResponse.data.marketplace;
-                                if (!newMD) {
-                                    reject("'marketplace' is missing from response data");
-                                    return;
-                                }
+                                    const newMD = stcResponse.data.marketplace;
+                                    if (!newMD) {
+                                        reject("'marketplace' is missing from response data");
+                                        return;
+                                    }
 
-                                const md = { location: nextJob, updatedAt: new Date(), goods: newMD };
-                                const _marketData = insertOrUpdate([...loadMarketData()], md, (md) => md.location == nextJob);
-                                setMarketData(_marketData);
+                                    const md = { location: nextJob, updatedAt: new Date(), goods: newMD };
+                                    const _marketData = insertOrUpdate([...loadMarketData()], md, (md) => md.location == nextJob);
+                                    setMarketData(_marketData);
 
-                                resolve();
-                            },
-                                error => {
-                                    console.error("Error refreshing market data", nextJob, error);
-                                    reject(error);
-                                })
+                                    //setTimeout(() => { _resolve() }, 500);
+                                    _resolve();
+                                },
+                                    error => {
+                                        console.error("Error refreshing market data", nextJob, error);
+                                        _reject(error);
+                                    })
+                        })
                     })
+
                 }, Promise.resolve())
                     .then(result => resolve(result), error => reject(error)); // resolve, we're finished updating market data
 
@@ -215,16 +220,16 @@ export default function RefreshWorkerJobs(props) {
             interval: 60480e5, // 1 week
             func: function (resolve, reject) {
                 getAllGoodTypes()
-                .then(stcResponse => {
-                    if (!stcResponse.ok) {
-                        reject(stcResponse.errorPretty);
-                    }
-                    saveGoodTypes(stcResponse.data.goods);
-                    resolve();
-                })
-                .catch(error => {
-                    reject(error);
-                })
+                    .then(stcResponse => {
+                        if (!stcResponse.ok) {
+                            reject(stcResponse.errorPretty);
+                        }
+                        saveGoodTypes(stcResponse.data.goods);
+                        resolve();
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
             }
         });
 
@@ -233,16 +238,16 @@ export default function RefreshWorkerJobs(props) {
             interval: 60480e5, // 1 week
             func: function (resolve, reject) {
                 getAllGoodTypes()
-                .then(stcResponse => {
-                    if (!stcResponse.ok) {
-                        reject(stcResponse.errorPretty);
-                    }
-                    saveGoodTypes(stcResponse.data.goods);
-                    resolve();
-                })
-                .catch(error => {
-                    reject(error);
-                })
+                    .then(stcResponse => {
+                        if (!stcResponse.ok) {
+                            reject(stcResponse.errorPretty);
+                        }
+                        saveGoodTypes(stcResponse.data.goods);
+                        resolve();
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
             }
         });
 
@@ -251,16 +256,16 @@ export default function RefreshWorkerJobs(props) {
             interval: 60480e5, // 1 week
             func: function (resolve, reject) {
                 getAllStructureTypes()
-                .then(stcResponse => {
-                    if (!stcResponse.ok) {
-                        reject(stcResponse.errorPretty);
-                    }
-                    saveStructureTypes(stcResponse.data.structures);
-                    resolve();
-                })
-                .catch(error => {
-                    reject(error);
-                })
+                    .then(stcResponse => {
+                        if (!stcResponse.ok) {
+                            reject(stcResponse.errorPretty);
+                        }
+                        saveStructureTypes(stcResponse.data.structures);
+                        resolve();
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
             }
         });
 
@@ -269,20 +274,20 @@ export default function RefreshWorkerJobs(props) {
             interval: 60480e5, // 1 week
             func: function (resolve, reject) {
                 getAllShipTypes()
-                .then(stcResponse => {
-                    if (!stcResponse.ok) {
-                        reject(stcResponse.errorPretty);
-                    }
-                    saveShipTypes(stcResponse.data.ships);
-                    resolve();
-                })
-                .catch(error => {
-                    reject(error);
-                })
+                    .then(stcResponse => {
+                        if (!stcResponse.ok) {
+                            reject(stcResponse.errorPretty);
+                        }
+                        saveShipTypes(stcResponse.data.ships);
+                        resolve();
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
             }
         });
 
-        
+
     }, []);
 
     return (
