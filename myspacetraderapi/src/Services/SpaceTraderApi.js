@@ -109,6 +109,10 @@ export async function getGameLeaderboard() {
     return _doRequest("game/leaderboard/net-worth", "GET");
 }
 
+export async function registerUsername(username) {
+    return _doRequest("users/" + username + "/claim", "POST", { ignore_auth: true })
+}
+
 export async function getSystemFlightPlans(systemId) {
     return _doRequest("systems/" + systemId + "/flight-plans", "GET");
 }
@@ -192,7 +196,7 @@ async function _doRequest(url, method, options) {
 
         // Get the auth token, handle if it's missing
         const authToken = getAuthToken();
-        if (!authToken || authToken == "") {
+        if (!options.ignore_auth && (!authToken || authToken == "")) {
             const missingTokenMsg = "Auth token is missing. Is the user logged in?";
             console.error(missingTokenMsg)
             reject(missingTokenMsg);
