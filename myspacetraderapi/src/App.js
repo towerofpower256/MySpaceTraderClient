@@ -44,7 +44,7 @@ function App() {
   return (
     <div className="App">
       <ToastContainer
-        position="top-right"
+        position="bottom-right"
         autoClose={5000}
         newestonTop={false}
         pauseOnFocusLoss

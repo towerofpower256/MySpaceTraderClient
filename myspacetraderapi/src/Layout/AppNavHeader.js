@@ -6,13 +6,16 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import { FaUserCircle } from "react-icons/fa";
 
-import React, { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { NavLink, useNavigate } from "react-router-dom";
 import isAutoRefreshEnabled from '../Utils/isAutoRefreshEnabled';
 import { SETTING_AUTO_REFRESH_ENABLED } from "../Constants"
+import { getAuthToken } from "../Services/LocalStorage";
 
 import PlayerInfoContext from '../Contexts/PlayerInfoContext';
 import AppSettingsContext from '../Contexts/AppSettingsContext';
+import LoggedInContext from '../Contexts/LoggedInContext';
+
 import Timestamp from "../Components/Timestamp";
 import prettyNumber from "../Utils/prettyNumber";
 import valOrDefault from "../Utils/valOrDefault";
@@ -22,7 +25,9 @@ export default function AppNavHeader(props) {
     return (
         <Navbar bg="light" expand="lg">
             <Container>
-                <Navbar.Brand href="/">MySpaceTraderApi</Navbar.Brand>
+                <Navbar.Brand href="/">
+                    MySpaceTraderClient
+                </Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="me-auto">
@@ -79,17 +84,23 @@ function SyncButton(props) {
 
 function AppNavPlayer(props) {
     const [playerInfo, setPlayerinfo] = useContext(PlayerInfoContext);
+    const [loggedIn, setLoggedIn] = useContext(LoggedInContext);
+    const [showMenu, setShowMenu] = useState(false);
     const navigate = useNavigate();
 
     let playerCredits = "";
-    if (playerInfo && playerInfo.credits) playerCredits = "$" + valOrDefault(prettyNumber(playerInfo.credits));
+    if (playerInfo) playerCredits = "$" + valOrDefault(prettyNumber(playerInfo.credits), 0);
+
+    if (!loggedIn) {
+        return (<div className="d-none">Not logged in</div>);
+    }
 
     return (
-        <div>
+        <div className="w-100 text-end">
 
-            <Dropdown>
-                <Dropdown.Toggle id="nav-player-dropdown" variant="">
-                    <span className="me-2">{playerCredits}</span>
+            <Dropdown autoClose="outside" show={showMenu} onToggle={show => setShowMenu(show)} align="end">
+                <Dropdown.Toggle id="nav-player-dropdown" variant="" onClick={() => setShowMenu(true)}>
+                    <span id="player-credits" data-credits={playerInfo ? playerInfo.credits : ""} className="me-2">{playerCredits}</span>
                     <FaUserCircle />
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
@@ -102,7 +113,11 @@ function AppNavPlayer(props) {
                         <Timestamp value={playerInfo.joinedAt} />
                     </Dropdown.Item>
                     <Dropdown.Divider />
-                    <Dropdown.Item onClick={() => navigate("/logout")}>Logout</Dropdown.Item>
+                    <Dropdown.Item>
+                        <UserTokenItem />
+                    </Dropdown.Item>
+                    <Dropdown.Divider />
+                    <Dropdown.Item onClick={() => {setShowMenu(false); navigate("/logout")}}>Logout</Dropdown.Item>
                 </Dropdown.Menu>
             </Dropdown>
         </div>
@@ -122,5 +137,20 @@ function AppNavPlayer(props) {
                 </Dropdown.Item>
             </Dropdown.Menu>
         </Dropdown>
+    )
+}
+
+function UserTokenItem(props) {
+    const [revealToken, setRevealToken] = useState(false);
+
+    return (
+        <div onClick={() => setRevealToken(!revealToken)}>
+            {
+                revealToken ?
+                    <pre>{getAuthToken()}</pre>
+                    :
+                    "Click to reveal user token"
+            }
+        </div>
     )
 }

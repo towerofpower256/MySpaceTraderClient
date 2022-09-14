@@ -80,9 +80,9 @@ export default function CommandShipPage(props) {
         <div>
             <MyPageTitle>Command</MyPageTitle>
             <MyPageSubTitle>Ships</MyPageSubTitle>
-            <Button variant="primary" onClick={() => reloadData()}>Reload</Button>
-            <Table striped hover responsive>
+            <Table striped hover responsive className="mt-3">
                 <tbody>
+                    {!data || !data.length && <tr><td>You don't own any ships.</td></tr>}
                     {data.map((ship, idx) => {
                         return (
                             <CommandShipRow key={idx} shipId={ship.id} showTradeModal={showTradeModal} showRouteModal={showRouteModal} showManageModal={showManageModal} />

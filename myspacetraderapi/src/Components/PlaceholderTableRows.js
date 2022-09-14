@@ -9,11 +9,11 @@ export default function PlaceholderTableRows(props) {
 
     for (var iCol = 0; iCol < colCount; iCol++) {
         phRow.push(
-            <td><PlaceholderLoading shape="rect" width="100%" height="0.5em" /></td>
+            <td key={iCol}><PlaceholderLoading shape="rect" width="100%" height="0.5em" /></td>
         )
     }
     for (var iRow = 0; iRow < rowCount; iRow++) {
-        phRows.push(<tr>{phRow}</tr>);
+        phRows.push(<tr key={iRow}>{phRow}</tr>);
     }
 
     return (phRows);
