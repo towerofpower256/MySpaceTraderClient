@@ -12,6 +12,7 @@ import {
     STORAGE_STRUCTURE_TYPES,
     STORAGE_SHIP_TYPES,
     STORAGE_ROUTE_FINDER_LAST_RESULT,
+    STORAGE_ROUTE_FINDER_SETTINGS,
     STORAGE_TRADE_HISTORY,
     STORAGE_FLIGHT_PLAN_HISTORY
 } from "../Constants";
@@ -184,6 +185,18 @@ export function saveRouteFinderResults(a) {
 
 export function loadRouteFinderResults() {
     return getSessionStorageItemAsJson(STORAGE_ROUTE_FINDER_LAST_RESULT, []);
+}
+
+export function saveRouteFinderSettings(a) {
+    setSessionStorageItemAsJson(STORAGE_ROUTE_FINDER_SETTINGS, a);
+}
+
+export function loadRouteFinderSettings() {
+    return getSessionStorageItemAsJson(STORAGE_ROUTE_FINDER_SETTINGS, {
+        shipSpeed: 1,
+        shipCargoSize: 250,
+        orderBy: "trade_run_profit_per_second"
+    });
 }
 
 export function saveTradeHistory(a) {

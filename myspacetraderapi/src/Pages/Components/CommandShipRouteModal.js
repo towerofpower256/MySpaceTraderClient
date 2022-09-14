@@ -2,7 +2,7 @@ import { useState, useContext } from "react";
 import { loadPlayerShipsData, saveFlightPlanData, loadFlightPlanData } from "../../Services/LocalStorage";
 import { submitFlightPlan, attemptWarpJump } from "../../Services/SpaceTraderApi";
 import { toast } from "react-toastify";
-import { MdMoveToInbox, MdDoubleArrow } from "react-icons/md";
+import { MdMoveToInbox, MdDoubleArrow, MdTimer } from "react-icons/md";
 import { GiJerrycan } from 'react-icons/gi';
 import { FaBoxes } from "react-icons/fa";
 import { TbArrowBigRightLines } from "react-icons/tb";
@@ -10,6 +10,7 @@ import { TbArrowBigRightLines } from "react-icons/tb";
 import CommandShipLocation from "./CommandShipLocation";
 import LocationPlayerShipCountBadge from "../../Components/LocationPlayerShipCountBadge";
 import ShipFuelBadge from "../../Components/ShipFuelBadge";
+import TimeDelta from "../../Components/TimeDelta";
 
 import Badge from "react-bootstrap/esm/Badge";
 import Button from "react-bootstrap/esm/Button";
@@ -24,6 +25,7 @@ import getDestinationsFromLocation from "../../Utils/getDestinationsFromLocation
 import updateFlightPlanHistory from "../../Utils/updateFlightPlanHistory";
 import insertOrUpdate from "../../Utils/insertOrUpdate";
 import FlightPlansContextSet from "../../Contexts/FlightPlansContextSet";
+import sortCompareNumerically from "../../Utils/sortCompareNumerically";
 
 
 export default function CommandShipRouteModal(props) {
@@ -33,6 +35,8 @@ export default function CommandShipRouteModal(props) {
     const shipId = props.shipId;
     const ship = loadPlayerShipsData().find((_ship) => _ship.id === shipId);
     const destinations = (ship ? getDestinationsFromLocation(ship.location) : undefined);
+    if (Array.isArray(destinations))
+        destinations.sort((a, b) => sortCompareNumerically(a._distance, b._distance, false)); // Sort by distance
 
     function PageWrapper(props) {
         return (
@@ -120,17 +124,17 @@ export default function CommandShipRouteModal(props) {
             })
     }
 
-    function handleSuccessfulFlightPlan(_fp) {
+    function handleSuccessfulFlightPlan(newFp) {
         toast.success([
             "Flight plan submited to",
-            getLocationName(_fp.destination),
+            getLocationName(newFp.destination),
             "for",
-            prettyNumber(_fp.fuelConsumed),
+            prettyNumber(newFp.fuelConsumed),
             "fuel"
         ].join(" "));
 
-        setFlightPlans(insertOrUpdate(loadFlightPlanData(), _fp, (fp) => fp.id === _fp.id));
-        updateFlightPlanHistory(_fp);
+        setFlightPlans(insertOrUpdate(loadFlightPlanData(), newFp, (fp) => fp.id === newFp.id));
+        updateFlightPlanHistory(newFp);
     }
 
 
@@ -157,6 +161,7 @@ export default function CommandShipRouteModal(props) {
             </PageWrapper>
         )
     }
+
 
     return (
         <PageWrapper>
@@ -196,7 +201,7 @@ export default function CommandShipRouteModal(props) {
                         return (
                             <tr key={dest.symbol}>
                                 <td className="align-middle">
-                                    <span className="me-2">{getLocationName(dest)}</span>
+                                    <span className="me-2">{getLocationName(dest)}</span><LocationPlayerShipCountBadge locationId={dest.symbol} />
                                 </td>
                                 <td>
                                     <Badge bg="light" className="text-dark me-2" title="Fuel cost">
@@ -207,7 +212,10 @@ export default function CommandShipRouteModal(props) {
                                         <TbArrowBigRightLines className="me-2 fw-normal" />
                                         {prettyNumber(Math.ceil(dest._distance))}
                                     </Badge>
-                                    <LocationPlayerShipCountBadge locationId={dest.symbol} />
+                                    <Badge bg="light" className="text-dark me-2" title="Travel time">
+                                        <MdTimer className="me-2 fw-normal" />
+                                        <TimeDelta variant="hms" value={dest._travel_time * 1000} />
+                                    </Badge>
                                 </td>
                                 <td className="align-middle">
                                     <Button onClick={handleRouteClick} variant="" disabled={isWorking} data-location-id={dest.symbol}>

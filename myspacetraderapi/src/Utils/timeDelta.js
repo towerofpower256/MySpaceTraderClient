@@ -1,26 +1,23 @@
 import padZero from "./padZero";
 
-export default function timeDelta(a, b, options) {
+export default function timeDelta(delta, options) {
     if (!options) options = {};
-    if (!b) b = new Date(); // Use now
 
-    let aDate = new Date(a);
-    let bDate = new Date(b);
-
-    let diff = aDate-bDate;
-    let diffAbs = Math.abs(diff);
-
-    // TODO handle invalid times
-
-    // Allow for previous times
-    var sign = diff < 0? '-' : '';
-    diff = Math.abs(diff);
+    let deltaAbs = Math.abs(delta);
+    var sign = delta < 0 ? '-' : '';
 
     // Get time components
-    var hours = diff/3.6e6 | 0;
-    var mins  = diff%3.6e6 / 6e4 | 0;
-    var secs  = Math.round(diff%6e4 / 1e3);
+    var hours = deltaAbs / 3.6e6 | 0;
+    var mins = deltaAbs % 3.6e6 / 6e4 | 0;
+    var secs = Math.round(deltaAbs % 6e4 / 1e3);
 
     // Return formatted string
-    return sign + padZero(hours, 2) + ':' + padZero(mins, 2) + ':' + padZero(secs, 2);
+    if (options.variant === "hms") {
+        if (hours > 0) return sign + hours + "h" + padZero(mins, 2) + "m" + padZero(secs, 2) + "s";
+        if (mins > 0) return sign + mins + "m" + padZero(secs, 2) + "s";
+        return sign + secs + "s";
+    } else {
+        return sign + padZero(hours, 2) + ':' + padZero(mins, 2) + ':' + padZero(secs, 2);
+    }
+
 }

@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 import Button from "react-bootstrap/esm/Button";
 import Table from "react-bootstrap/esm/Table";
@@ -6,12 +6,11 @@ import InputGroup from "react-bootstrap/esm/InputGroup";
 import Form from "react-bootstrap/esm/Form";
 
 import MyPageSubTitle from "../../Components/MyPageSubTitle";
-import SystemsContext from "../../Contexts/SystemsContext";
-import MarketDataContext from "../../Contexts/MarketDataContext";
 import getGoodName from "../../Utils/getGoodName";
 import prettyNumber from "../../Utils/prettyNumber";
 import durationString from "../../Utils/durationString";
 import { loadGoodTypes, loadMarketData } from "../../Services/LocalStorage";
+import sortCompareAlphabetically from "../../Utils/sortCompareAlphabetically";
 
 
 export default function MarketReport(props) {
@@ -104,24 +103,6 @@ export default function MarketReport(props) {
         }
     }
 
-    /*
-    if (!systems || !Array.isArray(systems.all_locations) || !Array.isArray(systems.systems)) {
-        return (<PageWrapper>
-            No systems data.
-        </PageWrapper>)
-    }
-    */
-
-    /*
-    if (!Array.isArray(marketData)) {
-        return (<PageWrapper>
-            No market data.
-        </PageWrapper>)
-    }
-    */
-
-
-
     function ReportColHeader(props) {
         let colSortIcon = "";
         if (state.sortBy === props.name) {
@@ -149,7 +130,7 @@ export default function MarketReport(props) {
                     <InputGroup.Text id="filter-good">Good</InputGroup.Text>
                     <Form.Select aria-label="Filter by good" value={state.filterGood} onChange={(e) => setGoodFilter(e.currentTarget.value)}>
                         <option value="">(all)</option>
-                        {loadGoodTypes().map((type) => {
+                        {loadGoodTypes().sort((a, b) => sortCompareAlphabetically(a.name, b.name)).map((type) => {
                             return (
                                 <option value={type.symbol}>{type.name}</option>
                             )

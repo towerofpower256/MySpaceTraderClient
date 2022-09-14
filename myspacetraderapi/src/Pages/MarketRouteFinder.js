@@ -1,4 +1,14 @@
 import { useState, useContext, useEffect } from "react";
+import {
+    loadGoodTypes,
+    loadMarketData,
+    loadRouteFinderResults,
+    loadSystemsData,
+    saveRouteFinderResults,
+    loadRouteFinderSettings,
+    saveRouteFinderSettings
+} from "../Services/LocalStorage";
+
 import MarketDataContext from "../Contexts/MarketDataContext";
 import MarketHeader from "./Components/MarketHeader";
 import MyPageSubTitle from "../Components/MyPageSubTitle";
@@ -19,7 +29,8 @@ import sortCompareAlphabetically from "../Utils/sortCompareAlphabetically";
 import prettyNumber from "../Utils/prettyNumber";
 import getGoodName from "../Utils/getGoodName";
 import findGoodTradeRoutes from "../Utils/findGoodTradeRoutes";
-import { loadGoodTypes, loadMarketData, loadRouteFinderResults, loadSystemsData, saveRouteFinderResults } from "../Services/LocalStorage";
+
+
 
 function PageWrapper(props) {
     return (
@@ -30,25 +41,24 @@ function PageWrapper(props) {
     )
 }
 
-const STORAGE_ROUTE_FINDER_LAST_RESULT = "route_finder_last_report";
 export default function MarketRouteFinderPage(props) {
-    const [filterSection, setFilterSection] = useState({});
+    const [finderSettings, _setFinderSettings] = useState(loadRouteFinderSettings());
     const [reportData, _setReportData] = useState(loadRouteFinderResults());
-    const [shipSpeed, setShipSpeed] = useState(1);
-    const [shipCargoSize, setShipCargoSize] = useState(25);
     const [columns, setColumns] = useState(setupColumns());
     const [systemList, setSystemList] = useState([]);
-    const [filterSystem, setFilterSystem] = useState();
     const [goodList, setGoodList] = useState(loadGoodTypes().sort((a, b) => sortCompareAlphabetically(a.name, b.name)));
-    const [filterGood, setFilterGood] = useState();
-    const [orderBy, setOrderBy] = useState("profit_per_volume_per_fuel");
-    //const [marketData, setMarketData] = useContext(MarketDataContext);
+
 
     useEffect(() => {
         // On mount
         setPageTitle("Deal Finder");
         setupFilters();
     }, []);
+
+    function setFinderSettings(a) {
+        saveRouteFinderSettings(a);
+        _setFinderSettings({ ...a });
+    }
 
     function setReportData(val) {
         saveRouteFinderResults(val);
@@ -65,24 +75,24 @@ export default function MarketRouteFinderPage(props) {
     function doReport() {
         let options = {
             result_limit: 10,
-            ship_speed: shipSpeed,
-            ship_cargo_size: shipCargoSize
+            ship_speed: finderSettings.shipSpeed,
+            ship_cargo_size: finderSettings.shipCargoSize
         }
 
-        if (orderBy) options.sort_by = orderBy;
+        if (finderSettings.orderBy) options.sort_by = finderSettings.orderBy;
 
-        if (filterSystem) {
+        if (finderSettings.filterSystem) {
             let systemData = loadSystemsData();
             if (Array.isArray(systemData.systems)) {
-                let system = systemData.systems.find(s => s.symbol === filterSystem);
+                let system = systemData.systems.find(s => s.symbol === finderSettings.filterSystem);
                 if (system && Array.isArray(system.locations)) {
                     options.filter_locations = system.locations.map(loc => loc.symbol);
                 }
             }
         }
 
-        if (filterGood) {
-            options.filter_goods = [filterGood];
+        if (finderSettings.filterGood) {
+            options.filter_goods = [finderSettings.filterGood];
         }
 
         let r = findGoodTradeRoutes(loadMarketData(), options);
@@ -117,7 +127,7 @@ export default function MarketRouteFinderPage(props) {
                 <Row>
                     <Form.Group className="col-md-4 col-sm-12 mb-3">
                         <Form.Label>Order by</Form.Label>
-                        <Form.Select value={orderBy} onChange={(e) => setOrderBy(e.target.value)}>
+                        <Form.Select value={finderSettings.orderBy} onChange={(e) => { finderSettings.orderBy = e.target.value; setFinderSettings(finderSettings) }}>
                             <option value="profit_per_volume">Profit per volume</option>
                             <option value="profit_per_volume_per_fuel">Profit per volume per fuel</option>
                             <option value="trade_run_profit">Trade run profit</option>
@@ -126,14 +136,14 @@ export default function MarketRouteFinderPage(props) {
                     </Form.Group>
                     <Form.Group className="col-md-4 col-sm-12 mb-3">
                         <Form.Label>System</Form.Label>
-                        <Form.Select value={filterSystem} onChange={(e) => setFilterSystem(e.target.value)}>
+                        <Form.Select value={finderSettings.filterSystem} onChange={(e) => { finderSettings.filterSystem = e.target.value; setFinderSettings(finderSettings) }}>
                             <option value="">(all)</option>
                             {systemList.map(s => <option key={s.symbol} value={s.symbol}>{s.symbol} ({s.name})</option>)}
                         </Form.Select>
                     </Form.Group>
                     <Form.Group className="col-md-4 col-sm-12 mb-3">
                         <Form.Label>Good</Form.Label>
-                        <Form.Select value={filterGood} onChange={(e) => setFilterGood(e.target.value)}>
+                        <Form.Select value={finderSettings.filterGood} onChange={(e) => { finderSettings.filterGood = e.target.value; setFinderSettings(finderSettings); }}>
                             <option value="">(all)</option>
                             {goodList.map(g => <option key={g.symbol} value={g.symbol}>{g.name}</option>)}
                         </Form.Select>
@@ -143,11 +153,11 @@ export default function MarketRouteFinderPage(props) {
 
                     <Form.Group className="col-md-4 col-sm-12 mb-3">
                         <Form.Label>Ship speed</Form.Label>
-                        <Form.Control type="number" value={shipSpeed} onChange={(e) => setShipSpeed(e.target.value)} />
+                        <Form.Control type="number" value={finderSettings.shipSpeed} onChange={(e) => { finderSettings.shipSpeed = e.target.value; setFinderSettings(finderSettings); }} />
                     </Form.Group>
                     <Form.Group className="col-md-4 col-sm-12 mb-3">
                         <Form.Label>Ship cargo hold size</Form.Label>
-                        <Form.Control type="number" value={shipCargoSize} onChange={(e) => setShipCargoSize(e.target.value)} />
+                        <Form.Control type="number" value={finderSettings.shipCargoSize} onChange={(e) => { finderSettings.shipCargoSize = e.target.value; setFinderSettings(finderSettings); }} />
                     </Form.Group>
                 </Row>
             </Container>
@@ -217,25 +227,3 @@ function DataTableColHeader(props) {
         </th>
     )
 }
-
-/*
-function DataTableColHeader(props) {
-    let colSortIcon = "";
-    if (state.sortBy === props.name) {
-        colSortIcon = (state.sortAscending ? <>&#129083;</> : <>&#129081;</>);
-    }
-    return (
-        <th className={props.className}
-            data-col-name={props.name}
-            data-col-data-type={props.datatype}
-            active={(state.sortBy === props.name) + ""}
-            onClick={handleColumnClick}
-        >
-            <div>
-                {props.children}
-                {colSortIcon}
-            </div>
-        </th>
-    )
-}
-*/

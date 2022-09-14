@@ -105,6 +105,10 @@ export async function getSystemDockedShips(systemId) {
     return _doRequest("systems/" + systemId + "/ships", "GET");
 }
 
+export async function getGameLeaderboard() {
+    return _doRequest("game/leaderboard/net-worth", "GET");
+}
+
 export async function getSystemFlightPlans(systemId) {
     return _doRequest("systems/" + systemId + "/flight-plans", "GET");
 }

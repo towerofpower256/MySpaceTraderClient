@@ -17,6 +17,7 @@ import getSystem from "../../Utils/getSystem";
 import getLocationName from "../../Utils/getLocationName";
 import prettyNumber from "../../Utils/prettyNumber";
 import sortCompareAlphabetically from "../../Utils/sortCompareAlphabetically";
+import SystemMapDiagram from "../../Components/SystemMapDiagram";
 
 
 export default function MarketDashboardSystemInfo(props) {
@@ -52,32 +53,35 @@ export default function MarketDashboardSystemInfo(props) {
 
     return (
 
-        <Card className="w-100 mb-3">
-            <Card.Header>
-                {getLocationName(system)}
-            </Card.Header>
-            <Card.Body>
-                <Button className="me-3" variant="secondary" onClick={() => showFlightPlansModal()}>Flight plans in system</Button>
-                <Button className="me-3" variant="secondary" onClick={() => showShipsModal()}>Ships in system</Button>
-                Map goes here
-            </Card.Body>
+        <Container>
+            <Card className="w-100 mb-3">
+                <Card.Header>
+                    {getLocationName(system)}
+                </Card.Header>
+                <Card.Body>
+                    <Button className="me-2 mb-2" variant="secondary" onClick={() => showFlightPlansModal()}>Flight plans in system</Button>
+                    <Button className="me-2 mb-2" variant="secondary" onClick={() => showShipsModal()}>Ships in system</Button>
+                    <SystemMapDiagram system={system.symbol} width="300px" height="300px" />
+                </Card.Body>
 
-            <Modal show={modalState === "ships"} onHide={closeModal}>
-                <Modal.Header>Ships docked in {getLocationName(system)}</Modal.Header>
-                <Modal.Body>
-                    <ShipsInSystemModal system={system.symbol} />
-                </Modal.Body>
-            </Modal>
+                <Modal show={modalState === "ships"} onHide={closeModal}>
+                    <Modal.Header closeButton>Ships docked in {getLocationName(system)}</Modal.Header>
+                    <Modal.Body>
+                        <ShipsInSystemModal system={system.symbol} />
+                    </Modal.Body>
+                </Modal>
 
-            <Modal show={modalState === "fp"} onHide={closeModal}>
-                <Modal.Header>Active flight plans in {getLocationName(system)}</Modal.Header>
-                <Modal.Body>
-                    <FlightPlansInSystemModal system={system.symbol} />
-                </Modal.Body>
-            </Modal>
+                <Modal show={modalState === "fp"} onHide={closeModal}>
+                    <Modal.Header closeButton>
+                        Active flight plans in {getLocationName(system)}
+                    </Modal.Header>
+                    <Modal.Body>
+                        <FlightPlansInSystemModal system={system.symbol} />
+                    </Modal.Body>
+                </Modal>
 
-        </Card>
-
+            </Card>
+        </Container>
     )
 }
 
@@ -113,7 +117,7 @@ function FlightPlansInSystemModal(props) {
 
     return (
         <div>
-            <div>Flight plans: {prettyNumber(data.length)}</div>
+            <div>Flight plans: {isLoading ? "-" : prettyNumber(data.length)}</div>
             <Table striped size="sm">
                 <thead>
                     <tr>
@@ -173,7 +177,7 @@ function ShipsInSystemModal(props) {
 
     return (
         <div>
-            <div>Ships: {prettyNumber(data.length)}</div>
+            <div>Ships: {isLoading ? "-" : prettyNumber(data.length)}</div>
             <Table striped size="sm">
                 <thead>
                     <tr>

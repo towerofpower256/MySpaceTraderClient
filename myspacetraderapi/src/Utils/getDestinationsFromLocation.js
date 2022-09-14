@@ -19,8 +19,5 @@ export default function getDestinationsFromLocation(startLocationSymbol, systemD
         location._travel_time = travelTime;
     });
 
-    // Sort based on distance (shortest to largest)
-    destinations.sort((a, b) => { return a._distance - b._distance });
-
     return destinations;
 }

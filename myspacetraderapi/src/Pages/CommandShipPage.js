@@ -2,12 +2,9 @@ import { useContext, useEffect, useState } from "react";
 import { loadPlayerShipsData, savePlayerShipsData } from "../Services/LocalStorage";
 import { getShipInfo } from "../Services/SpaceTraderApi";
 
-import getLocationName from "../Utils/getLocationName";
-import prettyNumber from "../Utils/prettyNumber";
-import getShipFuelCount from "../Utils/getShipFuelCount";
-import getLocationsBySystem from "../Utils/getLocationsBySystem";
-import getLocation from "../Utils/getLocation";
-import calcTravel from "../Utils/calcTravel";
+import insertOrUpdate from "../Utils/insertOrUpdate";
+import groupBy from "../Utils/groupBy";
+import sortCompareAlphabetically from "../Utils/sortCompareAlphabetically";
 
 import CommandShipRow from "./Components/CommandShipRow";
 import CommandShipTradeModal from "./Components/CommandShipTradeModal";
@@ -19,8 +16,6 @@ import Table from "react-bootstrap/esm/Table";
 import Modal from "react-bootstrap/esm/Modal";
 import Button from "react-bootstrap/esm/Button";
 
-import insertOrUpdate from "../Utils/insertOrUpdate";
-
 
 export default function CommandShipPage(props) {
     const [data, setData] = useState(loadPlayerShipsData());
@@ -28,10 +23,12 @@ export default function CommandShipPage(props) {
     const [tradeModalState, setTradeModalState] = useState({});
     const [manageModalState, setManageModalState] = useState({});
 
-
     
     function reloadData() {
-        setData(loadPlayerShipsData());
+        let shipData = (loadPlayerShipsData() || []);
+        shipData.sort((a, b) => sortCompareAlphabetically(a.type, b.type));
+
+        setData(shipData);
     }
 
     function refreshShipData(shipId) {

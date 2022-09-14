@@ -31,7 +31,8 @@ import MarketRouteFinderPage from "./Pages/MarketRouteFinder";
 import HistoryPage from "./Pages/HistoryPage";
 import setPageTitle from "./Utils/setPageTitle";
 import CommandShipPage from "./Pages/CommandShipPage";
-import LocationsPage from "./Pages/LocationsPage";
+import GamePage from "./Pages/GamePage";
+//import LocationsPage from "./Pages/LocationsPage";
 //import MyBuggyComponent from "./Components/MyBuggyComponent";
 
 function App() {
@@ -59,10 +60,11 @@ function App() {
                 <MyErrorBoundary>
                   <LoginWrapper>
                     <Routes>
-                      <Route index element={<Navigate to="/player" />} />
+                      <Route index element={<Navigate to="/game" />} />
                       
                       <Route path="/player" element={<PlayerInfoPage />} />
                       <Route path="/command" element={<CommandShipPage />} />
+                      <Route path="/game" element={<GamePage />} />
 
                       <Route path="/market/" element={<MarketDashboardPage />} />
                       <Route path="/market/:systemid" element={<MarketDashboardPage />} />
@@ -74,10 +76,6 @@ function App() {
                       <Route path="/devtools" element={<DevToolsPage />} />
                       
                       <Route path="/history" element={<HistoryPage />} />
-
-                      <Route path="/locations" element={<LocationsPage />} />
-                      <Route path="/locations/system/:systemid" element={<LocationsPage />} />
-                      <Route path="/locations/:locationid" element={<div />} />
 
                       <Route path="/logout" element={<LogoutPage />} />
                       <Route path="*" element={<UnknownPage />}>

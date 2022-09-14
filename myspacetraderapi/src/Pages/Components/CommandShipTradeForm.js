@@ -19,20 +19,11 @@ import PlayerShipsContextSet from "../../Contexts/PlayerShipsContextSet";
 
 export default function CommandShipTradeForm(props) {
     const [tradeAmount, _setTradeAmount] = useState(0);
-    //const [tradeProgress, _setTradeProgress] = useState(0);
     const [isMounted, setMounted] = useState(true);
     const [setPlayerInfo] = useContext(PlayerInfoContextSet);
     const [setPlayerShips] = useContext(PlayerShipsContextSet);
 
     useEffect(() => () => setMounted(false), []);
-    //useEffect(() => {console.log("useEffect tradeProgress", tradeProgress);}, [tradeProgress]);
-
-    /*
-    function setTradeProgress(a) {
-        console.log("Trade progress update", a, "old", tradeProgress);
-        _setTradeProgress(a);
-    }
-    */
 
     function setTradeAmount(a) {
         if (isWorking) return;
@@ -91,8 +82,9 @@ export default function CommandShipTradeForm(props) {
             setPlayerInfo(playerInfo);
         }
 
+        const ship = stcResponse.data.ship;
         if (stcResponse.data.ship) {
-            setPlayerShips(insertOrUpdate(loadPlayerShipsData(), stcResponse.data.ship, (_ship) => _ship.id === stcResponse.data.ship.id));
+            setPlayerShips(insertOrUpdate(loadPlayerShipsData(), ship, (_ship) => _ship.id === ship.id));
         }
 
         const od = stcResponse.data.order;

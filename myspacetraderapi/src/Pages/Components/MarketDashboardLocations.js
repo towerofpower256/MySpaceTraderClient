@@ -20,6 +20,7 @@ import getGoodName from "../../Utils/getGoodName";
 import MarketDataContext from "../../Contexts/MarketDataContext";
 import TimestampCount from "../../Components/TimestampCount";
 import sortCompareAlphabetically from "../../Utils/sortCompareAlphabetically";
+import LocationPlayerShipCountBadge from "../../Components/LocationPlayerShipCountBadge";
 
 export default function MarketDashboardLocations(props) {
     let parms = useParams();
@@ -55,6 +56,9 @@ function MarketDashboardLocationCard(props) {
         <Card className="mb-3">
             <Card.Header>
                 {getLocationName(loc)}
+                <div className="float-end">
+                    <LocationPlayerShipCountBadge locationId={loc.symbol} />
+                </div>
             </Card.Header>
             <Card.Body className="p-0">
                 <ListGroup variant="flush">
@@ -103,12 +107,17 @@ function MarketDashboardLocationMarket(props) {
 
     return (
         <div>
-            <small className="float-end text-muted">
-                <TimestampCount value={locMarketData.updatedAt} placeholder="" options={{ hide_seconds: true, suffix_past: "ago" }} />
-            </small>
+
 
             <Table striped size="sm">
                 <tbody>
+                    <tr>
+                        <td>
+                            <small className="float-end text-muted">
+                                <TimestampCount value={locMarketData.updatedAt} placeholder="" options={{ hide_seconds: true, suffix_past: "ago" }} />
+                            </small>
+                        </td>
+                    </tr>
                     {locMarketData.goods.map((good, idx) => {
                         return (
                             <tr key={idx}>
