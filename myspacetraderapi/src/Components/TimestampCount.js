@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import durationString from "../Utils/durationString";
 import timeDelta from "../Utils/timeDelta";
+import calcTimeDelta from "../Utils/calcTimeDelta";
 
 
 export default function TimestampCount(props) {
@@ -22,7 +23,7 @@ export default function TimestampCount(props) {
         let _text = props.placeholder;
         if (props.value) {
             if (props.variant === "raw") {
-                _text = timeDelta(props.value, new Date(), props.options);
+                _text = timeDelta(calcTimeDelta(props.value, new Date()), props.options);
             } else {
                 _text = durationString(new Date(props.value) - new Date(), props.options);
             }

@@ -10,6 +10,7 @@ export const STORAGE_GOOD_TYPES = "good_types";
 export const STORAGE_STRUCTURE_TYPES = "structure_types";
 export const STORAGE_SHIP_TYPES = "ship_types";
 export const STORAGE_ROUTE_FINDER_LAST_RESULT = "route_finder_last_result";
+export const STORAGE_ROUTE_FINDER_SETTINGS = "route_finder_settings";
 export const STORAGE_TRADE_HISTORY = "trade_history";
 export const STORAGE_FLIGHT_PLAN_HISTORY = "flight_plan_history";
 export const STORAGE_PLAYER_INFO = "player_info";

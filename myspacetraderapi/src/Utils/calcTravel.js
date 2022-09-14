@@ -5,7 +5,7 @@ import calcTravelTime from "./calcTraveTime";
 // https://github.com/Kaishiyoku/erebos/blob/dabf5933f88446be0babaca067c5b94e9b21c7ef/src/core/flight/estimateRouteFuelCost.js
 // https://github.com/Kaishiyoku/erebos/blob/dabf5933f88446be0babaca067c5b94e9b21c7ef/src/core/flight/calculateDistance.js
 export default function calcTravel(fromLocation, toLocation, shipSpeed) {
-    if (shipSpeed) shipSpeed = 1;
+    if (!shipSpeed) shipSpeed = 1;
 
     const r = [];
     const distance = calcDistance(fromLocation.x, fromLocation.y, toLocation.x, toLocation.y);
