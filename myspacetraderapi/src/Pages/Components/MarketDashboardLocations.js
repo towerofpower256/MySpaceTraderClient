@@ -69,16 +69,15 @@ function MarketDashboardLocationCard(props) {
                 <ListGroup variant="flush">
                     <ListGroupItem>
                         <div className="float-end">X: {loc.x} Y: {loc.y}</div>
-                        <div>{loc.type}</div>
+                        <div>{humanizeString(loc.type)}</div>
 
                         <div className={"" + (!loc.allowsConstruction ? " text-muted" : "")}>
                             <TbBuildingFactory2 className="me-2" />Construction{!loc.allowsConstruction ? " not" : ""} allowed
                         </div>
-                        <div>Traits</div>
                         <div className={"fw-light" + (!Array.isArray(loc.traits) ? " text-muted" : "")}>
-                            {!Array.isArray(loc.traits) ? "Unknown" :
+                            {!Array.isArray(loc.traits) ? "Unknown traits" :
                                 (loc.traits.length < 1
-                                    ? "(none)"
+                                    ? "(no traits)"
                                     : loc.traits.map(t => <div>{getLocationTrait(t)}</div>)
                                 )}
                         </div>
