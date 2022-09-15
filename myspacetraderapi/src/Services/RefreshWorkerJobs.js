@@ -234,24 +234,6 @@ export default function RefreshWorkerJobs(props) {
         });
 
         addJob({
-            name: "good_types",
-            interval: 60480e5, // 1 week
-            func: function (resolve, reject) {
-                getAllGoodTypes()
-                    .then(stcResponse => {
-                        if (!stcResponse.ok) {
-                            reject(stcResponse.errorPretty);
-                        }
-                        saveGoodTypes(stcResponse.data.goods);
-                        resolve();
-                    })
-                    .catch(error => {
-                        reject(error);
-                    })
-            }
-        });
-
-        addJob({
             name: "structure_types",
             interval: 60480e5, // 1 week
             func: function (resolve, reject) {
