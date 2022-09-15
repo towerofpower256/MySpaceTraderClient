@@ -87,9 +87,6 @@ function App() {
                 </MyErrorBoundary>
 
               </div>
-              {humanizeString("I_AM_A_TEST")}
-              {humanizeString("i AM_a-tEst", {capitalize: "first"})}
-              {humanizeString("i AM_a-tEst", {capitalize: "word"})}
             </div>
 
           </Router>
