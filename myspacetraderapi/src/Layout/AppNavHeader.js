@@ -4,7 +4,7 @@ import Navbar from 'react-bootstrap/Navbar'
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
-import { FaUserCircle } from "react-icons/fa";
+import { FaUserCircle, FaGithub } from "react-icons/fa";
 
 import { useContext, useState } from 'react';
 import { NavLink, useNavigate } from "react-router-dom";
@@ -23,34 +23,45 @@ import Button from 'react-bootstrap/esm/Button';
 
 export default function AppNavHeader(props) {
     return (
-        <Navbar bg="light" expand="lg">
-            <Container>
-                <Navbar.Brand href="/">
-                    MySpaceTraderClient
-                </Navbar.Brand>
-                <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                <Navbar.Collapse id="basic-navbar-nav">
-                    <Nav className="me-auto">
-                        <Nav.Link as={NavLink} to="/game">Game</Nav.Link>
-                        <Nav.Link as={NavLink} to="/player">Player</Nav.Link>
-                        <Nav.Link as={NavLink} to="/command">Command</Nav.Link>
-                        <Nav.Link as={NavLink} to="/market/">Market</Nav.Link>
-                        <Nav.Link as={NavLink} to="/history">History</Nav.Link>
-                        <NavDropdown title="Help" id="basic-nav-dropdown-help">
-                            <NavDropdown.Item as={NavLink} to="/help">Help</NavDropdown.Item>
-                            <NavDropdown.Item as={NavLink} to="/help/types">Types</NavDropdown.Item>
-                        </NavDropdown>
-                    </Nav>
-                    <Navbar.Text>
-                        <SyncButton />
-                    </Navbar.Text>
-                    <Navbar.Text>
+        <div>
+            <Navbar bg="light" expand="lg">
+                <Container>
+                    <Navbar.Brand href="/">
+                        MySpaceTraderClient
+                    </Navbar.Brand>
+                    <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                    <Navbar.Collapse id="basic-navbar-nav">
+                        <Nav className="me-auto">
+                            <Nav.Link as={NavLink} to="/game">Game</Nav.Link>
+                            <Nav.Link as={NavLink} to="/player">Player</Nav.Link>
+                            <Nav.Link as={NavLink} to="/command">Command</Nav.Link>
+                            <Nav.Link as={NavLink} to="/market/">Market</Nav.Link>
+                            <Nav.Link as={NavLink} to="/history">History</Nav.Link>
+                            <NavDropdown title="Help" id="basic-nav-dropdown-help">
+                                <NavDropdown.Item as={NavLink} to="/help">Help</NavDropdown.Item>
+                                <NavDropdown.Item as={NavLink} to="/help/types">Types</NavDropdown.Item>
+                            </NavDropdown>
+                        </Nav>
 
-                        <AppNavPlayer />
-                    </Navbar.Text>
-                </Navbar.Collapse>
-            </Container>
-        </Navbar>
+                        <Navbar.Text>
+                            <SyncButton />
+                        </Navbar.Text>
+
+                        <Navbar.Text>
+                            <AppNavPlayer />
+                            <div className="w-100 text-end">
+                                <span className="text-center fw-light align-middle">
+                                    <span className="me-2">By David McDonald</span>
+                                    <a href="https://github.com/towerofpower256/MySpaceTraderClient" target="_blank"><FaGithub /></a>
+                                </span>
+                            </div>
+                        </Navbar.Text>
+                    </Navbar.Collapse>
+                </Container>
+
+            </Navbar>
+        </div>
+
     )
 }
 
@@ -117,7 +128,7 @@ function AppNavPlayer(props) {
                         <UserTokenItem />
                     </Dropdown.Item>
                     <Dropdown.Divider />
-                    <Dropdown.Item onClick={() => {setShowMenu(false); navigate("/logout")}}>Logout</Dropdown.Item>
+                    <Dropdown.Item onClick={() => { setShowMenu(false); navigate("/logout") }}>Logout</Dropdown.Item>
                 </Dropdown.Menu>
             </Dropdown>
         </div>
