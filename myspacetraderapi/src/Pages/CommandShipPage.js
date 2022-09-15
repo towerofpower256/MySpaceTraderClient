@@ -85,7 +85,7 @@ export default function CommandShipPage(props) {
                     {!data || !data.length && <tr><td>You don't own any ships.</td></tr>}
                     {data.map((ship, idx) => {
                         return (
-                            <CommandShipRow key={idx} shipId={ship.id} showTradeModal={showTradeModal} showRouteModal={showRouteModal} showManageModal={showManageModal} />
+                            <CommandShipRow key={ship.id} shipId={ship.id} showTradeModal={showTradeModal} showRouteModal={showRouteModal} showManageModal={showManageModal} />
                         )
                     })}
                 </tbody>

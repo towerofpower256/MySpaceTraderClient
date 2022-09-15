@@ -7,7 +7,8 @@ import {
     getShips,
     getAllGoodTypes,
     getAllShipTypes,
-    getAllStructureTypes
+    getAllStructureTypes,
+    getSystemLocations
 } from "../Services/SpaceTraderApi";
 import {
     loadMarketData,
@@ -17,7 +18,8 @@ import {
     saveGoodTypes,
     saveStructureTypes,
     saveShipTypes,
-    loadPlayerShipsData
+    loadPlayerShipsData,
+    loadSystemsData
 } from "../Services/LocalStorage";
 import insertOrUpdate from "../Utils/insertOrUpdate";
 import readLocations from "../Utils/readLocations";
@@ -87,10 +89,65 @@ export default function RefreshWorkerJobs(props) {
                         if (!stcResponse.ok) {
                             reject(stcResponse.errorPretty);
                         }
-                        const systemData = readLocations(stcResponse.data.systems);
-                        setSystems(systemData);
-                        //console.log("Loaded systems", systemData);
-                        resolve();
+
+                        const systemData = stcResponse.data.systems;
+                        if (!systemData) {
+                            reject("Got response, but system data is missing from response body");
+                            return;
+                        }
+
+                        setSystems(readLocations(systemData));
+
+
+                        // For each system, do the "get locations in system" API, 
+                        // because the global one doesn't include some location info, like traits.
+                        if (Array.isArray(systemData)) {
+                            systemData.reduce((prevPromise, nextJob) => {
+                                const systemId = nextJob.symbol;
+                                return prevPromise
+                                    .then(value => {
+                                        
+                                        return new Promise((_resolve, _reject) => {
+                                            console.log("Refreshing location", systemId);
+                                            getSystemLocations(systemId)
+                                            .then(stcResponse => {
+                                                if (!stcResponse.ok) {
+                                                    _reject(stcResponse.errorPretty);
+                                                    return;
+                                                }
+
+                                                const locs = stcResponse.data.locations;
+                                                if (!locs || !Array.isArray(locs)) {
+                                                    _reject("'locations' is missing from system locations response");
+                                                    return;
+                                                }
+
+                                                // Good to go, lets update
+                                                const _systemData = loadSystemsData();
+                                                const system = _systemData.systems.find(s => s.symbol === systemId);
+                                                if (system && Array.isArray(system.locations)) {
+                                                    locs.forEach(loc => {
+                                                        insertOrUpdate(system.locations, loc, systemLoc => systemLoc.symbol === loc.symbol)
+                                                    });
+                                                    
+                                                    setSystems(readLocations(_systemData.systems));
+                                                }
+                                                
+                                                setTimeout(() => _resolve(), 500);
+                                            })
+                                            .catch(error => {
+                                                console.error("Error refreshing market data", systemId, error);
+                                                _reject(error);
+                                            })
+                                        })
+                                        
+
+                                        
+                                    })
+                                    
+                            }, Promise.resolve())
+                                .then(result => resolve(result), error => reject(error)); // resolve, we're finished updating location data
+                        }
                     })
                     .catch(error => {
                         reject(error);
@@ -179,59 +236,41 @@ export default function RefreshWorkerJobs(props) {
 
                 marketsToRefresh.reduce((prevPromise, nextJob) => {
                     return prevPromise
-                    .then(value => {
-                        return new Promise((_resolve, _reject) => {
-                            console.log("Refreshing market data", nextJob);
-                            getLocationMarketplace(nextJob)
-                                .then(stcResponse => {
-                                    if (!stcResponse.ok) {
-                                        _reject(stcResponse.errorPretty);
-                                        return;
-                                    }
+                        .then(value => {
+                            return new Promise((_resolve, _reject) => {
+                                console.log("Refreshing market data", nextJob);
+                                getLocationMarketplace(nextJob)
+                                    .then(stcResponse => {
+                                        if (!stcResponse.ok) {
+                                            _reject(stcResponse.errorPretty);
+                                            return;
+                                        }
 
-                                    const newMD = stcResponse.data.marketplace;
-                                    if (!newMD) {
-                                        reject("'marketplace' is missing from response data");
-                                        return;
-                                    }
+                                        const newMD = stcResponse.data.marketplace;
+                                        if (!newMD) {
+                                            reject("'marketplace' is missing from response data");
+                                            return;
+                                        }
 
-                                    const md = { location: nextJob, updatedAt: new Date(), goods: newMD };
-                                    const _marketData = insertOrUpdate([...loadMarketData()], md, (md) => md.location == nextJob);
-                                    setMarketData(_marketData);
+                                        const md = { location: nextJob, updatedAt: new Date(), goods: newMD };
+                                        const _marketData = insertOrUpdate([...loadMarketData()], md, (md) => md.location == nextJob);
+                                        setMarketData(_marketData);
 
-                                    //setTimeout(() => { _resolve() }, 500);
-                                    _resolve();
-                                },
-                                    error => {
-                                        console.error("Error refreshing market data", nextJob, error);
-                                        _reject(error);
-                                    })
+                                        setTimeout(() => { _resolve() }, 500);
+                                        //_resolve();
+                                    },
+                                        error => {
+                                            console.error("Error refreshing market data", nextJob, error);
+                                            _reject(error);
+                                        })
+                            })
                         })
-                    })
 
                 }, Promise.resolve())
                     .then(result => resolve(result), error => reject(error)); // resolve, we're finished updating market data
 
             }
         })
-
-        addJob({
-            name: "good_types",
-            interval: 60480e5, // 1 week
-            func: function (resolve, reject) {
-                getAllGoodTypes()
-                    .then(stcResponse => {
-                        if (!stcResponse.ok) {
-                            reject(stcResponse.errorPretty);
-                        }
-                        saveGoodTypes(stcResponse.data.goods);
-                        resolve();
-                    })
-                    .catch(error => {
-                        reject(error);
-                    })
-            }
-        });
 
         addJob({
             name: "good_types",

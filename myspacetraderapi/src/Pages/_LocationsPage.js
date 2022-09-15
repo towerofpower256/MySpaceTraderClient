@@ -36,7 +36,7 @@ export default function LocationsPage(props) {
                     <Row>
                         {Array.isArray(system.locations) && system.locations.map((loc, idx) => {
                             return (
-                                <Col md={4} sm={6} xs={12} key={idx}>
+                                <Col md={4} sm={6} xs={12} key={loc.symbol}>
                                     <LocationsPageCard location={loc} />
                                 </Col>
                             )

@@ -82,7 +82,7 @@ export default function ShipNewFlightPlanForm(props) {
         destinationsHtml = destinations.map((d, idx) => {
             const distanceText = (d._distance === 0 ? "Current location" : "~ " + Math.ceil(d._distance));
             return (
-                <tr key={idx}>
+                <tr key={d.symbol}>
                     <td>{d.symbol}</td>
                     <td>{distanceText}</td>
                     <td>{d._travel_time}</td>
