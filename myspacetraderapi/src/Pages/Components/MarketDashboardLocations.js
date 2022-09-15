@@ -4,6 +4,7 @@ import { TbBuildingFactory2 } from "react-icons/tb";
 import { loadSystemsData } from "../../Services/LocalStorage";
 
 import SystemsContext from "../../Contexts/SystemsContext";
+import MarketDashboardLocationCard from "./MarketDashboardLocationCard";
 import ListGroupItem from "react-bootstrap/esm/ListGroupItem";
 import ListGroup from "react-bootstrap/esm/ListGroup";
 import Card from "react-bootstrap/esm/Card";
@@ -45,102 +46,3 @@ export default function MarketDashboardLocations(props) {
     )
 }
 
-function MarketDashboardLocationCard(props) {
-    const [systemData, setSystemData] = useContext(SystemsContext);
-    const locId = props.location;
-    const loc = getLocation(locId, systemData);
-
-    if (!loc) {
-        return (
-            <div className="d-none">Unknown location: {locId}</div>
-        )
-    }
-
-    return (
-        <Card className="mb-3">
-            <Card.Header>
-                {getLocationName(loc)}
-                <div>
-                    <LocationMarketVisibilityBadge locationId={loc.symbol} />
-                    <LocationPlayerShipCountBadge locationId={loc.symbol} />
-                </div>
-            </Card.Header>
-            <Card.Body className="p-0">
-                <ListGroup variant="flush">
-                    <ListGroupItem>
-                        <div className="float-end">X: {loc.x} Y: {loc.y}</div>
-                        <div>{humanizeString(loc.type)}</div>
-
-                        <div className={"" + (!loc.allowsConstruction ? " text-muted" : "")}>
-                            <TbBuildingFactory2 className="me-2" />Construction{!loc.allowsConstruction ? " not" : ""} allowed
-                        </div>
-                        <div className={"fw-light" + (!Array.isArray(loc.traits) ? " text-muted" : "")}>
-                            {!Array.isArray(loc.traits) ? "Unknown traits" :
-                                (loc.traits.length < 1
-                                    ? "(no traits)"
-                                    : loc.traits.map(t => <div>{getLocationTrait(t)}</div>)
-                                )}
-                        </div>
-                    </ListGroupItem>
-                    <ListGroupItem>
-                        <MarketDashboardLocationMarket location={loc.symbol} />
-                    </ListGroupItem>
-                </ListGroup>
-
-            </Card.Body>
-        </Card>
-    )
-}
-
-function MarketDashboardLocationMarket(props) {
-    const locId = props.location;
-    const [marketData, setMarketData] = useContext(MarketDataContext);
-    const locMarketData = marketData.find(md => md.location === locId);
-
-    if (!locMarketData || !Array.isArray(locMarketData.goods)) {
-        return (
-            <small className="text-muted">
-                <span className="text-muted">No data</span>
-            </small>
-        )
-    }
-
-    locMarketData.goods.sort((a, b) => sortCompareAlphabetically(a.good, b.good))
-
-    return (
-        <div>
-
-
-            <Table striped size="sm">
-                <tbody>
-                    <tr>
-                        <td>
-                            <small className="float-end text-muted">
-                                <TimestampCount value={locMarketData.updatedAt} placeholder="" options={{ hide_seconds: true, suffix_past: "ago" }} />
-                            </small>
-                        </td>
-                    </tr>
-                    {locMarketData.goods.map((good, idx) => {
-                        return (
-                            <tr key={good.symbol}>
-                                <td>
-                                    <div className="row" key={good.symbol}>
-                                        <div className="col-12">
-                                            <span className="fw-bold">{getGoodName(good.symbol)}</span>
-                                        </div>
-
-                                        <div className="col-6 text-primary">Buy: <span className="fw-light">${prettyNumber(good.purchasePricePerUnit)}</span></div>
-                                        <div className="col-6">Qty: <span className="fw-light">{prettyNumber(good.quantityAvailable)}</span></div>
-                                        <div className="col-6 text-success">Sell: <span className="fw-light">${prettyNumber(good.sellPricePerUnit)}</span></div>
-                                        <div className="col-6">Spread: <span className="fw-light">&plusmn; ${prettyNumber(good.spread)}</span></div>
-
-                                    </div>
-                                </td>
-                            </tr>
-                        )
-                    })}
-                </tbody>
-            </Table>
-        </div>
-    )
-}

@@ -33,6 +33,7 @@ import setPageTitle from "./Utils/setPageTitle";
 import CommandShipPage from "./Pages/CommandShipPage";
 import GamePage from "./Pages/GamePage";
 import humanizeString from "./Utils/humanizeString";
+import LocationPage from "./Pages/LocationPage";
 //import LocationsPage from "./Pages/LocationsPage";
 //import MyBuggyComponent from "./Components/MyBuggyComponent";
 
@@ -76,6 +77,8 @@ function App() {
                       <Route path="/help/types" element={<HelpTypesPage />} />
                       <Route path="/devtools" element={<DevToolsPage />} />
                       
+                      <Route path="/locations/:locationid" element={<LocationPage />} />
+
                       <Route path="/history" element={<HistoryPage />} />
 
                       <Route path="/logout" element={<LogoutPage />} />
