@@ -21,6 +21,8 @@ import MarketDataContext from "../../Contexts/MarketDataContext";
 import TimestampCount from "../../Components/TimestampCount";
 import sortCompareAlphabetically from "../../Utils/sortCompareAlphabetically";
 import LocationPlayerShipCountBadge from "../../Components/LocationPlayerShipCountBadge";
+import Badge from "react-bootstrap/esm/Badge";
+import LocationMarketVisibilityBadge from "../../Components/LocationMarketVisibilityBadge";
 
 export default function MarketDashboardLocations(props) {
     let parms = useParams();
@@ -56,7 +58,8 @@ function MarketDashboardLocationCard(props) {
         <Card className="mb-3">
             <Card.Header>
                 {getLocationName(loc)}
-                <div className="float-end">
+                <div>
+                    <LocationMarketVisibilityBadge locationId={loc.symbol} />
                     <LocationPlayerShipCountBadge locationId={loc.symbol} />
                 </div>
             </Card.Header>
@@ -66,8 +69,8 @@ function MarketDashboardLocationCard(props) {
                         <div className="float-end">X: {loc.x} Y: {loc.y}</div>
                         <div>{loc.type}</div>
 
-                        <div className={"" + (!loc.allowsConstruction ? "" : " text-muted")}>
-                            <TbBuildingFactory2 className="me-2" />Construction{loc.allowsConstruction ? " not" : ""} allowed
+                        <div className={"" + (!loc.allowsConstruction ? " text-muted" : "")}>
+                            <TbBuildingFactory2 className="me-2" />Construction{!loc.allowsConstruction ? " not" : ""} allowed
                         </div>
                     </ListGroupItem>
                     <ListGroupItem>

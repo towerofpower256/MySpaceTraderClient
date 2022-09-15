@@ -26,6 +26,7 @@ import updateFlightPlanHistory from "../../Utils/updateFlightPlanHistory";
 import insertOrUpdate from "../../Utils/insertOrUpdate";
 import FlightPlansContextSet from "../../Contexts/FlightPlansContextSet";
 import sortCompareNumerically from "../../Utils/sortCompareNumerically";
+import LocationMarketVisibilityBadge from "../../Components/LocationMarketVisibilityBadge";
 
 
 export default function CommandShipRouteModal(props) {
@@ -201,7 +202,11 @@ export default function CommandShipRouteModal(props) {
                         return (
                             <tr key={dest.symbol}>
                                 <td className="align-middle">
-                                    <span className="me-2">{getLocationName(dest)}</span><LocationPlayerShipCountBadge locationId={dest.symbol} />
+                                    <span className="me-2">{getLocationName(dest)}</span>
+                                    <div>
+                                        <LocationMarketVisibilityBadge locationId={dest.symbol} />
+                                        <LocationPlayerShipCountBadge locationId={dest.symbol} />
+                                    </div>
                                 </td>
                                 <td>
                                     <Badge bg="light" className="text-dark me-2" title="Fuel cost">
