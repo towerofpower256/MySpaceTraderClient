@@ -119,7 +119,7 @@ function MarketPageSystem(props) {
 
         items = _locations.map((location, idx) => {
             return (
-                <Col md={3} sm={6} xs={12} key={idx}>
+                <Col lg={3} md={4} sm={6} xs={12} key={location.symbol}>
                     <MarketPageSystemCard location={location} key={location.symbol} />
                 </Col>
             )

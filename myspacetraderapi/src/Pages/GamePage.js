@@ -59,9 +59,9 @@ function GameLeaderboard(props) {
     }
 
     return (
-        <div>
+        <div className="mb-3">
             <h2>Leaderboard</h2>
-            <Table>
+            <Table striped size="sm" responsive>
                 <thead>
                     <tr>
                         <th>Rank</th>
@@ -115,7 +115,7 @@ function GameState(props) {
     }
 
     return (
-        <div className="w-100 text-center">
+        <div className="w-100 text-center mb-3">
             <h2>Game Status</h2>
             {isLoading ?
                 <PlaceholderLoading shape="rect" width="100%" height="3em" />

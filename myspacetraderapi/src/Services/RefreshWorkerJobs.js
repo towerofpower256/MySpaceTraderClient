@@ -199,8 +199,8 @@ export default function RefreshWorkerJobs(props) {
                                     const _marketData = insertOrUpdate([...loadMarketData()], md, (md) => md.location == nextJob);
                                     setMarketData(_marketData);
 
-                                    //setTimeout(() => { _resolve() }, 500);
-                                    _resolve();
+                                    setTimeout(() => { _resolve() }, 500);
+                                    //_resolve();
                                 },
                                     error => {
                                         console.error("Error refreshing market data", nextJob, error);

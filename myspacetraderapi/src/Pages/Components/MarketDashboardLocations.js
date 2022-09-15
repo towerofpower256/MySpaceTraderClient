@@ -31,7 +31,7 @@ export default function MarketDashboardLocations(props) {
             <Row>
                 {locations.map((loc, idx) => {
                     return (
-                        <Col md={3} sm={6} xs={12} key={idx}>
+                        <Col lg={3} md={4} sm={6} xs={12} key={loc.symbol}>
                             <MarketDashboardLocationCard location={loc.symbol} />
                         </Col>
                     )
@@ -120,7 +120,7 @@ function MarketDashboardLocationMarket(props) {
                     </tr>
                     {locMarketData.goods.map((good, idx) => {
                         return (
-                            <tr key={idx}>
+                            <tr key={good.symbol}>
                                 <td>
                                     <div className="row" key={good.symbol}>
                                         <div className="col-12">

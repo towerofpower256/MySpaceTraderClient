@@ -89,7 +89,7 @@ export default function CommandShipManageModal(props) {
                     {Array.isArray(ship.cargo) &&
                         ship.cargo.map((c, idx) => {
                             return (
-                                <tr key={idx} className="align-middle">
+                                <tr key={c.good} className="align-middle">
                                     <td className="w-auto">{getGoodName(c.good)}</td>
                                     <td>{prettyNumber(c.quantity)}</td>
                                     <td>{prettyNumber(c.totalVolume)}</td>
