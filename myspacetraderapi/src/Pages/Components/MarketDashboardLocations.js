@@ -23,6 +23,8 @@ import sortCompareAlphabetically from "../../Utils/sortCompareAlphabetically";
 import LocationPlayerShipCountBadge from "../../Components/LocationPlayerShipCountBadge";
 import Badge from "react-bootstrap/esm/Badge";
 import LocationMarketVisibilityBadge from "../../Components/LocationMarketVisibilityBadge";
+import humanizeString from "../../Utils/humanizeString";
+import getLocationTrait from "../../Utils/getLocationTrait";
 
 export default function MarketDashboardLocations(props) {
     let parms = useParams();
@@ -72,14 +74,12 @@ function MarketDashboardLocationCard(props) {
                         <div className={"" + (!loc.allowsConstruction ? " text-muted" : "")}>
                             <TbBuildingFactory2 className="me-2" />Construction{!loc.allowsConstruction ? " not" : ""} allowed
                         </div>
-                    </ListGroupItem>
-                    <ListGroupItem>
                         <div>Traits</div>
-                        <div className={!Array.isArray(loc.traits) && "text-muted"}>
+                        <div className={"fw-light" + (!Array.isArray(loc.traits) ? " text-muted" : "")}>
                             {!Array.isArray(loc.traits) ? "Unknown" :
                                 (loc.traits.length < 1
                                     ? "(none)"
-                                    : loc.traits.join(", ")
+                                    : loc.traits.map(t => <div>{getLocationTrait(t)}</div>)
                                 )}
                         </div>
                     </ListGroupItem>

@@ -105,6 +105,14 @@ export async function getSystemDockedShips(systemId) {
     return _doRequest("systems/" + systemId + "/ships", "GET");
 }
 
+export async function getSystemFlightPlans(systemId) {
+    return _doRequest("systems/" + systemId + "/flight-plans", "GET");
+}
+
+export async function getSystemLocations(systemId) {
+    return _doRequest("systems/" + systemId + "/locations", "GET");
+}
+
 export async function getGameLeaderboard() {
     return _doRequest("game/leaderboard/net-worth", "GET");
 }
@@ -113,9 +121,7 @@ export async function registerUsername(username) {
     return _doRequest("users/" + username + "/claim", "POST", { ignore_auth: true })
 }
 
-export async function getSystemFlightPlans(systemId) {
-    return _doRequest("systems/" + systemId + "/flight-plans", "GET");
-}
+
 export async function placeBuySellOrderHelper(action, shipID, goodID, quantity, loadingSpeed, onPageComplete) {
     return new Promise(async (resolve, reject) => {
         try {
