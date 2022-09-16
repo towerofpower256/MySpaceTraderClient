@@ -18,6 +18,8 @@ import ShipFuelBadge from "../../Components/ShipFuelBadge";
 
 import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
+import ShipNameBadge from "../../Components/ShipNameBadge";
+import ShipLoadingSpeedBadge from "../../Components/ShipLoadingSpeedBadge";
 
 export default function CommandShipRow(props) {
     const [playerShips, setPlayerShips] = useContext(PlayerShipsContext);
@@ -39,6 +41,7 @@ export default function CommandShipRow(props) {
             <td className="align-middle">
                 <div className="d-flex flex-row flex-wrap">
                     <div>
+                        <ShipNameBadge ship={ship} />
                         <div className="fw-bold me-3">{ship.type}</div>
                         <div className="text-muted">{ship.manufacturer}</div>
                     </div>
@@ -46,12 +49,8 @@ export default function CommandShipRow(props) {
                         <div>
                             <ShipCargoBadge ship={ship} />
                             <ShipFuelBadge ship={ship} />
-                            <Badge bg="light" title="Loading speed" className="text-dark fw-light me-2">
-                                <MdMoveToInbox className="me-2" />{ship.loadingSpeed}
-                            </Badge>
-                            <Badge bg="light" title="Speed" className="text-dark fw-light me-2">
-                                <MdDoubleArrow className="me-2" />{ship.speed}
-                            </Badge>
+                            <ShipLoadingSpeedBadge ship={ship} />
+                            <ShipLoadingSpeedBadge ship={ship} />
                         </div>
                     </div>
                 </div>

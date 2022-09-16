@@ -19,6 +19,11 @@ import getGoodName from "../../Utils/getGoodName";
 import getShipFuelCount from "../../Utils/getShipFuelCount";
 import sortCompareAlphabetically from "../../Utils/sortCompareAlphabetically";
 import getShipCargoCount from "../../Utils/getShipCargoCount";
+import ShipNameBadge from "../../Components/ShipNameBadge";
+import ShipCargoBadge from "../../Components/ShipCargoBadge";
+import ShipFuelBadge from "../../Components/ShipFuelBadge";
+import ShipLoadingSpeedBadge from "../../Components/ShipLoadingSpeedBadge";
+
 
 export default function CommandShipTradeModal(props) {
     const [isWorking, setWorking] = useState(false);
@@ -39,7 +44,9 @@ export default function CommandShipTradeModal(props) {
     function PageWrapper(props) {
         return (
             <>
-                <Modal.Header closeButton>Trading {ship && ship.type}</Modal.Header>
+                <Modal.Header closeButton>
+                    <span className="me-2">Trading {ship && ship.type}</span><ShipNameBadge ship={ship} />
+                </Modal.Header>
                 <Modal.Body>
                     {props.children}
                 </Modal.Body>
@@ -77,22 +84,14 @@ export default function CommandShipTradeModal(props) {
                 </Badge>
             </div>
             <div>
-                <Badge bg="light" title="Cargo / Max Cargo" className="text-dark me-2  fw-normal">
-                    <FaBoxes className="me-2" />{prettyNumber(ship.maxCargo - ship.spaceAvailable)} / {prettyNumber(ship.maxCargo)}
-                </Badge>
-                <Badge bg="light" title="Fuel" className="text-dark me-2  fw-normal">
-                    <GiJerrycan className="me-2" />{prettyNumber(getShipFuelCount(ship))}
-                </Badge>
-                <Badge bg="light" title="Loading speed" className="text-dark me-2  fw-normal">
-                    <MdMoveToInbox className="me-2" />{prettyNumber(ship.loadingSpeed)}
-                </Badge>
-                <Badge bg="light" title="Speed" className="text-dark me-2  fw-normal">
-                    <MdDoubleArrow className="me-2" />{ship.speed}
-                </Badge>
+                <ShipCargoBadge ship={ship} />
+                <ShipFuelBadge ship={ship} />
+                <ShipLoadingSpeedBadge ship={ship} />
+                <ShipLoadingSpeedBadge ship={ship} />
             </div>
             {selectedGood && <div className="mu-3">
                 <hr />
-                <CommandShipTradeGoodCard marketData={selectedGood} ship={ship}/>
+                <CommandShipTradeGoodCard marketData={selectedGood} ship={ship} />
                 <Button variant="" onClick={() => setSelectedGood(undefined)}>&lt;&lt;&lt; Select a different good</Button>
             </div>}
             <hr />
@@ -183,11 +182,11 @@ function CommandShipTradeGoodCard(props) {
                 <Badge bg="light" className="text-dark fw-normal me-2" title="Quantity available at location">
                     Qty {prettyNumber(md.quantityAvailable)}
                 </Badge>
-                <Badge bg="light" className={"fw-normal me-2"+(getShipCargoCount(ship, md.symbol) === 0 ? " text-muted": " text-dark")}>
+                <Badge bg="light" className={"fw-normal me-2" + (getShipCargoCount(ship, md.symbol) === 0 ? " text-muted" : " text-dark")}>
                     <FaBoxes className="me-2" />
                     {prettyNumber(getShipCargoCount(ship, md.symbol))} in cargo
                 </Badge>
-                
+
             </div>
             <div>
                 <Badge bg="light" className="text-success fw-normal me-2">Buy ${prettyNumber(md.purchasePricePerUnit)}</Badge>

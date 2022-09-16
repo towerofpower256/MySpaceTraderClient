@@ -27,6 +27,7 @@ import insertOrUpdate from "../../Utils/insertOrUpdate";
 import FlightPlansContextSet from "../../Contexts/FlightPlansContextSet";
 import sortCompareNumerically from "../../Utils/sortCompareNumerically";
 import LocationMarketVisibilityBadge from "../../Components/LocationMarketVisibilityBadge";
+import ShipNameBadge from "../../Components/ShipNameBadge";
 
 
 export default function CommandShipRouteModal(props) {
@@ -42,7 +43,9 @@ export default function CommandShipRouteModal(props) {
     function PageWrapper(props) {
         return (
             <>
-                <Modal.Header closeButton>Routing {ship && ship.type}</Modal.Header>
+                <Modal.Header closeButton>
+                    <span className="me-2">Routing {ship && ship.type}</span><ShipNameBadge ship={ship} />
+                </Modal.Header>
                 <Modal.Body>
                     {props.children}
                 </Modal.Body>

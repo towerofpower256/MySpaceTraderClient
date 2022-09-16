@@ -13,6 +13,7 @@ import MarketDataContext from "./Contexts/MarketDataContext";
 import AppSettingsContext from "./Contexts/AppSettingsContext";
 import RefreshWorkerContext from "./Contexts/RefreshWorkerContext";
 import RefreshWorker from "./Services/RefreshWorker";
+import populateShipNames from "./Utils/populateShipNames";
 
 import {
     getAuthToken,
@@ -26,8 +27,6 @@ import {
     loadAppSettings,
     saveSystemsData,
     loadSystemsData,
-    saveSystemsLastLoad,
-    loadSystemsLastLoad,
     saveFlightPlanData,
     loadFlightPlanData,
     savePlayerInfo,
@@ -69,6 +68,7 @@ export default function ContextContainer(props) {
     }
 
     function setPlayerShips(a) {
+        populateShipNames(a);
         savePlayerShipsData(a);
         _setPlayerShips(a);
     }
