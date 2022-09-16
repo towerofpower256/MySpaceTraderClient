@@ -144,7 +144,7 @@ export default function CommandShipPage(props) {
             </Container>
             <Table striped hover responsive className="mt-3">
                 <tbody>
-                    <tr><td colspan="100%" className="fw-light">Ships: {prettyNumber(data.length)}</td></tr>
+                    <tr><td colSpan="100%" className="fw-light">Ships: {prettyNumber(data.length)}</td></tr>
                     {data.map((ship, idx) => {
                         return (
                             <CommandShipRow key={idx} shipId={ship.id} showTradeModal={showTradeModal} showRouteModal={showRouteModal} showManageModal={showManageModal} />
