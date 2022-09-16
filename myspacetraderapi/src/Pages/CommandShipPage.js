@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { loadPlayerShipsData, savePlayerShipsData } from "../Services/LocalStorage";
+import { loadPlayerShipsData, savePlayerShipsData, loadSystemsData } from "../Services/LocalStorage";
 import { getShipInfo } from "../Services/SpaceTraderApi";
 
 import insertOrUpdate from "../Utils/insertOrUpdate";
@@ -15,20 +15,59 @@ import MyPageSubTitle from "../Components/MyPageSubTitle";
 import Table from "react-bootstrap/esm/Table";
 import Modal from "react-bootstrap/esm/Modal";
 import Button from "react-bootstrap/esm/Button";
+import getShipsInSystem from "../Utils/getShipsInSystem";
+import Form from "react-bootstrap/esm/Form";
+import Container from "react-bootstrap/esm/Container";
+import Row from "react-bootstrap/esm/Row";
+import prettyNumber from "../Utils/prettyNumber";
 
 
 export default function CommandShipPage(props) {
-    const [data, setData] = useState(loadPlayerShipsData());
     const [routeModalState, setRouteModalState] = useState({});
     const [tradeModalState, setTradeModalState] = useState({});
     const [manageModalState, setManageModalState] = useState({});
+    const [listSettings, setListSettings] = useState({ sort: "type" });
+    const [systemList, setSystemList] = useState([]);
+    const [data, setData] = useState(getShipList());
 
-    
+    useEffect(() => {
+        reloadData();
+    }, [listSettings]);
+
+    useEffect(() => {
+        // Setup system list
+        let systemData = loadSystemsData();
+        if (Array.isArray(systemData.systems)) {
+            setSystemList(systemData.systems.map((s) => { return { name: s.name, symbol: s.symbol }; }));
+        }
+    }, []);
+
     function reloadData() {
-        let shipData = (loadPlayerShipsData() || []);
-        shipData.sort((a, b) => sortCompareAlphabetically(a.type, b.type));
+        setData(getShipList());
+    }
 
-        setData(shipData);
+    function getShipList() {
+        let data = loadPlayerShipsData();
+
+        // Filter
+        if (listSettings.filterSystem) data = getShipsInSystem(listSettings.filterSystem, data);
+        if (listSettings.search) {
+            const searchParm = ("" + listSettings.search).toLowerCase();
+            data = data.filter(s => { return ("" + s.type).toLowerCase().startsWith(searchParm) || ("" + s.manufacturer).toLowerCase().startsWith(searchParm) } );
+        }
+
+        // Sort
+        if (listSettings.sort === "type") {
+            data.sort((a, b) => sortCompareAlphabetically(a.type, b.type));
+        }
+
+        // Done
+        return data;
+    }
+
+    function setListSetting(key, value) {
+        listSettings[key] = value;
+        setListSettings({ ...listSettings });
     }
 
     function refreshShipData(shipId) {
@@ -80,12 +119,35 @@ export default function CommandShipPage(props) {
         <div>
             <MyPageTitle>Command</MyPageTitle>
             <MyPageSubTitle>Ships</MyPageSubTitle>
+            <Container>
+                <Row>
+                    <Form.Group className="col-sm-12 col-md-4 mb-3">
+                        <Form.Label>Search</Form.Label>
+                        <Form.Control type="text" className="w-100" value={listSettings.search} onChange={(e) => { setListSetting("search", e.target.value) }}>
+
+                        </Form.Control>
+                    </Form.Group>
+                    <Form.Group className="col-sm-12 col-md-4 mb-3">
+                        <Form.Label>System</Form.Label>
+                        <Form.Select value={listSettings.filterSystem} onChange={(e) => { setListSetting("filterSystem", e.target.value) }}>
+                            <option value="">(all)</option>
+                            {systemList.map(s => <option key={s.symbol} value={s.symbol}>{s.symbol} ({s.name})</option>)}
+                        </Form.Select>
+                    </Form.Group>
+                    <Form.Group className="col-sm-12 col-md-4 mb-3">
+                        <Form.Label>Sort by</Form.Label>
+                        <Form.Select value={listSettings.sort} onChange={(e) => { setListSetting("sort", e.target.value) }}>
+                            <option value="type">Ship type</option>
+                        </Form.Select>
+                    </Form.Group>
+                </Row>
+            </Container>
             <Table striped hover responsive className="mt-3">
                 <tbody>
-                    {!data || !data.length && <tr><td>You don't own any ships.</td></tr>}
+                    <tr><td colSpan="100%" className="fw-light">Ships: {prettyNumber(data.length)}</td></tr>
                     {data.map((ship, idx) => {
                         return (
-                            <CommandShipRow key={ship.id} shipId={ship.id} showTradeModal={showTradeModal} showRouteModal={showRouteModal} showManageModal={showManageModal} />
+                            <CommandShipRow key={idx} shipId={ship.id} showTradeModal={showTradeModal} showRouteModal={showRouteModal} showManageModal={showManageModal} />
                         )
                     })}
                 </tbody>
@@ -94,8 +156,8 @@ export default function CommandShipPage(props) {
             <Modal show={manageModalState.show} onHide={() => closeManageModal()}>
                 <CommandShipManageModal
                     shipId={manageModalState.shipId}
-                    onComplete={() => { closeManageModal(); reloadData(); }} 
-                    close={closeManageModal}/>
+                    onComplete={() => { closeManageModal(); reloadData(); }}
+                    close={closeManageModal} />
             </Modal>
 
 
@@ -111,20 +173,9 @@ export default function CommandShipPage(props) {
             <Modal show={tradeModalState.show} onHide={() => closeTradeModal()}>
                 <CommandShipTradeModal
                     shipId={tradeModalState.shipId}
-                    onComplete={() => { closeTradeModal(); reloadData(); }} 
-                    close={closeTradeModal}/>
+                    onComplete={() => { closeTradeModal(); reloadData(); }}
+                    close={closeTradeModal} />
             </Modal>
         </div>
     )
 }
-
-
-
-
-
-
-
-
-
-
-

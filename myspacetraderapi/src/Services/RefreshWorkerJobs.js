@@ -41,6 +41,7 @@ export default function RefreshWorkerJobs(props) {
 
     // On mount
     useEffect(() => {
+        /*
         addJob({
             name: "flight_plan_cleaner",
             interval: 1000, // 1 second
@@ -61,6 +62,7 @@ export default function RefreshWorkerJobs(props) {
                 resolve();
             }
         });
+        */
 
         addJob({
             name: "player_info",

@@ -34,6 +34,7 @@ import {
     loadPlayerInfo
 } from "./Services/LocalStorage";
 import updateFlightPlanHistory from "./Utils/updateFlightPlanHistory";
+import FlightPlanCleanerWorker from "./Services/FlightPlanCleanerWorker";
 
 export default function ContextContainer(props) {
     const [isLoggedIn, setLoggedIn] = useState(!!getAuthToken()); // User is considered logged in if there's an auth token in storage
@@ -105,6 +106,7 @@ export default function ContextContainer(props) {
                                             <MarketDataContext.Provider value={[marketData, setMarketData]}>
                                                 <RefreshWorkerContext.Provider value={[refreshWorkerState, setRefreshWorkerState]}>
                                                     <RefreshWorker />
+                                                    <FlightPlanCleanerWorker />
                                                     {props.children}
                                                 </RefreshWorkerContext.Provider>
                                             </MarketDataContext.Provider>

@@ -60,7 +60,7 @@ export default function MarketDashboardLocationCard(props) {
                             {!Array.isArray(loc.traits) ? "Unknown traits" :
                                 (loc.traits.length < 1
                                     ? "(no traits)"
-                                    : loc.traits.map(t => <div>{getLocationTrait(t)}</div>)
+                                    : loc.traits.map(t => <div key={t}>{getLocationTrait(t)}</div>)
                                 )}
                         </div>
                     </ListGroupItem>
