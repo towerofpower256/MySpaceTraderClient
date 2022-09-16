@@ -16,6 +16,9 @@ import CommandShipLocation from "./CommandShipLocation";
 import ShipCargoBadge from "../../Components/ShipCargoBadge";
 import ShipFuelBadge from "../../Components/ShipFuelBadge";
 
+import Row from "react-bootstrap/esm/Row";
+import Col from "react-bootstrap/esm/Col";
+
 export default function CommandShipRow(props) {
     const [playerShips, setPlayerShips] = useContext(PlayerShipsContext);
     const shipId = props.shipId;
@@ -34,22 +37,27 @@ export default function CommandShipRow(props) {
     return (
         <tr data-ship={shipId}>
             <td className="align-middle">
-                <div>
-                    <span className="fw-bold me-3">{ship.type}</span>
-                    <ShipCargoBadge ship={ship} />
-                    <ShipFuelBadge ship={ship} />
-                    <Badge bg="light" title="Loading speed" className="text-dark me-2">
-                        <MdMoveToInbox className="me-2" />{ship.loadingSpeed}
-                    </Badge>
-                    <Badge bg="light" title="Speed" className="text-dark me-2">
-                        <MdDoubleArrow className="me-2" />{ship.speed}
-                    </Badge>
+                <div className="d-flex flex-row flex-wrap">
+                    <div>
+                        <div className="fw-bold me-3">{ship.type}</div>
+                        <div className="text-muted">{ship.manufacturer}</div>
+                    </div>
+                    <div className="d-flex">
+                        <div>
+                            <ShipCargoBadge ship={ship} />
+                            <ShipFuelBadge ship={ship} />
+                            <Badge bg="light" title="Loading speed" className="text-dark fw-light me-2">
+                                <MdMoveToInbox className="me-2" />{ship.loadingSpeed}
+                            </Badge>
+                            <Badge bg="light" title="Speed" className="text-dark fw-light me-2">
+                                <MdDoubleArrow className="me-2" />{ship.speed}
+                            </Badge>
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <span className="text-muted">{ship.manufacturer}</span>
 
 
-                </div>
+
             </td>
             <td className="align-middle">
                 <CommandShipLocation ship={ship} />
@@ -59,7 +67,7 @@ export default function CommandShipRow(props) {
                     onClick={() => { props.showTradeModal(shipId) }}
                 >Trade</Button>
                 <Button className="text-primary" variant=""
-                    onClick={() => { props.showManageModal(shipId)}}
+                    onClick={() => { props.showManageModal(shipId) }}
                 >Manage</Button>
                 <Button className="text-primary" variant=""
                     onClick={() => { props.showRouteModal(shipId) }}
