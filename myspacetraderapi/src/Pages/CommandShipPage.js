@@ -3,7 +3,6 @@ import { loadPlayerShipsData, savePlayerShipsData, loadSystemsData } from "../Se
 import { getShipInfo } from "../Services/SpaceTraderApi";
 
 import insertOrUpdate from "../Utils/insertOrUpdate";
-import groupBy from "../Utils/groupBy";
 import sortCompareAlphabetically from "../Utils/sortCompareAlphabetically";
 
 import CommandShipRow from "./Components/CommandShipRow";
@@ -14,7 +13,6 @@ import MyPageTitle from "../Components/MyPageTitle";
 import MyPageSubTitle from "../Components/MyPageSubTitle";
 import Table from "react-bootstrap/esm/Table";
 import Modal from "react-bootstrap/esm/Modal";
-import Button from "react-bootstrap/esm/Button";
 import getShipsInSystem from "../Utils/getShipsInSystem";
 import Form from "react-bootstrap/esm/Form";
 import Container from "react-bootstrap/esm/Container";
@@ -53,7 +51,11 @@ export default function CommandShipPage(props) {
         if (listSettings.filterSystem) data = getShipsInSystem(listSettings.filterSystem, data);
         if (listSettings.search) {
             const searchParm = ("" + listSettings.search).toLowerCase();
-            data = data.filter(s => { return ("" + s.type).toLowerCase().startsWith(searchParm) || ("" + s.manufacturer).toLowerCase().startsWith(searchParm) } );
+            data = data.filter(s => {
+                return ("" + s.type).toLowerCase().startsWith(searchParm)
+                    || ("" + s.manufacturer).toLowerCase().startsWith(searchParm)
+                    || ("" + s._name).toLowerCase().startsWith(searchParm)
+            });
         }
 
         // Sort

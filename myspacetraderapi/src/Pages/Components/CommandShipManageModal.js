@@ -6,13 +6,16 @@
 
 import { useState, useEffect, useContext } from "react";
 import { loadPlayerShipsData } from "../../Services/LocalStorage";
-import { MdMoveToInbox, MdMoveToArrow, MdDoubleArrow } from "react-icons/md";
+import { MdMoveToInbox, MdDoubleArrow } from "react-icons/md";
 import { TbTrashX } from "react-icons/tb";
 import { jettisonCargo, transferCargoBetweenShips, scrapShip } from "../../Services/SpaceTraderApi";
 import { toast } from "react-toastify";
 import CommandShipLocation from "./CommandShipLocation";
 import ShipFuelBadge from "../../Components/ShipFuelBadge";
 import ShipCargoBadge from "../../Components/ShipCargoBadge";
+import ShipNameBadge from "../../Components/ShipNameBadge";
+import ShipLoadingSpeedBadge from "../../Components/ShipLoadingSpeedBadge";
+import ShipSpeedBadge from "../../Components/ShipSpeedBadge";
 import Modal from "react-bootstrap/esm/Modal";
 import Badge from "react-bootstrap/esm/Badge";
 import Button from "react-bootstrap/esm/Button";
@@ -27,6 +30,7 @@ import getShipName from "../../Utils/getShipName";
 import insertOrUpdate from "../../Utils/insertOrUpdate";
 import PlayerShipsContextSet from "../../Contexts/PlayerShipsContextSet";
 
+
 export default function CommandShipManageModal(props) {
     const [subForm, setSubForm] = useState();
     const [selectedCargo, setSelectedCargo] = useState();
@@ -36,7 +40,9 @@ export default function CommandShipManageModal(props) {
     function PageWrapper(props) {
         return (
             <>
-                <Modal.Header closeButton>Managing {ship && ship.type}</Modal.Header>
+                <Modal.Header closeButton>
+                    <span className="me-2">Managing {ship && ship.type}</span><ShipNameBadge ship={ship} />
+                </Modal.Header>
                 <Modal.Body>
                     {props.children}
                 </Modal.Body>
@@ -67,12 +73,8 @@ export default function CommandShipManageModal(props) {
             <div>
                 <ShipCargoBadge ship={ship} />
                 <ShipFuelBadge ship={ship} />
-                <Badge bg="light" title="Loading speed" className="text-dark me-2 fw-normal">
-                    <MdMoveToInbox className="me-2" />{prettyNumber(ship.loadingSpeed)}
-                </Badge>
-                <Badge bg="light" title="Speed" className="text-dark me-2 fw-normal">
-                    <MdDoubleArrow className="me-2" />{ship.speed}
-                </Badge>
+                <ShipLoadingSpeedBadge ship={ship} />
+                <ShipSpeedBadge ship={ship} />
             </div>
             <hr />
             <div>Cargo</div>
