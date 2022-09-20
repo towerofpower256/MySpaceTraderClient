@@ -4,7 +4,9 @@ import Navbar from 'react-bootstrap/Navbar'
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
+import Form from 'react-bootstrap/Form';
 import { FaUserCircle, FaGithub } from "react-icons/fa";
+import { CgWebsite } from "react-icons/cg";
 
 import { useContext, useState } from 'react';
 import { NavLink, useNavigate } from "react-router-dom";
@@ -43,18 +45,19 @@ export default function AppNavHeader(props) {
                             </NavDropdown>
                         </Nav>
 
-                        <Navbar.Text>
+                        <Navbar.Text className="me-3">
                             <SyncButton />
                         </Navbar.Text>
 
                         <Navbar.Text>
-                            <AppNavPlayer />
                             <div className="w-100 text-end">
                                 <span className="text-center fw-light align-middle">
                                     <span className="me-2">By David McDonald</span>
-                                    <a href="https://github.com/towerofpower256/MySpaceTraderClient" target="_blank"><FaGithub /></a>
+                                    <a href="https://github.com/towerofpower256/MySpaceTraderClient" target="_blank"><FaGithub className="me-2" /></a>
+                                    <a href="https://davidmac.pro" target="_blank"><CgWebsite /></a>
                                 </span>
                             </div>
+                            <AppNavPlayer />
                         </Navbar.Text>
                     </Navbar.Collapse>
                 </Container>
@@ -76,20 +79,21 @@ function SyncButton(props) {
         setAppSettings(_appSettings);
     }
 
-    return (
-        <Button className="me-3" variant="outline-secondary"
-            onClick={handleClick}>
-            <span style={{ "backgroundColor": (syncEnabled ? "green" : "red"), "borderRadius": "50%", "height": "1em", "width": "1em", "display": "inline-block" }}></span>
-            Auto sync {syncEnabled ? "on" : "off"}
-        </Button>
-    )
+    function setAutoSync(a) {
+        const _appSettings = { ...appSettings };
+        _appSettings[SETTING_AUTO_REFRESH_ENABLED] = Boolean(a);
+        setAppSettings(_appSettings);
+    }
 
     return (
-        <Button className="me-3" variant={syncEnabled ? "secondary" : "outline-secondary"}
-            onClick={handleClick}
-        >
-
-        </Button>
+        <div className="w-100 text-end">
+            <Form.Check
+                className="d-inline-block"
+                type="switch" id="autosync-toggle"
+                label={"Auto sync " + (syncEnabled ? "on" : "off")}
+                checked={syncEnabled}
+                onChange={() => setAutoSync(!syncEnabled)} />
+        </div>
     )
 }
 
@@ -115,17 +119,13 @@ function AppNavPlayer(props) {
                     <FaUserCircle />
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
-                    <Dropdown.Item>
+                    <Dropdown.Item disabled>
                         <div className="fw-bold">Username</div>
                         <div>{playerInfo.username}</div>
                     </Dropdown.Item>
-                    <Dropdown.Item>
+                    <Dropdown.Item disabled>
                         <div className="fw-bold">Joined</div>
                         <Timestamp value={playerInfo.joinedAt} />
-                    </Dropdown.Item>
-                    <Dropdown.Divider />
-                    <Dropdown.Item>
-                        <UserTokenItem />
                     </Dropdown.Item>
                     <Dropdown.Divider />
                     <Dropdown.Item onClick={() => { setShowMenu(false); navigate("/logout") }}>Logout</Dropdown.Item>
@@ -154,11 +154,16 @@ function AppNavPlayer(props) {
 function UserTokenItem(props) {
     const [revealToken, setRevealToken] = useState(false);
 
+    function handleClick(e) {
+        e.preventDefault();
+        setRevealToken(!revealToken);
+    }
+
     return (
-        <div onClick={() => setRevealToken(!revealToken)}>
+        <div onClick={handleClick}>
             {
                 revealToken ?
-                    <pre>{getAuthToken()}</pre>
+                    <div className="overflow-auto"><pre>{getAuthToken()}</pre></div>
                     :
                     "Click to reveal user token"
             }

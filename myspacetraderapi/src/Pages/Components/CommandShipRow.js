@@ -1,25 +1,14 @@
-import { MdAnchor, MdFlight, MdMoveToInbox, MdDoubleArrow } from "react-icons/md";
-import { GiWoodenCrate, GiJerrycan } from 'react-icons/gi';
-import { FaBoxes } from "react-icons/fa";
-import { TbArrowBigRightLines, TbBox } from "react-icons/tb";
-
 import { useContext } from "react";
 
 import PlayerShipsContext from "../../Contexts/PlayerShipsContext";
 
-import prettyNumber from "../../Utils/prettyNumber";
-import getShipFuelCount from "../../Utils/getShipFuelCount";
-
-import Badge from "react-bootstrap/esm/Badge";
 import Button from "react-bootstrap/esm/Button";
+import ShipNameBadge from "../../Components/ShipNameBadge";
+import ShipLoadingSpeedBadge from "../../Components/ShipLoadingSpeedBadge";
+import ShipSpeedBadge from "../../Components/ShipSpeedBadge";
 import CommandShipLocation from "./CommandShipLocation";
 import ShipCargoBadge from "../../Components/ShipCargoBadge";
 import ShipFuelBadge from "../../Components/ShipFuelBadge";
-
-import Row from "react-bootstrap/esm/Row";
-import Col from "react-bootstrap/esm/Col";
-import ShipNameBadge from "../../Components/ShipNameBadge";
-import ShipLoadingSpeedBadge from "../../Components/ShipLoadingSpeedBadge";
 
 export default function CommandShipRow(props) {
     const [playerShips, setPlayerShips] = useContext(PlayerShipsContext);
@@ -50,7 +39,7 @@ export default function CommandShipRow(props) {
                             <ShipCargoBadge ship={ship} />
                             <ShipFuelBadge ship={ship} />
                             <ShipLoadingSpeedBadge ship={ship} />
-                            <ShipLoadingSpeedBadge ship={ship} />
+                            <ShipSpeedBadge ship={ship} />
                         </div>
                     </div>
                 </div>

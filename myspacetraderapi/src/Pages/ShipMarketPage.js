@@ -8,6 +8,8 @@ import getLocationName from "../Utils/getLocationName.js";
 import insertOrUpdate from "../Utils/insertOrUpdate.js";
 import getGoodName from "../Utils/getGoodName.js";
 import sortCompareAlphabetically from "../Utils/sortCompareAlphabetically.js";
+import sortCompareNumerically from "../Utils/sortCompareNumerically.js";
+
 
 import PlayerShipsContextSet from "../Contexts/PlayerShipsContextSet";
 import PlayerInfoContextSet from "../Contexts/PlayerInfoContextSet";
@@ -25,15 +27,41 @@ import Form from "react-bootstrap/esm/Form.js";
 export default function ShipMarketPage(props) {
     const [isLoading, setLoading] = useState(false);
     const [isLoaded, setLoaded] = useState(false);
+    const [rawData, setRawData] = useState([]);
     const [data, setData] = useState([]);
     const [buyModalState, setBuyModalState] = useState({});
     const [systemList, setSystemList] = useState([]);
     const [filterSystem, setFilterSystem] = useState(null);
+    const [sortBy, setSortBy] = useState("type");
 
     useEffect(() => {
         if (!isLoaded) refreshData();
         updateSystemList();
     }, []);
+
+    useEffect(() => {
+        let _data = [...rawData];
+
+        if (filterSystem) _data = _data.filter(s => s.system === filterSystem);
+
+        if (sortBy === "cargo") {
+            _data.sort((a, b) => sortCompareNumerically(a.maxCargo, b.maxCargo) || sortCompareAlphabetically(a.type, b.type));
+        }
+        else if (sortBy === "price") {
+            _data.sort((a, b) => sortCompareNumerically(a.price, b.price) || sortCompareAlphabetically(a.type, b.type));
+        }
+        else if (sortBy === "speed") {
+            _data.sort((a, b) => sortCompareNumerically(a.speed, b.speed) || sortCompareAlphabetically(a.type, b.type));
+        }
+        else if (sortBy === "location") {
+            _data.sort((a, b) => sortCompareAlphabetically(a.location, b.location) || sortCompareAlphabetically(a.type, b.type));
+        }
+        else {
+            _data.sort((a, b) => sortCompareAlphabetically(a.type, b.type));
+        }
+
+        setData(_data);
+    }, [sortBy, rawData, filterSystem]);
 
     function updateSystemList() {
         let systemData = loadSystemsData();
@@ -89,8 +117,7 @@ export default function ShipMarketPage(props) {
                         }
                     })
 
-                    _data.sort((a, b) => sortCompareAlphabetically(a.type, b.type));
-                    setData(_data);
+                    setRawData(_data);
                     setLoaded(true);
                 } else {
                     toast.error("Error loading ship market, data was missing from the response");
@@ -123,9 +150,19 @@ export default function ShipMarketPage(props) {
                 <Form.Label>System</Form.Label>
                 <Form.Select value={filterSystem} onChange={(e) => setFilterSystem(e.target.value)}>
                     <option value="">(all)</option>
-                    {systemList.map((s) => {
-                        return (<option value={s.symbol}>{s.symbol} ({s.name})</option>)
+                    {systemList.map((s, idx) => {
+                        return (<option value={s.symbol} key={idx}>{s.symbol} ({s.name})</option>)
                     })}
+                </Form.Select>
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="shipMarketFilterSystem">
+                <Form.Label>Sort</Form.Label>
+                <Form.Select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+                    <option value="type">Type</option>
+                    <option value="cargo">Cargo</option>
+                    <option value="price">Price</option>
+                    <option value="speed">Speed</option>
+                    <option value="location">Location</option>
                 </Form.Select>
             </Form.Group>
             <Table size="sm" responsive>
@@ -145,11 +182,11 @@ export default function ShipMarketPage(props) {
                 <tbody>
                     {isLoading && <PlaceholderTableRows colCount={9} rowCount={3} />}
                     {!isLoading &&
-                        data.filter((ship) => !filterSystem || ship.system === filterSystem).map((ship, idx) => {
+                        data.map((ship, idx) => {
                             return (
-                                <tr key={idx}>
+                                <tr key={""+ship.type+ship.location}>
                                     <th>
-                                        <div style={{width: "max-content"}}>{ship.type}</div>
+                                        <div style={{ width: "max-content" }}>{ship.type}</div>
                                         <div className="text-muted fw-normal">{ship.manufacturer}</div>
                                     </th>
                                     <td>{prettyNumber(ship.maxCargo)}</td>
@@ -254,189 +291,3 @@ function ShipMarketBuyShipConfirmModal(props) {
         </div>
     )
 }
-
-/*
-function _ShipMarketPage(props) {
-    const [error, setError] = useState(null)
-    const [isLoaded, setLoaded] = useState(false)
-    const [shipsData, setShipsData] = useState(null);
-
-    useEffect(() => {
-        loadAvailableShips();
-    }, []);
-
-    function loadAvailableShips() {
-        setLoaded(false);
-        setError(null);
-        setShipsData(null);
-
-        getShipMarket()
-            .then(stcResponse => {
-                console.log("Loading ship market data:", stcResponse);
-                setShipsData(stcResponse.data);
-                setLoaded(true);
-            })
-            .catch(ex => {
-                doError("Error reading the response payload: " + error);
-            });
-    }
-
-    function doError(error) {
-        console.error("ERROR", error);
-        setError(error);
-        setLoaded(true);
-    }
-
-    function PageWrapper(props) {
-        return (
-            <div>
-                <MarketHeader />
-                <MyPageSubTitle>Ship Market</MyPageSubTitle>
-                {props.children}
-            </div>
-        )
-    }
-
-    if (!isLoaded) {
-        return (
-            <PageWrapper>
-                <pre>It's loading</pre>
-            </PageWrapper>
-        );
-    }
-
-    if (error) {
-        return (
-            <PageWrapper>
-                <pre>ERROR: {error}</pre>
-            </PageWrapper>
-        );
-    }
-
-    if (shipsData) {
-
-        let shipItems = shipsData.ships.map((ship, index) => {
-            return (
-                <ShipMarketItem key={index} ship={ship} />
-            );
-        });
-
-        return (
-            <PageWrapper>
-                <div className="container">
-                    <div className="row">
-                        {shipItems}
-                    </div>
-                </div>
-            </PageWrapper>
-        );
-    }
-}
-
-function ShipMarketItem(props) {
-    const [isWorking, setWorking] = useState(false);
-
-    let st = props.ship;
-
-    let purchaseLocationItems = st.purchaseLocations.map((pl, index) => {
-        return (
-            <tr key={index}>
-                <td>{pl.system}</td>
-                <td>{pl.location}</td>
-                <td>{prettyNumber(pl.price)}</td>
-                <td>
-                    <Button size="sm" variant="info" disabled={isWorking}
-                        data-ship={st.type} data-location={pl.location} data-price={pl.price}
-                        onClick={handleBuyShipClick}
-                    >Buy</Button>
-                </td>
-            </tr>
-        );
-    });
-
-    function handleBuyShipClick(e) {
-        purchaseShip(e.target.dataset.location, e.target.dataset.ship);
-    }
-
-    function purchaseShip(location, shipType) {
-        if (isWorking) return;
-
-        buyNewShip(location, shipType)
-            .then(stcResponse => {
-                if (!stcResponse.ok) {
-                    toast.error(stcResponse.errorPretty);
-                    return;
-                }
-
-                // TODO update player credits
-                //const credits = stcResponse.data.credits
-
-                const newShip = stcResponse.data.ship;
-                if (newShip) {
-                    savePlayerShipsData(insertOrUpdate(loadPlayerShipsData(), newShip, (ship) => ship.id === newShip.id));
-                    toast.success("Purchased new ship: " + newShip.type);
-                } else {
-                    toast.warn("Purchase was successful, but ship details were missing from the response");
-                }
-            })
-            .finally(() => {
-                setWorking(false);
-            })
-    }
-
-    return (
-        <div className="col-md-6 col-xs-12" style={{ "margin-bottom": "15px" }}>
-            <div className="card">
-                <div className="card-header">
-                    <h4>{st.type}</h4>
-                </div>
-                <div className="card-body">
-                    <table className="table table-striped">
-                        <tbody>
-                            <tr>
-                                <th>Type</th>
-                                <td>{st.type}</td>
-                                <th>Max cargo</th>
-                                <td>{st.maxCargo}</td>
-                            </tr>
-                            <tr>
-                                <th>Manufacturer</th>
-                                <td>{st.manufacturer}</td>
-                                <th>Cargo loading speed</th>
-                                <td>{st.loadingSpeed}</td>
-                            </tr>
-                            <tr>
-                                <th>Class</th>
-                                <td>{st.class}</td>
-                                <th>Speed</th>
-                                <td>{st.speed}</td>
-                            </tr>
-                            <tr>
-                                <th>Plating</th>
-                                <td>{st.plating}</td>
-                                <th>Weapons</th>
-                                <td>{st.weapons}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-
-                    <h4>Purchase locations</h4>
-                    <table className="table table-striped table-hover table-sm">
-                        <thead>
-                            <tr>
-                                <td>System</td>
-                                <td>Location</td>
-                                <td>Price</td>
-                                <td></td>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {purchaseLocationItems}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    );
-}
-*/

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { getLoans, payLoan, takeOutLoan } from "../../Services/SpaceTraderApi";
 import { toast } from "react-toastify";
 import prettyNumber from "../../Utils/prettyNumber";
+import humanizeString from "../../Utils/humanizeString";
 import Timestamp from "../Timestamp";
 import LoanTypes from "../../Data/LoanTypes.js";
 
@@ -56,7 +57,7 @@ function NewLoanForm(props) {
                         <option value="">--- Select a loan ---</option>
                         {LoanTypes.loans.map((loan) => {
                             return (
-                                <option value={loan.type} key={loan.type}>{loan.type}</option>
+                                <option value={loan.type} key={loan.type}>{humanizeString(loan.type)}</option>
                             )
                         })
                         }
@@ -97,7 +98,7 @@ function LoanItem(props) {
                     <tbody>
                         <tr>
                             <th>Status</th>
-                            <td>{props.loan.status}</td>
+                            <td>{humanizeString(props.loan.status)}</td>
                         </tr>
                         <tr>
                             <th>Due</th>
@@ -109,13 +110,15 @@ function LoanItem(props) {
                         </tr>
                     </tbody>
                 </Table>
-                <Button variant="warning"
-                    disabled={props.isWorking}
-                    onClick={props.handlePayOffClick}
-                    data-loan-id={props.loan.id} data-loan-type={props.loan.type}>
-                    <Spinner animation="border" role="status" hidden={!props.isWorking} aria-hidden={!props.isWorking} size="sm" />
-                    <span>{props.isWorking ? "Working" : "Pay off loan"}</span>
-                </Button>
+                {props.loan.status === "CURRENT" &&
+                    <Button variant="warning"
+                        disabled={props.isWorking}
+                        onClick={props.handlePayOffClick}
+                        data-loan-id={props.loan.id} data-loan-type={props.loan.type}>
+                        <Spinner animation="border" role="status" hidden={!props.isWorking} aria-hidden={!props.isWorking} size="sm" />
+                        <span>{props.isWorking ? "Working" : "Pay off loan"}</span>
+                    </Button>
+                }
             </Card.Body>
         </Card>
     )

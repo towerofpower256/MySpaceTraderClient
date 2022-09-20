@@ -34,12 +34,13 @@ import CommandShipPage from "./Pages/CommandShipPage";
 import GamePage from "./Pages/GamePage";
 import humanizeString from "./Utils/humanizeString";
 import LocationPage from "./Pages/LocationPage";
+import NewStartSplash from "./Pages/NewStartSplash";
 //import LocationsPage from "./Pages/LocationsPage";
 //import MyBuggyComponent from "./Components/MyBuggyComponent";
 
 function App() {
   useEffect(() => {
-    toast("Starting");
+    //toast("Starting");
     //setPageTitle();
   }, []);
 
@@ -61,6 +62,7 @@ function App() {
               <div className="col text-start">
                 <MyErrorBoundary>
                   <LoginWrapper>
+                    <NewStartSplash />
                     <Routes>
                       <Route index element={<Navigate to="/game" />} />
                       
