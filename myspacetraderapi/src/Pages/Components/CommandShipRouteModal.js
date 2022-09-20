@@ -10,6 +10,7 @@ import { TbArrowBigRightLines } from "react-icons/tb";
 import CommandShipLocation from "./CommandShipLocation";
 import LocationPlayerShipCountBadge from "../../Components/LocationPlayerShipCountBadge";
 import ShipFuelBadge from "../../Components/ShipFuelBadge";
+import ShipNameBadge from "../../Components/ShipNameBadge";
 import TimeDelta from "../../Components/TimeDelta";
 
 import Badge from "react-bootstrap/esm/Badge";
@@ -27,8 +28,6 @@ import insertOrUpdate from "../../Utils/insertOrUpdate";
 import FlightPlansContextSet from "../../Contexts/FlightPlansContextSet";
 import sortCompareNumerically from "../../Utils/sortCompareNumerically";
 import LocationMarketVisibilityBadge from "../../Components/LocationMarketVisibilityBadge";
-import ShipNameBadge from "../../Components/ShipNameBadge";
-
 
 export default function CommandShipRouteModal(props) {
     const [isWorking, setWorking] = useState(false);

@@ -15,6 +15,8 @@ import MyPageTitle from "../Components/MyPageTitle";
 import MyPageSubTitle from "../Components/MyPageSubTitle";
 import Button from "react-bootstrap/esm/Button";
 import Table from "react-bootstrap/esm/Table";
+import TimeDelta from "../Components/TimeDelta";
+import calcTimeDelta from "../Utils/calcTimeDelta";
 
 export default function HistoryPage(props) {
 
@@ -97,28 +99,24 @@ function FlightPlanHistory(props) {
             <Table striped size="sm" responsive>
                 <thead>
                     <tr>
-                        <th>Departure</th>
                         <th>Created</th>
+                        <th>Departure</th>
                         <th>Destination</th>
-                        <th>Arrives at</th>
-                        <th>Travel time</th>
-                        <th>Distance</th>
-                        <th>Fuel</th>
-                        <th>Ship</th>
+                        <th className="text-end">Travel time</th>
+                        <th className="text-end">Distance</th>
+                        <th className="text-end">Fuel</th>
                     </tr>
                 </thead>
                 <tbody>
                     {Array.isArray(data) ? data.map((fp, idx) => {
                         return (
                             <tr key={idx}>
-                                <td>{fp.departure}</td>
                                 <td><Timestamp value={fp.createdAt} /></td>
+                                <td>{fp.departure}</td>
                                 <td>{fp.destination}</td>
-                                <td><Timestamp value={fp.arrivesAt} /></td>
-                                <td>{timeDelta(new Date(fp.arrivesAt), new Date(fp.createdAt))} </td>
-                                <td>{prettyNumber(fp.distance)}</td>
-                                <td>{prettyNumber(fp.fuelConsumed)}</td>
-                                <td>{fp.shipId}</td>
+                                <td className="text-end">{timeDelta(calcTimeDelta(new Date(fp.arrivesAt), new Date(fp.createdAt)), {variant: "hms"})} </td>
+                                <td className="text-end">{prettyNumber(fp.distance)}</td>
+                                <td className="text-end">{prettyNumber(fp.fuelConsumed)}</td>
                             </tr>
                         )
                     })

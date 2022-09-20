@@ -1,8 +1,6 @@
 import Badge from "react-bootstrap/esm/Badge";
 import { MdDoubleArrow } from "react-icons/md";
 
-import prettyNumber from "../Utils/prettyNumber";
-
 export default function ShipLoadingSpeedBadge(props) {
     const ship = props.ship || {};
 

@@ -23,6 +23,7 @@ import ShipNameBadge from "../../Components/ShipNameBadge";
 import ShipCargoBadge from "../../Components/ShipCargoBadge";
 import ShipFuelBadge from "../../Components/ShipFuelBadge";
 import ShipLoadingSpeedBadge from "../../Components/ShipLoadingSpeedBadge";
+import ShipSpeedBadge from "../../Components/ShipSpeedBadge";
 
 
 export default function CommandShipTradeModal(props) {
@@ -87,7 +88,7 @@ export default function CommandShipTradeModal(props) {
                 <ShipCargoBadge ship={ship} />
                 <ShipFuelBadge ship={ship} />
                 <ShipLoadingSpeedBadge ship={ship} />
-                <ShipLoadingSpeedBadge ship={ship} />
+                <ShipSpeedBadge ship={ship} />
             </div>
             {selectedGood && <div className="mu-3">
                 <hr />

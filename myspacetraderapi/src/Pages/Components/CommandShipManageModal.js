@@ -29,6 +29,7 @@ import getGoodName from "../../Utils/getGoodName";
 import getShipName from "../../Utils/getShipName";
 import insertOrUpdate from "../../Utils/insertOrUpdate";
 import PlayerShipsContextSet from "../../Contexts/PlayerShipsContextSet";
+import ShipSelectMenu from "../../Components/ShipSelectMenu";
 
 
 export default function CommandShipManageModal(props) {
@@ -36,6 +37,10 @@ export default function CommandShipManageModal(props) {
     const [selectedCargo, setSelectedCargo] = useState();
     const shipId = props.shipId;
     const ship = loadPlayerShipsData().find(s => s.id === shipId);
+
+    function doOnComplete(...args) {
+        if (typeof props.onComplete === "function") props.onComplete(...args);
+    }
 
     function PageWrapper(props) {
         return (
@@ -113,7 +118,7 @@ export default function CommandShipManageModal(props) {
             {subForm && <hr />}
             {subForm === "jettison" && <SubFormJettisonCargo ship={ship} selectedCargo={selectedCargo} onComplete={() => setSubForm()} />}
             {subForm === "transfer" && <SubFormTransferCargo ship={ship} selectedCargo={selectedCargo} onComplete={() => setSubForm()} />}
-            {subForm === "scrap" && <SubFormScrapShip ship={ship} onComplete={() => setSubForm()} />}
+            {subForm === "scrap" && <SubFormScrapShip ship={ship} onComplete={() => { setSubForm();   }} />}
         </PageWrapper>
     )
 }
@@ -146,6 +151,7 @@ function SubFormScrapShip(props) {
                     return;
                 }
 
+                setShipsData(loadPlayerShipsData().filter(s => s !== ship.id)); // Update the ship list, remove this ship
                 toast.success(stcResponse.data.success || "Ship scrapped");
 
                 doOnComplete();
@@ -225,15 +231,26 @@ function SubFormTransferCargo(props) {
                     getShipName(targetShip)
                 ].join(" "));
 
-                // TODO handle response
-                const fromShip = stcResponse.data.fromShip;
-                const toShip = stcResponse.data.toShip;
-                if (fromShip || toShip) {
-                    let shipData = loadPlayerShipsData();
-                    if (fromShip) insertOrUpdate(shipData, fromShip, (s) => s.id === fromShip.id);
-                    if (toShip) insertOrUpdate(shipData, fromShip, (s) => s.id === fromShip.id);
-                    setShipsData(shipData);
+                const dataFromShip = stcResponse.data.fromShip;
+                const dataToShip = stcResponse.data.toShip;
+
+
+                let shipData = loadPlayerShipsData();
+                let didChange = false;
+                // Responses are incomplete, missing location data. Find and merge the cargo objects only.
+
+                let fromShip = shipData.find(s => dataFromShip.id === s.id);
+                if (fromShip) {
+                    fromShip.cargo = dataFromShip.cargo;
+                    didChange = true;
                 }
+                let toShip = shipData.find(s => dataToShip.id === s.id);
+                if (toShip) {
+                    toShip.cargo = dataToShip.cargo;
+                    didChange = true;
+                }
+                
+                if (didChange) setShipsData(shipData);
 
                 doOnComplete();
             })
@@ -249,7 +266,9 @@ function SubFormTransferCargo(props) {
         <div>
             <Form.Group>
                 <Form.Text>Ship to transfer cargo to</Form.Text>
-                <div>UNDER CONSTRUCTION, ship select would go here</div>
+                    <ShipSelectMenu 
+                    filter={(s) => s.location === ship.location && s.id !== ship.id}
+                    onSelect={(ship) => setTargetShip(ship)}/>
                 <Form.Text>Quantity</Form.Text>
                 <InputGroup className="mb-3">
                     <Form.Control type="number" value={val} onChange={(e) => setVal(e.currentTarget.value)} />

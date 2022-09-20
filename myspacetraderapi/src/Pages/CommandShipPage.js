@@ -60,7 +60,7 @@ export default function CommandShipPage(props) {
 
         // Sort
         if (listSettings.sort === "type") {
-            data.sort((a, b) => sortCompareAlphabetically(a.type, b.type));
+            data.sort((a, b) => sortCompareAlphabetically(a.type, b.type) || sortCompareAlphabetically(a.name, b.name));
         }
 
         // Done
@@ -149,7 +149,7 @@ export default function CommandShipPage(props) {
                     <tr><td colSpan="100%" className="fw-light">Ships: {prettyNumber(data.length)}</td></tr>
                     {data.map((ship, idx) => {
                         return (
-                            <CommandShipRow key={idx} shipId={ship.id} showTradeModal={showTradeModal} showRouteModal={showRouteModal} showManageModal={showManageModal} />
+                            <CommandShipRow key={ship.id} shipId={ship.id} showTradeModal={showTradeModal} showRouteModal={showRouteModal} showManageModal={showManageModal} />
                         )
                     })}
                 </tbody>
