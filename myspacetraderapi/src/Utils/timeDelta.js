@@ -9,7 +9,7 @@ export default function timeDelta(delta, options) {
     // Get time components
     var hours = deltaAbs / 3.6e6 | 0;
     var mins = deltaAbs % 3.6e6 / 6e4 | 0;
-    var secs = Math.round(deltaAbs % 6e4 / 1e3);
+    var secs = Math.floor(deltaAbs % 6e4 / 1e3);
 
     // Return formatted string
     if (options.variant === "hms") {

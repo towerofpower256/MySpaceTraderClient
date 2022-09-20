@@ -35,7 +35,7 @@ export default function CommandShipRouteModal(props) {
 
     const shipId = props.shipId;
     const ship = loadPlayerShipsData().find((_ship) => _ship.id === shipId);
-    const destinations = (ship ? getDestinationsFromLocation(ship.location) : undefined);
+    const destinations = (ship ? getDestinationsFromLocation(ship.location, ship.speed) : undefined);
     if (Array.isArray(destinations))
         destinations.sort((a, b) => sortCompareNumerically(a._distance, b._distance, false)); // Sort by distance
 
@@ -229,7 +229,7 @@ export default function CommandShipRouteModal(props) {
                                         {isWorking && <Spinner animation="border" role="status" size="sm">
                                             <span className="visually-hidden">Loading...</span>
                                         </Spinner>}
-                                        Move
+                                        {!isWorking && "Move"}
                                     </Button>
                                 </td>
                             </tr>

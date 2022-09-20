@@ -36,7 +36,7 @@ export default function LoginPage(props) {
 
     useEffect(() => {
         setPageTitle("Login");
-    })
+    }, [])
 
     function handleRegisterClick(e) {
         if (isWorking) return;

@@ -35,6 +35,7 @@ import GamePage from "./Pages/GamePage";
 import humanizeString from "./Utils/humanizeString";
 import LocationPage from "./Pages/LocationPage";
 import NewStartSplash from "./Pages/NewStartSplash";
+import TestCalcsPage from "./Pages/TestCalcsPage";
 //import LocationsPage from "./Pages/LocationsPage";
 //import MyBuggyComponent from "./Components/MyBuggyComponent";
 
@@ -80,6 +81,8 @@ function App() {
                       <Route path="/devtools" element={<DevToolsPage />} />
                       
                       <Route path="/locations/:locationid" element={<LocationPage />} />
+
+                      <Route path="/testcalcs" element={<TestCalcsPage />} />
 
                       <Route path="/history" element={<HistoryPage />} />
 

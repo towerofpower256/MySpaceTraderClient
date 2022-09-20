@@ -9,7 +9,7 @@ import insertOrUpdate from "../Utils/insertOrUpdate.js";
 import getGoodName from "../Utils/getGoodName.js";
 import sortCompareAlphabetically from "../Utils/sortCompareAlphabetically.js";
 import sortCompareNumerically from "../Utils/sortCompareNumerically.js";
-
+import setPageTitle from "../Utils/setPageTitle.js";
 
 import PlayerShipsContextSet from "../Contexts/PlayerShipsContextSet";
 import PlayerInfoContextSet from "../Contexts/PlayerInfoContextSet";
@@ -33,6 +33,8 @@ export default function ShipMarketPage(props) {
     const [systemList, setSystemList] = useState([]);
     const [filterSystem, setFilterSystem] = useState(null);
     const [sortBy, setSortBy] = useState("type");
+
+    useEffect(() => {setPageTitle("Ship Market")}, []);
 
     useEffect(() => {
         if (!isLoaded) refreshData();

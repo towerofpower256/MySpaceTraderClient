@@ -12,7 +12,7 @@ export default function LogoutPage(props) {
 
     useEffect(() => {
         setPageTitle("Logout");
-    })
+    }, [])
 
     function handleLogoutClick(e) {
         e.preventDefault();
