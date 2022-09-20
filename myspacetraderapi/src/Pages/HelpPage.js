@@ -1,9 +1,11 @@
+import { useEffect } from "react"
 import MyPageSubTitle from "../Components/MyPageSubTitle"
 import MyPageTitle from "../Components/MyPageTitle"
+import setPageTitle from "../Utils/setPageTitle"
 
 
 export default function HelpPage(props) {
-
+    useEffect(() => setPageTitle("Help"), []);
 
     return (
         <div>

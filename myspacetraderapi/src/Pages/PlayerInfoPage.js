@@ -13,7 +13,7 @@ import setPageTitle from "../Utils/setPageTitle";
 function PlayerInfoPage(props) {
     const [playerInfo, setPlayerInfo] = useContext(PlayerInfoContext);
 
-    useEffect(() => {setPageTitle("Player")});
+    useEffect(() => {setPageTitle("Player")}, []);
 
     if (!playerInfo) {
         return (

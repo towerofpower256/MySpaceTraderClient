@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import setPageTitle from "../Utils/setPageTitle";
 
 export default function MarketReportPage(props) {
-    useEffect(() => {setPageTitle("Market Report")})
+    useEffect(() => {setPageTitle("Market Report")}, [])
     return(
         <>
             <MarketHeader />

@@ -10,7 +10,7 @@ import {
 export default function UnknownPage() {
     let location = useLocation();
 
-    useEffect(() => {setPageTitle("Unknown page")});
+    useEffect(() => {setPageTitle("Unknown page")}, []);
 
     return (
         <div>

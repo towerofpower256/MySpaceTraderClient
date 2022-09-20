@@ -3,7 +3,7 @@ import calcTravel from "./calcTravel";
 import getLocation from "./getLocation";
 import getLocationsBySystem from "./getLocationsBySystem";
 
-export default function getDestinationsFromLocation(startLocationSymbol, systemData) {
+export default function getDestinationsFromLocation(startLocationSymbol, shipSpeed, systemData) {
     if (!systemData) systemData = loadSystemsData();
     const startLocation = getLocation(startLocationSymbol);
     if (!startLocation) return [];
@@ -13,7 +13,7 @@ export default function getDestinationsFromLocation(startLocationSymbol, systemD
     // Calculate distance from start location
     destinations.forEach(location => {
         if (location.symbol === startLocationSymbol) return;
-        const [distance, fuelCost, travelTime] = calcTravel(startLocation, location);
+        const [distance, fuelCost, travelTime] = calcTravel(startLocation, location, shipSpeed);
         location._distance = distance;
         location._fuel_cost = fuelCost;
         location._travel_time = travelTime;

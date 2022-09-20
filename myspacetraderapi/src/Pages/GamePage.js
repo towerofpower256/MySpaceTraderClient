@@ -8,6 +8,7 @@ import Table from "react-bootstrap/esm/Table";
 import prettyNumber from "../Utils/prettyNumber";
 import insertOrUpdate from "../Utils/insertOrUpdate";
 import { loadPlayerInfo } from "../Services/LocalStorage";
+import setPageTitle from "../Utils/setPageTitle";
 
 
 export default function GamePage(props) {
@@ -92,6 +93,7 @@ function GameState(props) {
     const [isLoading, setLoading] = useState(false);
 
     useEffect(() => {
+        setPageTitle("Game");
         // Get the game state
         updateGameStatus();
     }, []);

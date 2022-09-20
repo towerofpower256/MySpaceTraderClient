@@ -17,8 +17,10 @@ import Button from "react-bootstrap/esm/Button";
 import Table from "react-bootstrap/esm/Table";
 import TimeDelta from "../Components/TimeDelta";
 import calcTimeDelta from "../Utils/calcTimeDelta";
+import setPageTitle from "../Utils/setPageTitle";
 
 export default function HistoryPage(props) {
+    useEffect(() => setPageTitle("History"), [])
 
     function PageWrapper(props) {
         return (

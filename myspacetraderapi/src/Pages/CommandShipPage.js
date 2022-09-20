@@ -18,6 +18,7 @@ import Form from "react-bootstrap/esm/Form";
 import Container from "react-bootstrap/esm/Container";
 import Row from "react-bootstrap/esm/Row";
 import prettyNumber from "../Utils/prettyNumber";
+import setPageTitle from "../Utils/setPageTitle";
 
 
 export default function CommandShipPage(props) {
@@ -33,6 +34,8 @@ export default function CommandShipPage(props) {
     }, [listSettings]);
 
     useEffect(() => {
+        setPageTitle("Command Ship");
+
         // Setup system list
         let systemData = loadSystemsData();
         if (Array.isArray(systemData.systems)) {
