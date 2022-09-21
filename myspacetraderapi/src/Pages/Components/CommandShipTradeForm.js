@@ -64,6 +64,9 @@ export default function CommandShipTradeForm(props) {
                 );
                 doOnComplete();
             })
+            .catch(error => {
+                toast.error(error || "There was an error completing the trade");
+            })
             .finally(() => {
                 setWorking(false);
             })
