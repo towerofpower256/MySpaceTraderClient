@@ -1,5 +1,5 @@
 import calcDistance from "./calcDistance";
-import calcTravelTime from "./calcTraveTime";
+import calcTravelTime from "./calcTravelTime";
 
 // Credit to erebos
 // https://github.com/Kaishiyoku/erebos/blob/dabf5933f88446be0babaca067c5b94e9b21c7ef/src/core/flight/estimateRouteFuelCost.js
