@@ -28,7 +28,9 @@ import sortCompareNumerically from "../Utils/sortCompareNumerically";
 import sortCompareAlphabetically from "../Utils/sortCompareAlphabetically";
 import prettyNumber from "../Utils/prettyNumber";
 import getGoodName from "../Utils/getGoodName";
+import timeDelta from "../Utils/timeDelta";
 import findGoodTradeRoutes from "../Utils/findGoodTradeRoutes";
+import findGoodTradeRoutesV2 from "../Utils/findGoodTradeRoutesV2";
 
 
 
@@ -76,7 +78,8 @@ export default function MarketRouteFinderPage(props) {
         let options = {
             result_limit: 10,
             ship_speed: finderSettings.shipSpeed,
-            ship_cargo_size: finderSettings.shipCargoSize
+            ship_cargo_size: finderSettings.shipCargoSize,
+            multi_system: finderSettings.multi_system
         }
 
         if (finderSettings.orderBy) options.sort_by = finderSettings.orderBy;
@@ -95,7 +98,8 @@ export default function MarketRouteFinderPage(props) {
             options.filter_goods = [finderSettings.filterGood];
         }
 
-        let r = findGoodTradeRoutes(loadMarketData(), options);
+        //let r = findGoodTradeRoutes(loadMarketData(), options);
+        let r = findGoodTradeRoutesV2(loadMarketData(), loadSystemsData(), options);
 
         console.log("Trade finder result", r);
         setReportData(r.routes);
@@ -104,17 +108,27 @@ export default function MarketRouteFinderPage(props) {
     function setupColumns() {
         const columns = [
             { name: "good", label: "Good", formatter: (a) => getGoodName(a) },
-            { name: "good_volume", label: "Volume/unit" },
+            { name: "good_volume", label: "Vol.", formatter: (a) => a+" m3" },
             { name: "profit", label: "Profit", cellClassName: "text-end", formatter: (a) => "$" + prettyNumber(a) },
             { name: "profit_per_volume_per_fuel", cellClassName: "text-end", label: "Profit/vol&dist", formatter: (a) => "$" + (a.toFixed(4)) },
             { name: "quantity", label: "Qty", cellClassName: "text-end", formatter: (a) => prettyNumber(a) },
             { name: "buy_location", label: "Buy location" },
+            {
+                name: "route", label: "Route", formatter: (a) => (a || []).map((r, idx) => {
+                    if (idx === 0) return undefined;
+                    return <div className="text-nowrap">{idx !== 0 ? <>{"->"}</> : undefined}{r}</div>
+                })
+            },
             { name: "buy_price", label: "Buy price", cellClassName: "text-end", formatter: (a) => "$" + prettyNumber(a) },
-            { name: "sell_location", label: "Sell location" },
+            //{ name: "sell_location", label: "Sell location" },
             { name: "sell_price", label: "Sell price", cellClassName: "text-end", formatter: (a) => "$" + prettyNumber(a) },
             { name: "distance", label: "Distance", cellClassName: "text-end", formatter: (a) => prettyNumber(a.toFixed(2)) },
             { name: "fuel_cost", label: "Fuel", cellClassName: "text-end", formatter: (a) => "~" + a },
-            { name: "travel_time", label: "Travel time", cellClassName: "text-end", formatter: (a) => prettyNumber(a || "-") + " sec" },
+            {
+                name: "travel_time", label: "Travel time", cellClassName: "text-end", formatter: (a) => {
+                    return (typeof a === "number" ? timeDelta(a * 1000, { variant: "hms" }) : "-");
+                }
+            },
             { name: "trade_run_profit", label: "Run profit", cellClassName: "text-end", formatter: (a) => "$" + prettyNumber(parseFloat(a).toFixed(2)) },
             { name: "trade_run_profit_per_second", label: "Run profit/second", cellClassName: "text-end", formatter: (a) => "$" + prettyNumber(a ? a.toFixed(2) : "-") + " sec" },
         ];
@@ -147,6 +161,11 @@ export default function MarketRouteFinderPage(props) {
                             <option value="">(all)</option>
                             {goodList.map(g => <option key={g.symbol} value={g.symbol}>{g.name}</option>)}
                         </Form.Select>
+                    </Form.Group>
+                    <Form.Group className="col-md-4 col-sm-12 mb-3">
+                        <Form.Check checked={finderSettings.multi_system}
+                            label="Allow runs across systems"
+                            onChange={(e) => { finderSettings.multi_system = e.target.checked; setFinderSettings(finderSettings); }} />
                     </Form.Group>
                 </Row>
                 <Row>
@@ -186,6 +205,7 @@ function DataTable(props) {
                 </tr>
             </thead>
             <tbody>
+                {Array.isArray(props.rows) && props.rows.length === 0 ? <tr><td className="text-muted" colSpan="100%">No results</td></tr>: undefined}
                 {Array.isArray(props.rows) ?
                     props.rows.map((row, idx) => {
                         return <DataTableRow key={idx} row={row} columns={columns} />

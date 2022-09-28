@@ -1,3 +1,5 @@
+import calcDistance from "./calcDistance";
+
 // Credit to erebos
 // https://github.com/Kaishiyoku/erebos/blob/dabf5933f88446be0babaca067c5b94e9b21c7ef/src/core/flight/estimateRouteFuelCost.js
 export default function calcFuelCost(fromLocation, toLocation) {
