@@ -41,7 +41,7 @@ export default function findGoodTradeRoutesV2(marketData, systemData, options) {
             let md2 = mdQueue[i2];
             let md2System = getSystemFromLocationName(md2.location);
 
-            if (!options.multi_system && md1System.system !== md2System.system) continue; // Only allow routes in the same system
+            if (!options.multi_system && md1System !== md2System) continue; // Only allow routes in the same system
 
             console.log("Scanning ", md1.location, "<->", md2.location);
 
